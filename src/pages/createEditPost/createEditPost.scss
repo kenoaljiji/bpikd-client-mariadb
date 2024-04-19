@@ -1,0 +1,128 @@
+.post {
+  overflow: hidden;
+  margin-bottom: 60px;
+  &-category {
+    background: #d9d9d9;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+
+    font-size: 18px;
+
+    select {
+      padding: 5px;
+      border: 1px solid #eee;
+    }
+  }
+
+  input,
+  textarea {
+    border-radius: 1px;
+  }
+
+  .file-upload-grid {
+    margin-top: 18px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(5, 1fr);
+
+    .items {
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: pointer;
+      rect {
+        stroke: none;
+      }
+    }
+
+    svg:hover {
+      opacity: 0.9;
+    }
+
+    /*  label {
+      font-size: 13px;
+      text-transform: uppercase;
+    } */
+  }
+
+  .select {
+    width: 150px;
+    padding: 5px;
+    border: 1px solid #eee;
+  }
+
+  .add-image-placeholder {
+    text-align: center;
+    cursor: pointer;
+  }
+  .add-image-placeholder:hover {
+    opacity: 0.9;
+  }
+
+  .form-control {
+    padding: 5px;
+  }
+
+  .featured {
+    position: relative;
+    width: 305px;
+    &-close {
+      position: absolute;
+      font-weight: 600;
+      right: 0;
+      background-color: #fff;
+
+      margin: 2px 4px;
+      padding: 5px;
+
+      cursor: pointer;
+
+      i {
+        color: black;
+      }
+    }
+
+    &-close:hover i {
+      color: rgb(150, 36, 36);
+    }
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      width: 50%;
+      text-transform: uppercase;
+      border-radius: 2px;
+      border: 0;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:first-child {
+      background: #4d5f81;
+      color: #fff;
+    }
+    button:not(:first-child) {
+      background-color: #00a1d3;
+      color: #fff;
+    }
+  }
+
+  .react-quill {
+    margin-top: 20px;
+    .ql-container {
+      .ql-editor {
+        padding: 15px;
+        min-height: 500px; /* Set your desired height here */
+        /* Additional styling if needed */
+      }
+    }
+  }
+}

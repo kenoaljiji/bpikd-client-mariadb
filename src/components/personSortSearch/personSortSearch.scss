@@ -1,0 +1,130 @@
+.person-sort-search {
+  input {
+    border-radius: 28px;
+    padding: 10px 20px;
+  }
+
+  .droppable-container {
+    display: flex;
+    overflow-x: auto; /* Allows horizontal scrolling if items overflow */
+  }
+
+  .first-row {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .sort-search {
+    display: flex;
+    gap: 20px;
+
+    img {
+      width: 150px !important;
+      height: auto !important;
+    }
+  }
+
+  .sort-result {
+    border-top: 1px solid rgb(158, 158, 158);
+    border-bottom: 1px solid rgb(158, 158, 158);
+    padding: 10px;
+    padding-bottom: 30px;
+  }
+
+  .search-row-result {
+    text-align: center;
+    margin-top: 10px;
+    border-right: 1px solid rgb(161, 161, 161);
+
+    margin-bottom: 20px;
+  }
+
+  .second-row-result {
+    width: 239px;
+
+    .result-box {
+      position: relative;
+      width: 62%;
+      margin: 0 auto;
+      .row-names {
+        width: 100%;
+        span {
+          text-align: center;
+        }
+      }
+    }
+
+    img {
+      cursor: pointer;
+    }
+  }
+
+  .second-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    div {
+      display: flex;
+      gap: 20px;
+    }
+  }
+
+  .row-items {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .row-names {
+    position: absolute;
+    bottom: 0;
+    width: 95%;
+    padding: 5px;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.377);
+    display: flex;
+    margin: 0 auto;
+    text-align: center;
+
+    span {
+      margin: 0 auto;
+    }
+  }
+
+  .delete {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+
+    button {
+      margin-top: 20px;
+      width: 150px;
+      text-transform: uppercase;
+      border-radius: 2px;
+      border: 0;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:first-child {
+      background: #4d5f81;
+      color: #fff;
+    }
+    button:not(:first-child) {
+      background-color: #00a1d3;
+      color: #fff;
+    }
+  }
+}

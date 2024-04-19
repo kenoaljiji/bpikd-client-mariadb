@@ -1,0 +1,26 @@
+.footer-company-grid {
+  .add-image-placeholder {
+    span {
+      cursor: pointer;
+    }
+  }
+}
+
+.footer-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.footer-button .button {
+  background: #00a1d3;
+  width: 150px;
+  border: 1px solid #00a1d3;
+  color: #fff;
+}
+.footer-button .button:hover {
+  background: transparent;
+  width: 150px;
+  opacity: 0.8;
+  color: #000;
+}

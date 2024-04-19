@@ -1,0 +1,20 @@
+.search-result {
+  h2 {
+    color: #093a41;
+  }
+  color: #000;
+  input {
+    border: 1px solid initial;
+    box-shadow: none;
+    color: #555555;
+    transition: none;
+  }
+
+  input:focus-visible {
+    outline: 1px solid #000;
+  }
+  input:focus {
+    box-shadow: none;
+    border: 1px solid black;
+  }
+}

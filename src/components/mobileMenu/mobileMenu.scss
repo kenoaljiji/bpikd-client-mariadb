@@ -1,0 +1,81 @@
+.hide {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.animate0 {
+  transform: rotate(45deg) translate(-9px, 6px);
+}
+
+.animate2 {
+  transform: rotate(-45deg) translateY(-17px);
+}
+
+.overlay {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  opacity: 0;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.226);
+  pointer-events: none;
+  transition: all 0.3s;
+}
+
+.overlay.show {
+  opacity: 1;
+  pointer-events: initial;
+}
+.fullscreenmenu {
+  background-color: rgba(52, 152, 219, 0);
+  top: 0;
+  left: 0;
+  width: 80%;
+  height: 100vh;
+  position: fixed;
+  opacity: 0;
+  -webkit-transition: background 0.5s ease-in-out, opacity 0.5s;
+  -moz-transition: background 0.5s ease-in-out, opacity 0.5s;
+  -ms-transition: background 0.5s ease-in-out, opacity 0.5s;
+  -o-transition: background 0.5s ease-in-out, opacity 0.5s;
+  transition: background 0.5s ease-in-out, opacity 0.5s;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  pointer-events: none;
+}
+.fullscreenmenu.show {
+  pointer-events: initial;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.952);
+  -webkit-transition: background 0.5s ease-in-out, visibility 0.5s;
+  -moz-transition: background 0.5s ease-in-out, visibility 0.5s;
+  -ms-transition: background 0.5s ease-in-out, visibility 0.5s;
+  -o-transition: background 0.5s ease-in-out, visibility 0.5s;
+  transition: background 0.5s ease-in-out, visibility 0.5s;
+}
+
+.fullscreenmenu ul {
+  padding: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  list-style: none;
+
+  li {
+    margin-bottom: 20px;
+  }
+}
+.fullscreenmenu li a {
+  visibility: inherit;
+  color: #000;
+  font-size: 22px;
+  text-decoration: none;
+  font-weight: 100;
+  text-transform: uppercase;
+  line-height: 150%;
+}

@@ -1,0 +1,12 @@
+.persons {
+  .img-container {
+    max-width: 100%;
+
+    h3 {
+      font-weight: 400;
+    }
+  }
+  .grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}

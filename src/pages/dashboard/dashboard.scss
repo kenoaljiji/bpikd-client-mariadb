@@ -1,0 +1,16 @@
+.dashboard {
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 200px);
+    justify-content: center;
+    justify-items: center;
+  }
+
+  svg {
+    width: 150px;
+  }
+
+  svg:hover path {
+    fill: rgb(178, 243, 181);
+  }
+}

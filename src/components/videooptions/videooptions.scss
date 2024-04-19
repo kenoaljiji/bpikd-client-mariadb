@@ -1,0 +1,73 @@
+.video-options {
+  display: flex;
+  bottom: 5%;
+  right: 0px;
+  gap: 10px;
+  position: absolute;
+  transition: all 0.3s;
+  width: 150px;
+  .option {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    cursor: pointer;
+
+    // Style for the text labels
+    span {
+      margin-left: 8px;
+    }
+  }
+
+  .option:first-child {
+    background: transparent !important;
+  }
+
+  .more-options {
+    text-align: left;
+    position: relative;
+    font-size: 14px;
+    .hidden-menu {
+      display: none;
+      position: absolute;
+      color: #fff;
+      bottom: 20%;
+      right: -70%;
+      background-color: #423e3e; // Adjust background color as needed
+      box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2); // Adjust shadow as needed
+      z-index: 1;
+      width: 180px;
+
+      .option {
+        padding: 2px 15px; // Adjust padding as needed
+        white-space: nowrap;
+
+        &:hover {
+          background-color: #00000085; // Adjust hover background color as needed
+        }
+      }
+    }
+
+    &:hover .hidden-menu {
+      display: block;
+    }
+  }
+
+  .copy {
+    position: relative;
+    span {
+      position: absolute;
+      top: -35px;
+      color: rgba(238, 238, 238, 0.76);
+      left: 0;
+      font-size: 12px;
+    }
+  }
+
+  svg {
+    fill: #fff;
+    padding: 10px;
+    color: #fff;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,38 @@
+.tab-content {
+  margin: 25px 0;
+
+  p {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  .audio-container {
+    border: 1px solid #eee;
+    padding: 20px;
+
+    span {
+      font-size: 14px;
+    }
+  }
+  .audio-container i {
+    display: flex;
+    cursor: pointer;
+    color: #0087d5;
+    font-size: 30px;
+  }
+  ul {
+    margin-bottom: 0;
+  }
+}
+
+.tab-content.documents {
+  ul li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    a {
+      margin-left: 5px;
+      width: 100%;
+    }
+  }
+}

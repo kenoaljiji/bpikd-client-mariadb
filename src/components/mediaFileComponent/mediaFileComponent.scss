@@ -1,0 +1,87 @@
+.media-toggle-container {
+  position: absolute;
+  width: 90vw;
+  right: 0%;
+  height: 90%;
+  top: -1%;
+  transform: translateX(100%);
+  transition: all 0.3s;
+  .media-side {
+    position: absolute;
+    top: 0;
+    left: -50px;
+    background-color: #093a41;
+    height: 100%;
+    width: 50px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
+
+  .media-button {
+    position: absolute;
+    display: inline-block;
+    top: 40%;
+    left: -70%;
+    cursor: pointer;
+  }
+
+  .media-container {
+    width: 100%;
+    min-height: 600px;
+    background: #f8f9fa;
+    padding: 20px;
+    overflow-y: scroll;
+    z-index: 9999999;
+  }
+
+  .arrow.up::after {
+    content: '\25bc'; /* Unicode for upward arrow */
+    color: #093a41;
+  }
+
+  /* Style for the down arrow icon */
+  .arrow.down::after {
+    content: '\25b2'; /* Unicode for downward arrow */
+    color: #093a41;
+  }
+
+  .accordion {
+    &-header {
+      background: #d9d9d9;
+      padding: 5px 10px;
+    }
+
+    &-item {
+      margin-bottom: 10px;
+    }
+    &-body {
+      display: grid;
+      grid-template-columns: repeat(8, 100px);
+      gap: 10px;
+      font-size: 14px;
+
+      .audio-container {
+        i {
+          color: #093a41;
+          font-size: 30px;
+        }
+      }
+
+      .file-item {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: start;
+      }
+    }
+  }
+  button {
+    border: 1px solid #eee;
+    padding: 2px 5px;
+    border-radius: 1px;
+  }
+}
+
+.media-toggle-container.active {
+  transform: translateX(0);
+}
