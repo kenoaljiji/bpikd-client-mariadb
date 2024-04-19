@@ -27,6 +27,7 @@ export const SortedItemsProvider = ({ children }) => {
 
       console.log(response);
       setSortedItems(response.data);
+      getSortedItems();
 
       setAlert("Sorted items successfully update", "success");
     } catch (error) {

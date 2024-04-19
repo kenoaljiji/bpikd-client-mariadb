@@ -46,7 +46,11 @@ const Posts = () => {
         </div>
       </div>
       {category === "News" && (
-        <PostsTable posts={posts} listPosts={listPosts} category={category} />
+        <PostsTable
+          posts={posts}
+          listPosts={() => listPosts(setLoading)}
+          category={category}
+        />
       )}
       {category === "Person of Interest" && (
         <PostsTable

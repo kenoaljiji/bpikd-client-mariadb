@@ -4,14 +4,14 @@ import { useRouteContext } from "../../context/route/RouteProvider";
 
 const Partners = () => {
   const { state } = useRouteContext();
-  const { routes } = state;
+  const { routes } = state.headersData;
   return (
     <section className="persons">
       <div className="container">
-        <h2>{routes.partners}</h2>
+        <h2>{routes?.partners}</h2>
 
         <div className="grid grid-5 items-center">
-          {footerCompanies.map((company) => (
+          {footerCompanies?.map((company) => (
             <div className="">
               <img
                 src={`/assets/images/${company.src}`}
@@ -20,7 +20,7 @@ const Partners = () => {
               />
             </div>
           ))}
-          {footerCompanies.map((company) => (
+          {footerCompanies?.map((company) => (
             <div className="">
               <img
                 src={`/assets/images/${company.src}`}
@@ -29,7 +29,7 @@ const Partners = () => {
               />
             </div>
           ))}
-          {footerCompanies.map((company) => (
+          {footerCompanies?.map((company) => (
             <div className="">
               <img
                 src={`/assets/images/${company.src}`}

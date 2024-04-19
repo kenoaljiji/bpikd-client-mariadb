@@ -35,6 +35,7 @@ const PostsTable = ({ posts, category, listPosts }) => {
   };
 
   const deleteSelectedPosts = async () => {
+    const path = category !== "Person of Interest" ? "news" : "persons";
     try {
       const data = {
         personIds: selectedPostIds, // Pass the person IDs to delete here
@@ -48,7 +49,7 @@ const PostsTable = ({ posts, category, listPosts }) => {
       };
 
       const res = await axios.post(
-        `${localhost}/post/persons/delete-multiply`, // Make sure the URL is correct
+        `${localhost}/post/${path}/delete-multiply`, // Make sure the URL is correct
         data, // passing data as the second argument
         config // config as the third argument
       );
@@ -73,7 +74,7 @@ const PostsTable = ({ posts, category, listPosts }) => {
       const token = user.user.token;
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
         },
       };
 

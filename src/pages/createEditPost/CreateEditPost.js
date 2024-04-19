@@ -1,28 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
-import { useGlobalContext } from '../../context/bpikd/GlobalState';
-import AddImageIcon from '../../icons/AddImageIcon';
-import AddAudioIcon from '../../icons/AddAudioIcon';
-import AddVideoIcon from '../../icons/AddVideoIcon';
-import AddWordIcon from '../../icons/AddWordIcon';
-import './createEditPost.scss';
-import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import MediaFileComponent from '../../components/mediaFileComponent/MediaFileComponent';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // for snow theme
-import Loader from '../../components/loader/Loader';
-import moment from 'moment';
+import React, { useEffect, useRef, useState } from "react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import AddImageIcon from "../../icons/AddImageIcon";
+import AddAudioIcon from "../../icons/AddAudioIcon";
+import AddVideoIcon from "../../icons/AddVideoIcon";
+import AddWordIcon from "../../icons/AddWordIcon";
+import "./createEditPost.scss";
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import MediaFileComponent from "../../components/mediaFileComponent/MediaFileComponent";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css"; // for snow theme
+import Loader from "../../components/loader/Loader";
+import moment from "moment";
+import Partners from "../partners/Partners";
+import CreateEditPartners from "../createEditPartners/CreateEditPartners";
 
 const CreateEditPost = () => {
   const { createPost, createNewsPost, category, setCategory } =
     useGlobalContext();
 
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState("");
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
-  const [featuredImage, setFeaturedImage] = useState('');
+  const [featuredImage, setFeaturedImage] = useState("");
   const fileInputRef = useRef(null);
 
   const handleImageUpload = (event) => {
@@ -62,7 +64,7 @@ const CreateEditPost = () => {
     }));
 
     const targetKey =
-      fileType === 'words' || fileType === 'pdfs' ? 'documents' : fileType;
+      fileType === "words" || fileType === "pdfs" ? "documents" : fileType;
 
     setUploadedFiles((prev) => ({
       ...prev,
@@ -72,17 +74,17 @@ const CreateEditPost = () => {
 
   const clearImage = () => {
     setFeaturedImage(null);
-    setImageURL(''); // Clear image preview
+    setImageURL(""); // Clear image preview
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Reset file input
+      fileInputRef.current.value = ""; // Reset file input
     }
   };
 
   const personValidationSchema = Yup.object().shape({
     person: Yup.object({
-      firstName: Yup.string().required('First name is required'),
-      lastName: Yup.string().required('Last name is required'),
-      aboutPerson: Yup.string().required('About person is required'),
+      firstName: Yup.string().required("First name is required"),
+      lastName: Yup.string().required("Last name is required"),
+      aboutPerson: Yup.string().required("About person is required"),
     }),
   });
 
@@ -90,12 +92,12 @@ const CreateEditPost = () => {
   // Base validation schema
   // Validation schema
   const baseValidationSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required'),
-    visibility: Yup.string().required('Visibility is required'),
-    publishTime: Yup.string().required('Publish time is required'),
+    title: Yup.string().required("Title is required"),
+    visibility: Yup.string().required("Visibility is required"),
+    publishTime: Yup.string().required("Publish time is required"),
     externalSource: Yup.string(),
     pendingReview: Yup.boolean(),
-    content: Yup.string().required('Content is required'),
+    content: Yup.string().required("Content is required"),
     scheduledPublishTime: null,
     isPublished: Yup.boolean(),
   });
@@ -104,7 +106,7 @@ const CreateEditPost = () => {
   const getValidationSchema = (category) => {
     let schema = baseValidationSchema;
 
-    if (category === 'Person of Interest') {
+    if (category === "Person of Interest") {
       schema = schema.concat(
         Yup.object().shape({
           person: personValidationSchema,
@@ -130,372 +132,380 @@ const CreateEditPost = () => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+      ["bold", "italic", "underline", "strike", "blockquote"],
       [
-        { list: 'ordered' },
-        { list: 'bullet' },
-        { indent: '-1' },
-        { indent: '+1' },
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
       ],
-      ['link', 'image'], // Link and image insertion
+      ["link", "image"], // Link and image insertion
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      ['clean'], // remove formatting button
+      ["clean"], // remove formatting button
     ],
   };
 
   return (
-    <div className='post'>
-      <h2 className='text-center mt-5 mb-2'>Add New Post</h2>
-      <div className='post-category bg-gray '>
-        <div className='category-select d-flex align-items-center p-1'>
+    <div className="post">
+      <h2 className="text-center mt-5 mb-2">Add New Post</h2>
+      <div className="post-category bg-gray ">
+        <div className="category-select d-flex align-items-center p-1">
           <label>Select category:</label>
           <select
-            className=''
+            className=""
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option value='Person of Interest'>Person of Interest</option>
-            <option value='News'>News</option>
+            <option value="Person of Interest">Person of Interest</option>
+            <option value="News">News</option>
+            <option value="Partners">Partners</option>
           </select>
         </div>
       </div>
-      <div className='position-relative'>
-        <div className='container mt-5'>
-          <Formik
-            initialValues={{
-              title: '',
-              visibility: 'Public',
-              publishTime: 'Now',
-              isPublished: isPublished, // For selecting between Now and Schedule
-              scheduledPublishTime: null, // To store the date when Schedule is selected
-              externalSource: '',
-              content: '',
-              category: '',
-              ...(category === 'Person of Interest' && {
-                person: {
-                  firstName: '',
-                  lastName: '',
-                  aboutPerson: '',
-                  featured: '',
-                },
-              }),
-            }}
-            validationSchema={getValidationSchema}
-            onSubmit={(values) => {
-              let submissionData = { ...values };
+      {category === "Partners" ? (
+        <CreateEditPartners />
+      ) : (
+        <div className="position-relative">
+          <div className="container mt-5">
+            <Formik
+              initialValues={{
+                title: "",
+                visibility: "Public",
+                publishTime: "Now",
+                isPublished: isPublished, // For selecting between Now and Schedule
+                scheduledPublishTime: null, // To store the date when Schedule is selected
+                externalSource: "",
+                content: "",
+                category: "",
+                ...(category === "Person of Interest" && {
+                  person: {
+                    firstName: "",
+                    lastName: "",
+                    aboutPerson: "",
+                    featured: "",
+                  },
+                }),
+              }}
+              validationSchema={getValidationSchema}
+              onSubmit={(values) => {
+                let submissionData = { ...values };
 
-              let today = moment().format('DD MMMM YYYY');
+                let today = moment().format("DD MMMM YYYY");
 
-              const newMediaData = cleanMedia(uploadedFiles);
+                const newMediaData = cleanMedia(uploadedFiles);
 
-              /* 
+                /* 
               const scheduledTimeUTC = moment
                 .tz(submissionData.scheduledPublishTime, 'Europe/Berlin')
                 .utc()
                 .toISOString(); */
 
-              if (submissionData.externalSource === '') {
-                delete submissionData.externalSource;
-              }
+                if (submissionData.externalSource === "") {
+                  delete submissionData.externalSource;
+                }
 
-              // If the category is not 'Person of Interest', delete 'media' and 'featured' from submissionData
-              if (category !== 'Person of Interest') {
-                delete submissionData.media;
-                delete submissionData.featured;
-                delete submissionData.person;
+                // If the category is not 'Person of Interest', delete 'media' and 'featured' from submissionData
+                if (category !== "Person of Interest") {
+                  delete submissionData.media;
+                  delete submissionData.featured;
+                  delete submissionData.person;
 
-                submissionData = {
-                  ...submissionData,
-                  category: category,
-                  isPublished: isPublished,
-                  scheduledPublishTime:
-                    submissionData.publishTime === 'Now'
-                      ? new Date()
-                      : submissionData.scheduledPublishTime,
-                  externalSource: submissionData.externalSource,
-                };
+                  submissionData = {
+                    ...submissionData,
+                    category: category,
+                    isPublished: isPublished,
+                    scheduledPublishTime:
+                      submissionData.publishTime === "Now"
+                        ? new Date()
+                        : submissionData.scheduledPublishTime,
+                    externalSource: submissionData.externalSource,
+                  };
 
-                console.log(submissionData);
+                  console.log(submissionData);
 
-                createNewsPost(submissionData, featuredImage, setIsLoading);
-              } else {
-                // If 'Person-of-Interest', include 'media' and 'featured' in submissionData
-                // Assuming media and featured are handled outside Formik's initialValues
-                // and you have the state uploadedFiles and imageURL to include
+                  createNewsPost(submissionData, featuredImage, setIsLoading);
+                } else {
+                  // If 'Person-of-Interest', include 'media' and 'featured' in submissionData
+                  // Assuming media and featured are handled outside Formik's initialValues
+                  // and you have the state uploadedFiles and imageURL to include
 
-                submissionData = {
-                  person: { ...submissionData.person },
-                  title: submissionData.title,
-                  media: cleanMedia(uploadedFiles),
-                  content: submissionData.content,
-                  category: category,
-                  publishTime: submissionData.publishTime,
-                  scheduledPublishTime:
-                    submissionData.publishTime === 'Now'
-                      ? new Date()
-                      : submissionData.scheduledPublishTime,
-                  externalSource: submissionData.externalSource
-                    ? submissionData.externalSource
-                    : null,
+                  submissionData = {
+                    person: { ...submissionData.person },
+                    title: submissionData.title,
+                    media: cleanMedia(uploadedFiles),
+                    content: submissionData.content,
+                    category: category,
+                    publishTime: submissionData.publishTime,
+                    scheduledPublishTime:
+                      submissionData.publishTime === "Now"
+                        ? new Date()
+                        : submissionData.scheduledPublishTime,
+                    externalSource: submissionData.externalSource
+                      ? submissionData.externalSource
+                      : null,
 
-                  visibility: submissionData.visibility,
-                  isPublished: isPublished,
-                };
+                    visibility: submissionData.visibility,
+                    isPublished: isPublished,
+                  };
 
-                createPost(
-                  submissionData,
-                  uploadedFiles,
-                  featuredImage,
-                  setIsLoading
-                );
-              }
-            }}
-          >
-            {({ setFieldValue, values }) => (
-              <Form>
-                <div className='row'>
-                  <div className='col-md-8'>
-                    {/* First Column */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '20px',
-                      }}
-                    >
-                      {category === 'Person of Interest' && (
-                        <>
-                          <div className='d-flex'>
-                            <div className='d-flex me-2 align-items-center'>
-                              <label className='flex-shrink-0 me-2'>
-                                First Name:
-                              </label>
-                              <Field
-                                className='form-control'
-                                name='person.firstName'
-                              />
-                            </div>
-                            <div className='d-flex ms-3 align-items-center'>
-                              <label className='flex-shrink-0 me-2'>
-                                Last Name:
-                              </label>
-                              <Field
-                                className='form-control'
-                                name='person.lastName'
-                              />
-                            </div>
-                          </div>
-
-                          <Field
-                            as='textarea'
-                            className='form-control'
-                            style={{ padding: '20px' }}
-                            name='person.aboutPerson'
-                            placeholder='About person'
-                          />
-                        </>
-                      )}
-
-                      <Field
-                        as='textarea'
-                        className='form-control mb-1'
-                        style={{ padding: '20px', height: '280px' }}
-                        name='title'
-                        placeholder='Title'
-                      />
-                    </div>
-                    {category === 'Person of Interest' && (
-                      <div className='file-upload-grid'>
-                        {[
-                          {
-                            type: 'Image',
-                            fileType: 'images',
-                            Icon: AddImageIcon,
-                          },
-                          {
-                            type: 'Audio',
-                            fileType: 'audios',
-                            Icon: AddAudioIcon,
-                          },
-                          {
-                            type: 'Video',
-                            fileType: 'videos',
-                            Icon: AddVideoIcon,
-                          },
-                          {
-                            type: 'Word',
-                            fileType: 'documents',
-                            Icon: AddWordIcon,
-                          },
-                        ].map(({ type, fileType, Icon }) => {
-                          const hasFiles = uploadedFiles[fileType].length > 0;
-                          const iconColor = hasFiles ? '#198754' : '#093A41'; // Example: Green if files exist, otherwise black
-
-                          return (
-                            <div className='items' key={type}>
-                              <div className='items-box'>
-                                <input
-                                  type='file'
-                                  multiple // Allow multiple file selection
-                                  id={`file-upload-${fileType}`}
-                                  style={{ display: 'none' }}
-                                  onChange={(e) =>
-                                    handleFileUpload(e, fileType)
-                                  }
-                                  accept={
-                                    fileType === 'images'
-                                      ? 'image/*'
-                                      : fileType === 'audios'
-                                      ? 'audio/*'
-                                      : fileType === 'videos'
-                                      ? 'video/*'
-                                      : fileType === 'documents'
-                                      ? '.pdf, .doc, .docx' // Accept both PDF and Word documents
-                                      : ''
-                                  }
-                                />
-                                <label
-                                  htmlFor={`file-upload-${fileType}`}
-                                  className='file-upload-label'
-                                >
-                                  <div>
-                                    <Icon color={iconColor} />
-                                  </div>
+                  createPost(
+                    submissionData,
+                    uploadedFiles,
+                    featuredImage,
+                    setIsLoading
+                  );
+                }
+              }}
+            >
+              {({ setFieldValue, values }) => (
+                <Form>
+                  <div className="row">
+                    <div className="col-md-8">
+                      {/* First Column */}
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "20px",
+                        }}
+                      >
+                        {category === "Person of Interest" && (
+                          <>
+                            <div className="d-flex">
+                              <div className="d-flex me-2 align-items-center">
+                                <label className="flex-shrink-0 me-2">
+                                  First Name:
                                 </label>
-                                {/*  {uploadedFiles[fileType].map((file, index) => (
+                                <Field
+                                  className="form-control"
+                                  name="person.firstName"
+                                />
+                              </div>
+                              <div className="d-flex ms-3 align-items-center">
+                                <label className="flex-shrink-0 me-2">
+                                  Last Name:
+                                </label>
+                                <Field
+                                  className="form-control"
+                                  name="person.lastName"
+                                />
+                              </div>
+                            </div>
+
+                            <Field
+                              as="textarea"
+                              className="form-control"
+                              style={{ padding: "20px" }}
+                              name="person.aboutPerson"
+                              placeholder="About person"
+                            />
+                          </>
+                        )}
+
+                        <Field
+                          as="textarea"
+                          className="form-control mb-1"
+                          style={{ padding: "20px", height: "280px" }}
+                          name="title"
+                          placeholder="Title"
+                        />
+                      </div>
+                      {category === "Person of Interest" && (
+                        <div className="file-upload-grid">
+                          {[
+                            {
+                              type: "Image",
+                              fileType: "images",
+                              Icon: AddImageIcon,
+                            },
+                            {
+                              type: "Audio",
+                              fileType: "audios",
+                              Icon: AddAudioIcon,
+                            },
+                            {
+                              type: "Video",
+                              fileType: "videos",
+                              Icon: AddVideoIcon,
+                            },
+                            {
+                              type: "Word",
+                              fileType: "documents",
+                              Icon: AddWordIcon,
+                            },
+                          ].map(({ type, fileType, Icon }) => {
+                            const hasFiles = uploadedFiles[fileType].length > 0;
+                            const iconColor = hasFiles ? "#198754" : "#093A41"; // Example: Green if files exist, otherwise black
+
+                            return (
+                              <div className="items" key={type}>
+                                <div className="items-box">
+                                  <input
+                                    type="file"
+                                    multiple // Allow multiple file selection
+                                    id={`file-upload-${fileType}`}
+                                    style={{ display: "none" }}
+                                    onChange={(e) =>
+                                      handleFileUpload(e, fileType)
+                                    }
+                                    accept={
+                                      fileType === "images"
+                                        ? "image/*"
+                                        : fileType === "audios"
+                                        ? "audio/*"
+                                        : fileType === "videos"
+                                        ? "video/*"
+                                        : fileType === "documents"
+                                        ? ".pdf, .doc, .docx" // Accept both PDF and Word documents
+                                        : ""
+                                    }
+                                  />
+                                  <label
+                                    htmlFor={`file-upload-${fileType}`}
+                                    className="file-upload-label"
+                                  >
+                                    <div>
+                                      <Icon color={iconColor} />
+                                    </div>
+                                  </label>
+                                  {/*  {uploadedFiles[fileType].map((file, index) => (
                                   <p key={index} className='small'>
                                     {file.name}
                                   </p>
                                 ))} */}
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {category === 'News' && (
-                      <ReactQuill
-                        className='react-quill'
-                        theme='snow'
-                        value={values.content}
-                        onChange={(content) =>
-                          setFieldValue('content', content)
-                        }
-                        modules={modules}
-                      />
-                    )}
-                  </div>
-
-                  <div className='col-md-4 '>
-                    <div className='featured'>
-                      {imageURL !== '' && (
-                        <div
-                          className='featured-close'
-                          onClick={() => clearImage()}
-                        >
-                          <i class='fa-solid fa-trash'></i>
+                            );
+                          })}
                         </div>
                       )}
-
-                      {/* Image upload and display */}
-                      {imageURL ? (
-                        <img
-                          src={imageURL}
-                          alt='Featured'
-                          style={{
-                            width: '305px',
-                            height: '250px',
-                            objectFit: 'cover',
-                          }}
+                      {category === "News" && (
+                        <ReactQuill
+                          className="react-quill"
+                          theme="snow"
+                          value={values.content}
+                          onChange={(content) =>
+                            setFieldValue("content", content)
+                          }
+                          modules={modules}
                         />
-                      ) : (
-                        <div
-                          style={{
-                            width: '305px',
-                            height: '250px',
-                            border: '2px dashed #ccc',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <span>Add Featured Image</span>
-                        </div>
                       )}
-                      <input
-                        type='file'
-                        id='featured-image-upload'
-                        style={{ display: 'none' }}
-                        ref={fileInputRef}
-                        onChange={handleImageUpload}
-                        accept='image/*' // Accept images only
-                      />
-                      <label
-                        htmlFor='featured-image-upload'
-                        className='featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer'
-                      >
-                        <div className='add-image-placeholder'>
-                          <i className='fas fa-plus'></i>{' '}
-                          <span>ADD FEATURE IMAGE</span>
-                        </div>
-                      </label>
                     </div>
 
-                    <div className='border'>
-                      <div className='d-flex justify-content-between align-items-center px-2 border-0 border-bottom py-2 '>
-                        <label className='w-50'>Visibility:</label>
-                        <Field as='select' name='visibility' className='select'>
-                          <option value='Public'>Public</option>
-                          <option value='Private'>Private</option>
-                        </Field>
-                      </div>
+                    <div className="col-md-4 ">
+                      <div className="featured">
+                        {imageURL !== "" && (
+                          <div
+                            className="featured-close"
+                            onClick={() => clearImage()}
+                          >
+                            <i class="fa-solid fa-trash"></i>
+                          </div>
+                        )}
 
-                      {/* Other form fields */}
-                      <div className='d-flex justify-content-between align-items-center px-2 py-2 border-0'>
-                        <label className='w-50'>Publish:</label>
-                        <Field
-                          as='select'
-                          name='publishTime'
-                          className='select'
-                          onChange={(e) => {
-                            const { value } = e.target;
-                            setFieldValue('publishTime', value);
-                            if (value === 'Now') {
-                              // Clear the scheduledPublishTime if Now is selected
-                              setFieldValue('scheduledPublishTime', null);
-                            }
-                          }}
+                        {/* Image upload and display */}
+                        {imageURL ? (
+                          <img
+                            src={imageURL}
+                            alt="Featured"
+                            style={{
+                              width: "305px",
+                              height: "250px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: "305px",
+                              height: "250px",
+                              border: "2px dashed #ccc",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span>Add Featured Image</span>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          id="featured-image-upload"
+                          style={{ display: "none" }}
+                          ref={fileInputRef}
+                          onChange={handleImageUpload}
+                          accept="image/*" // Accept images only
+                        />
+                        <label
+                          htmlFor="featured-image-upload"
+                          className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
                         >
-                          <option value='Now'>Now</option>
-                          <option value='Schedule'>Schedule</option>
-                        </Field>
-                      </div>
-                      {values.publishTime === 'Schedule' && (
-                        <ReactDatePicker
-                          selected={values.scheduledPublishTime}
-                          onChange={(date) =>
-                            setFieldValue('scheduledPublishTime', date)
-                          }
-                          showTimeSelect
-                          dateFormat='Pp'
-                          className='form-control mb-2 mx-2'
-                          placeholderText='Select date'
-                          style={{ cursor: 'pointer' }}
-                        />
-                      )}
-                      <div
-                        className='border-0 border-top pb-2 px-2'
-                        style={{ paddingTop: '10px' }}
-                      >
-                        <label>External source:</label>
-                        <Field
-                          className='form-control mt-2'
-                          name='externalSource'
-                        />
+                          <div className="add-image-placeholder">
+                            <i className="fas fa-plus"></i>{" "}
+                            <span>ADD FEATURE IMAGE</span>
+                          </div>
+                        </label>
                       </div>
 
-                      {/* Pending review checkbox */}
-                      {/* <div className='form-check mb-5 mx-1 mt-2 ps-0'>
+                      <div className="border">
+                        <div className="d-flex justify-content-between align-items-center px-2 border-0 border-bottom py-2 ">
+                          <label className="w-50">Visibility:</label>
+                          <Field
+                            as="select"
+                            name="visibility"
+                            className="select"
+                          >
+                            <option value="Public">Public</option>
+                            <option value="Private">Private</option>
+                          </Field>
+                        </div>
+
+                        {/* Other form fields */}
+                        <div className="d-flex justify-content-between align-items-center px-2 py-2 border-0">
+                          <label className="w-50">Publish:</label>
+                          <Field
+                            as="select"
+                            name="publishTime"
+                            className="select"
+                            onChange={(e) => {
+                              const { value } = e.target;
+                              setFieldValue("publishTime", value);
+                              if (value === "Now") {
+                                // Clear the scheduledPublishTime if Now is selected
+                                setFieldValue("scheduledPublishTime", null);
+                              }
+                            }}
+                          >
+                            <option value="Now">Now</option>
+                            <option value="Schedule">Schedule</option>
+                          </Field>
+                        </div>
+                        {values.publishTime === "Schedule" && (
+                          <ReactDatePicker
+                            selected={values.scheduledPublishTime}
+                            onChange={(date) =>
+                              setFieldValue("scheduledPublishTime", date)
+                            }
+                            showTimeSelect
+                            dateFormat="Pp"
+                            className="form-control mb-2 mx-2"
+                            placeholderText="Select date"
+                            style={{ cursor: "pointer" }}
+                          />
+                        )}
+                        <div
+                          className="border-0 border-top pb-2 px-2"
+                          style={{ paddingTop: "10px" }}
+                        >
+                          <label>External source:</label>
+                          <Field
+                            className="form-control mt-2"
+                            name="externalSource"
+                          />
+                        </div>
+
+                        {/* Pending review checkbox */}
+                        {/* <div className='form-check mb-5 mx-1 mt-2 ps-0'>
                         <Field
                           type='checkbox'
                           name='pendingReview'
@@ -515,42 +525,43 @@ const CreateEditPost = () => {
                         </label>
                       </div> */}
 
-                      <div className='button-container px-2 my-3'>
-                        <button type='button' className='me-2'>
-                          Preview
-                        </button>
-                        <button type='submit' className='btn btn-primary'>
-                          Publish
-                        </button>
+                        <div className="button-container px-2 my-3">
+                          <button type="button" className="me-2">
+                            Preview
+                          </button>
+                          <button type="submit" className="btn btn-primary">
+                            Publish
+                          </button>
+                        </div>
                       </div>
+                      <div className="mt-3">{loading && <Loader />}</div>
                     </div>
-                    <div className='mt-3'>{loading && <Loader />}</div>
+                    <div>
+                      {category === "Person of Interest" && (
+                        <ReactQuill
+                          className="react-quill"
+                          theme="snow"
+                          value={values.content}
+                          onChange={(content) =>
+                            setFieldValue("content", content)
+                          }
+                          modules={modules}
+                        />
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    {category === 'Person of Interest' && (
-                      <ReactQuill
-                        className='react-quill'
-                        theme='snow'
-                        value={values.content}
-                        onChange={(content) =>
-                          setFieldValue('content', content)
-                        }
-                        modules={modules}
-                      />
-                    )}
-                  </div>
-                </div>
-              </Form>
-            )}
-          </Formik>
+                </Form>
+              )}
+            </Formik>
+          </div>
+          {category !== "News" && (
+            <MediaFileComponent
+              uploadedFiles={uploadedFiles}
+              setUploadedFiles={setUploadedFiles}
+            />
+          )}
         </div>
-        {category !== 'News' && (
-          <MediaFileComponent
-            uploadedFiles={uploadedFiles}
-            setUploadedFiles={setUploadedFiles}
-          />
-        )}
-      </div>
+      )}
     </div>
   );
 };

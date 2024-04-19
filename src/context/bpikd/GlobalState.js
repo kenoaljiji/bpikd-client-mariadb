@@ -48,6 +48,7 @@ export const GlobalState = ({ children }) => {
       const response = await axios.get(`${localhost}/post/news/`);
       if (response.data && response.data.length > 0) {
         dispatch({ type: LIST_POSTS, payload: response.data });
+        console.log(response.data);
       } else {
         dispatch({ type: LIST_POSTS, payload: [] }); // Ensure empty data is handled gracefully
         setAlert("No posts available", "info"); // Optionally set an alert if no data
