@@ -5,6 +5,7 @@ import globalReducer from "./globalReducer";
 import { localhost } from "../../config/config";
 import { NavigationType, useNavigate } from "react-router-dom";
 import {
+  GET_PARTNERS_DATA,
   LIST_AUTHORS,
   LIST_POSTS,
   LIST_POSTS_FAIL,
@@ -33,6 +34,7 @@ export const GlobalState = ({ children }) => {
     searchTerm: "",
     searchResult: "",
     category: "Person of Interest",
+    partners: [],
   };
   const [state, dispatch] = useReducer(globalReducer, initialState);
 
@@ -45,16 +47,32 @@ export const GlobalState = ({ children }) => {
   const listPosts = async (setLoading) => {
     setLoading(true); // Control loading state globally or locally
     try {
-      const response = await axios.get(`${localhost}/post/news/`);
+      const response = await axios.get(`${localhost}/post/news`);
       if (response.data && response.data.length > 0) {
         dispatch({ type: LIST_POSTS, payload: response.data });
-        console.log(response.data);
       } else {
         dispatch({ type: LIST_POSTS, payload: [] }); // Ensure empty data is handled gracefully
         setAlert("No posts available", "info"); // Optionally set an alert if no data
       }
     } catch (error) {
       dispatch({ type: LIST_POSTS_FAIL, payload: error.message });
+      setAlert(error.message, "danger"); // Display any errors as alerts
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const listPages = async (setLoading, term) => {
+    const category = term.toLowerCase();
+    setLoading(true); // Control loading state globally or locally
+    try {
+      const res = await axios.get(`${localhost}/post/page/${category}`);
+
+      dispatch({
+        type: LIST_SINGLE_POST,
+        payload: res.data,
+      });
+    } catch (error) {
       setAlert(error.message, "error"); // Display any errors as alerts
     } finally {
       setLoading(false);
@@ -66,13 +84,13 @@ export const GlobalState = ({ children }) => {
     try {
       const response = await axios.get(`${localhost}/post/persons/basic`);
       const authorsData = Array.isArray(response.data) ? response.data : [];
-      console.log(response.data);
+
       dispatch({ type: LIST_AUTHORS, payload: authorsData });
       if (authorsData.length === 0) {
         setAlert("No authors found", "danger");
       }
     } catch (error) {
-      console.error("Failed to fetch authors:", error);
+      console.error("Failed to fetch authors:", "danger");
       dispatch({ type: LIST_AUTHORS, payload: [] }); // Ensure payload is always an array
       setAlert("Error fetching authors. " + error.message, "danger");
     } finally {
@@ -84,7 +102,7 @@ export const GlobalState = ({ children }) => {
     try {
       const response = await axios.get(`${localhost}/post/persons/basic`);
       const authorsData = Array.isArray(response.data) ? response.data : [];
-      console.log(response.data);
+
       dispatch({ type: LIST_AUTHORS, payload: authorsData });
       if (authorsData.length === 0) {
         setAlert("No authors found", "danger");
@@ -116,7 +134,7 @@ export const GlobalState = ({ children }) => {
     }
   };
 
-  const createPost = async (
+  const createPersonsPost = async (
     data,
     uploadedFiles,
     featuredImage,
@@ -153,7 +171,7 @@ export const GlobalState = ({ children }) => {
     } catch (error) {
       console.log(error);
 
-      setAlert("Post created successfully", "danger");
+      setAlert(error.message, "danger");
     }
 
     setIsLoading(false);
@@ -161,7 +179,25 @@ export const GlobalState = ({ children }) => {
     /* navigate("/admin/posts"); */
   };
 
-  const createNewsPost = async (data, featuredImage, setIsLoading) => {
+  const getPartnersData = async (setLoading) => {
+    setLoading(true); // Control loading state globally or locally
+    try {
+      const res = await axios.get(`${localhost}/post/partners`);
+
+      dispatch({
+        type: GET_PARTNERS_DATA,
+        payload: res.data.results,
+      });
+    } catch (error) {
+      setAlert(error.message, "error"); // Display any errors as alerts
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createNewsAndPagePost = async (data, featuredImage, setIsLoading) => {
+    const category = data.category?.toLowerCase();
+    console.log(category);
     const formData = new FormData();
 
     if (featuredImage !== "") {
@@ -176,22 +212,26 @@ export const GlobalState = ({ children }) => {
     try {
       setIsLoading(true);
 
-      const response = await axios.post(`${localhost}/post/news`, formData, {
-        headers: {
-          Authorization: user.token, // Include authorization if needed
-        },
-      });
+      const response = await axios.post(
+        `${localhost}/post/${category}`,
+        formData,
+        {
+          headers: {
+            Authorization: user.token, // Include authorization if needed
+          },
+        }
+      );
 
       console.log(response);
 
       setAlert("Post created", "success");
     } catch (error) {
       console.log(error);
-      setAlert(error.message, "success");
+      setAlert(error.message, "danger");
     }
 
     setIsLoading(false);
-    navigate("/admin/posts");
+    /*  navigate("/admin/posts"); */
   };
 
   const editPost = async (id, data) => {
@@ -279,15 +319,18 @@ export const GlobalState = ({ children }) => {
     <GlobalContext.Provider
       value={{
         searchPosts,
-        createPost,
+        createPersonsPost,
         getPostById,
         deletePost,
         editPost,
         listAuthors,
-        createNewsPost,
+        createNewsAndPagePost,
         listPosts,
         setCategory,
         listPersonsData,
+        listPages,
+        getPartnersData,
+        partners: state.partners,
         authors: state.authors,
         error: state.error,
         category: state.category,

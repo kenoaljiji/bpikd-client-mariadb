@@ -26,6 +26,7 @@ import { useAuthContext } from "./context/auth/AuthState";
 import CreateEditPost from "./pages/createEditPost/CreateEditPost";
 import SingleNews from "./pages/singleNews/SingleNews";
 import SortPersons from "./pages/sortPersons/SortPersons";
+import SoonPage from "./pages/soonPage/SoonPage";
 
 function App() {
   const { state } = useRouteContext();
@@ -47,6 +48,7 @@ function App() {
           path={transformPath(`${routes.news}/:slug`)}
           element={<SingleNews />}
         />
+        <Route path={transformPath(routes.soon)} element={<SoonPage />} />
 
         <Route path={transformPath(routes.partners)} element={<Partners />} />
         <Route
@@ -73,7 +75,10 @@ function App() {
           <Route path="users/create-edit" element={<CreateEditUser />} />
           <Route path="posts/create-edit" element={<CreateEditPost />} />
           <Route path="users/create-edit/:id" element={<CreateEditUser />} />
-          <Route path="posts/create-edit/:id" element={<CreateEditPost />} />
+          <Route
+            path="posts/create-edit/:category/:id"
+            element={<CreateEditPost />}
+          />
         </Route>
       </Route>
     </Routes>

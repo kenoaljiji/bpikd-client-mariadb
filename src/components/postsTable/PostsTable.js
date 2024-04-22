@@ -6,6 +6,7 @@ import { useAuthContext } from "../../context/auth/AuthState";
 import { localhost } from "../../config/config";
 import ConfirmationModal from "../confirmationModal/ConfirmationModal";
 import moment from "moment";
+import transformPath from "../../utils/transformPath";
 
 const PostsTable = ({ posts, category, listPosts }) => {
   const { user } = useAuthContext();
@@ -193,7 +194,11 @@ const PostsTable = ({ posts, category, listPosts }) => {
                         <i
                           className="fa fa-edit"
                           onClick={() =>
-                            navigate(`/admin/posts/create-edit/${post.id}`)
+                            navigate(
+                              `/admin/posts/create-edit/${transformPath(
+                                category
+                              )}/${post.id}`
+                            )
                           }
                         ></i>
 

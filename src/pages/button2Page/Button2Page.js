@@ -1,23 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import { ContentComponent } from "../../components/ContentComponent";
 
 const Button2Page = () => {
+  const { posts, listPosts, singlePost, listPages } = useGlobalContext();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    listPages(setLoading, "button2");
+  }, []);
   return (
-    <section className='container'>
-      <h2 className='pb-3 border-bottom border-gray'>
-        Submit Document To Bpikd
-      </h2>
-      <p className='pt-3'>
-        WikiLeaks publishes documents of political or historical importance that
-        are censored or otherwise suppressed. We specialise in strategic global
-        publishing and large archives.
-      </p>
-      <p className='pt-2'>
-        The following is the address of our secure site where you can
-        anonymously upload your documents to WikiLeaks editors. You can only
-        access this submissions system through Tor. (See our Tor tab for more
-        information.) We also advise you to read our tips for sources before
-        submitting.
-      </p>
+    <section className="container">
+      <h2 className="pb-3 border-bottom border-gray">{singlePost?.title}</h2>
+      <div className="news-description">
+        <ContentComponent content={singlePost?.content} />
+      </div>
     </section>
   );
 };

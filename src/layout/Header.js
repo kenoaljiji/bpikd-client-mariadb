@@ -11,7 +11,7 @@ const Header = ({ handleClick, isActive }) => {
 
   const { headersData } = state;
 
-  const { routes, buttons } = headersData;
+  const { routes, buttons, logoImgPath } = headersData;
   const { pathname } = useLocation();
 
   const navigate = useNavigate();
@@ -41,9 +41,10 @@ const Header = ({ handleClick, isActive }) => {
           </div>
           <Link to="/">
             <img
-              src={"/assets/images/logo.png"}
+              src={logoImgPath ? logoImgPath : "/assets/images/logo.png"}
               alt="Logo"
               className="d-inline-block align-top me-5 mt-1"
+              width="100px"
             />
           </Link>
           <Navbar />

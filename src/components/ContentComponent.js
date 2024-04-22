@@ -1,4 +1,4 @@
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 export function ContentComponent({ content }) {
   const sanitizedContent = DOMPurify.sanitize(content);

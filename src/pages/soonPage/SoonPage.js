@@ -1,19 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useGlobalContext } from "../../context/bpikd/GlobalState";
-import { ContentComponent } from "../../components/ContentComponent";
+/* import { ContentComponent } from "../../components/ContentComponent"; */
+/* import "./about.scss"; */
 import moment from "moment";
+import DOMPurify from "dompurify";
 
-const Shop = () => {
+export function ContentComponent({ content }) {
+  const config = {
+    ADD_TAGS: ["img"],
+    ADD_ATTR: ["src", "alt", "title", "width", "height", "style"],
+    ALLOW_DATA_ATTR: true, // Allow data attributes which might be necessary for base64 images
+  };
+
+  const sanitizedContent = DOMPurify.sanitize(content, config);
+
+  return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />;
+}
+
+const SoonPage = () => {
   const { posts, listPosts, singlePost, listPages } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    listPages(setLoading, "shop");
+    listPages(setLoading, "soon");
   }, []);
 
   return (
-    <section className="shop-page">
+    <section className="soon-page">
       <div className="container">
         <div className="mb-5">
           <h2 className="pb-0">{singlePost?.title}</h2>
@@ -27,4 +41,4 @@ const Shop = () => {
   );
 };
 
-export default Shop;
+export default SoonPage;

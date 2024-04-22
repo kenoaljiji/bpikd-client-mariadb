@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 import {
+  GET_PARTNERS_DATA,
   LIST_AUTHORS,
   LIST_POSTS,
   LIST_POSTS_FAIL,
@@ -56,6 +57,14 @@ const globalReducers = (state, action) => {
         error: action.payload,
         success: null,
         loading: false,
+      };
+    case GET_PARTNERS_DATA:
+      return {
+        ...state,
+        partners: action.payload,
+        loading: false,
+        error: null,
+        success: null,
       };
     case SET_CATEGORY:
       return {

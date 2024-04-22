@@ -16,16 +16,94 @@ import Loader from "../../components/loader/Loader";
 import moment from "moment";
 import Partners from "../partners/Partners";
 import CreateEditPartners from "../createEditPartners/CreateEditPartners";
+import { useParams } from "react-router-dom";
 
 const CreateEditPost = () => {
-  const { createPost, createNewsPost, category, setCategory } =
-    useGlobalContext();
+  const {
+    createPersonsPost,
+    createNewsAndPagePost,
+    category,
+    setCategory,
+    singlePost,
+    listPages,
+  } = useGlobalContext();
 
   const [imageURL, setImageURL] = useState("");
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
   const [featuredImage, setFeaturedImage] = useState("");
+
   const fileInputRef = useRef(null);
+
+  const { category: paramCategory, id: postId } = useParams();
+
+  const [initialValues, setInitialValues] = useState({
+    title: singlePost?.title || "",
+    visibility: singlePost?.visibility || "Public",
+    publishTime: singlePost?.publishTime ? "Schedule" : "Now",
+    isPublished: Boolean(singlePost?.isPublished),
+    scheduledPublishTime: singlePost.scheduledPublishTime
+      ? new Date(singlePost.scheduledPublishTime)
+      : null,
+    externalSource: singlePost.externalSource || "",
+    content: singlePost.content || "",
+    category: category,
+    ...(category === "Person of Interest" && {
+      person: {
+        firstName: "",
+        lastName: "",
+        aboutPerson: "",
+        featured: "",
+      },
+    }),
+  });
+
+  useEffect(() => {
+    console.log("Checking singlePost:", singlePost);
+    listPages(setIsLoading, category);
+
+    if (singlePost && postId) {
+      // Ensures that singlePost is not null or empty
+      const data = singlePost; // Directly use singlePost as it is already available
+      setInitialValues({
+        title: data && data?.title,
+        visibility: data?.visibility || "Public",
+        publishTime: data?.publishTime ? "Schedule" : "Now",
+        isPublished: Boolean(data?.isPublished),
+        scheduledPublishTime: data.scheduledPublishTime
+          ? new Date(data.scheduledPublishTime)
+          : null,
+        externalSource: data.externalSource || "",
+        content: data.content || "",
+        category: category,
+        person: {
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          aboutPerson: data.aboutPerson || "",
+          featured: data.featured || "",
+        },
+      });
+    } else {
+      // Reset to defaults if no postId or singlePost is empty
+      setInitialValues((prev) => ({
+        ...prev,
+        title: "",
+        visibility: "Public",
+        publishTime: "Now",
+        isPublished: true,
+        scheduledPublishTime: null,
+        externalSource: "",
+        content: "",
+        category: category,
+        person: {
+          firstName: "",
+          lastName: "",
+          aboutPerson: "",
+          featured: "",
+        },
+      }));
+    }
+  }, [postId, paramCategory]); // Include singlePost in the dependency array
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -159,8 +237,16 @@ const CreateEditPost = () => {
             <option value="Person of Interest">Person of Interest</option>
             <option value="News">News</option>
             <option value="Partners">Partners</option>
+            <option value="About">About</option>
+            {/*             <option value="Button1">Button1Page</option> */}
+            <option value="Button2">Button2Page</option>
+            <option value="Soon">Soon Page</option>
+            <option value="Shop">Shop</option>
           </select>
         </div>
+      </div>
+      <div className="container mt-5">
+        <h4>{category}</h4>
       </div>
       {category === "Partners" ? (
         <CreateEditPartners />
@@ -168,24 +254,7 @@ const CreateEditPost = () => {
         <div className="position-relative">
           <div className="container mt-5">
             <Formik
-              initialValues={{
-                title: "",
-                visibility: "Public",
-                publishTime: "Now",
-                isPublished: isPublished, // For selecting between Now and Schedule
-                scheduledPublishTime: null, // To store the date when Schedule is selected
-                externalSource: "",
-                content: "",
-                category: "",
-                ...(category === "Person of Interest" && {
-                  person: {
-                    firstName: "",
-                    lastName: "",
-                    aboutPerson: "",
-                    featured: "",
-                  },
-                }),
-              }}
+              initialValues={initialValues}
               validationSchema={getValidationSchema}
               onSubmit={(values) => {
                 let submissionData = { ...values };
@@ -223,7 +292,11 @@ const CreateEditPost = () => {
 
                   console.log(submissionData);
 
-                  createNewsPost(submissionData, featuredImage, setIsLoading);
+                  createNewsAndPagePost(
+                    submissionData,
+                    featuredImage,
+                    setIsLoading
+                  );
                 } else {
                   // If 'Person-of-Interest', include 'media' and 'featured' in submissionData
                   // Assuming media and featured are handled outside Formik's initialValues
@@ -248,7 +321,7 @@ const CreateEditPost = () => {
                     isPublished: isPublished,
                   };
 
-                  createPost(
+                  createPersonsPost(
                     submissionData,
                     uploadedFiles,
                     featuredImage,
@@ -379,7 +452,7 @@ const CreateEditPost = () => {
                           })}
                         </div>
                       )}
-                      {category === "News" && (
+                      {category !== "Person of Interest" && (
                         <ReactQuill
                           className="react-quill"
                           theme="snow"
@@ -393,59 +466,63 @@ const CreateEditPost = () => {
                     </div>
 
                     <div className="col-md-4 ">
-                      <div className="featured">
-                        {imageURL !== "" && (
-                          <div
-                            className="featured-close"
-                            onClick={() => clearImage()}
-                          >
-                            <i class="fa-solid fa-trash"></i>
-                          </div>
-                        )}
+                      {["Person of Interest", "News", "Soon", "Shop"].includes(
+                        category
+                      ) && (
+                        <div className="featured">
+                          {imageURL !== "" && (
+                            <div
+                              className="featured-close"
+                              onClick={() => clearImage()}
+                            >
+                              <i class="fa-solid fa-trash"></i>
+                            </div>
+                          )}
 
-                        {/* Image upload and display */}
-                        {imageURL ? (
-                          <img
-                            src={imageURL}
-                            alt="Featured"
-                            style={{
-                              width: "305px",
-                              height: "250px",
-                              objectFit: "cover",
-                            }}
+                          {/* Image upload and display */}
+                          {imageURL ? (
+                            <img
+                              src={imageURL}
+                              alt="Featured"
+                              style={{
+                                width: "305px",
+                                height: "250px",
+                                objectFit: "cover",
+                              }}
+                            />
+                          ) : (
+                            <div
+                              style={{
+                                width: "305px",
+                                height: "250px",
+                                border: "2px dashed #ccc",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <span>Add Featured Image</span>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            id="featured-image-upload"
+                            style={{ display: "none" }}
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*" // Accept images only
                           />
-                        ) : (
-                          <div
-                            style={{
-                              width: "305px",
-                              height: "250px",
-                              border: "2px dashed #ccc",
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
+                          <label
+                            htmlFor="featured-image-upload"
+                            className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
                           >
-                            <span>Add Featured Image</span>
-                          </div>
-                        )}
-                        <input
-                          type="file"
-                          id="featured-image-upload"
-                          style={{ display: "none" }}
-                          ref={fileInputRef}
-                          onChange={handleImageUpload}
-                          accept="image/*" // Accept images only
-                        />
-                        <label
-                          htmlFor="featured-image-upload"
-                          className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
-                        >
-                          <div className="add-image-placeholder">
-                            <i className="fas fa-plus"></i>{" "}
-                            <span>ADD FEATURE IMAGE</span>
-                          </div>
-                        </label>
-                      </div>
+                            <div className="add-image-placeholder">
+                              <i className="fas fa-plus"></i>{" "}
+                              <span>ADD FEATURE IMAGE</span>
+                            </div>
+                          </label>
+                        </div>
+                      )}
 
                       <div className="border">
                         <div className="d-flex justify-content-between align-items-center px-2 border-0 border-bottom py-2 ">
@@ -554,7 +631,7 @@ const CreateEditPost = () => {
               )}
             </Formik>
           </div>
-          {category !== "News" && (
+          {category === "Person of Interest" && (
             <MediaFileComponent
               uploadedFiles={uploadedFiles}
               setUploadedFiles={setUploadedFiles}

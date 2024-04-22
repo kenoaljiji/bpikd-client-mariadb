@@ -17,6 +17,7 @@ const initialState = {
       about: "About",
       partners: "Partners",
       shop: "Shop",
+      soon: "Soon",
     },
     buttons: {
       button1: "Donate",

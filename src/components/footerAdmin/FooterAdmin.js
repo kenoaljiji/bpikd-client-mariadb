@@ -6,7 +6,6 @@ import {
   footerCompaniesData,
   footerCompanies as footerCompaniesHelper,
 } from "../../helpers/people";
-import { localhost } from "../../config/config";
 
 const FooterAdmin = () => {
   const { changeFooter, footerCompanies: footer } = useFooterContext();

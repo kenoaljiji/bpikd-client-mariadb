@@ -66,7 +66,9 @@ const HeaderItems = () => {
 
     // Separate values into routes and buttons based on the key prefix or specific keys
     Object.keys(values).forEach((key) => {
-      if (["person", "news", "about", "partners", "shop"].includes(key)) {
+      if (
+        ["person", "news", "about", "partners", "shop", "soon"].includes(key)
+      ) {
         // If the key is one of the routes, add it to the routes object
         routes[key] = values[key];
       } else if (["button1", "button2"].includes(key)) {

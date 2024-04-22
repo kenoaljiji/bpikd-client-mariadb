@@ -47,7 +47,7 @@ const News = () => {
 
   const { posts, listPosts, getPostById } = useGlobalContext();
 
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     listPosts(setLoading);
@@ -101,5 +101,4 @@ const News = () => {
     </section>
   );
 };
-
 export default News;

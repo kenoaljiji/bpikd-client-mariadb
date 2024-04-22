@@ -46,6 +46,14 @@ const Navbar = () => {
             {routes.partners}
           </Link>
         </li>
+        <li className={styles["navbar-item"]}>
+          <Link
+            to={transformPath(routes.soon)}
+            className={styles["navbar-link"]}
+          >
+            {routes.soon}
+          </Link>
+        </li>
       </ul>
     </div>
   );
