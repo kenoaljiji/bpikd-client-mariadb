@@ -48,6 +48,7 @@ const CreateEditPost = () => {
     externalSource: singlePost.externalSource || "",
     content: singlePost.content || "",
     category: category,
+    featured: singlePost?.featured || "",
     ...(category === "Person of Interest" && {
       person: {
         firstName: "",
@@ -57,6 +58,13 @@ const CreateEditPost = () => {
       },
     }),
   });
+
+  useEffect(() => {
+    if (singlePost && postId) {
+      setImageURL(singlePost.featured);
+      console.log(singlePost.featured);
+    }
+  }, [singlePost, postId]);
 
   useEffect(() => {
     console.log("Checking singlePost:", singlePost);
@@ -76,12 +84,15 @@ const CreateEditPost = () => {
         externalSource: data.externalSource || "",
         content: data.content || "",
         category: category,
-        person: {
-          firstName: data.firstName || "",
-          lastName: data.lastName || "",
-          aboutPerson: data.aboutPerson || "",
-          featured: data.featured || "",
-        },
+        featured: data.featured || "",
+        ...(category === "Person of Interest" && {
+          person: {
+            firstName: "",
+            lastName: "",
+            aboutPerson: "",
+            featured: "",
+          },
+        }),
       });
     } else {
       // Reset to defaults if no postId or singlePost is empty
@@ -95,12 +106,15 @@ const CreateEditPost = () => {
         externalSource: "",
         content: "",
         category: category,
-        person: {
-          firstName: "",
-          lastName: "",
-          aboutPerson: "",
-          featured: "",
-        },
+        featured: "",
+        ...(category === "Person of Interest" && {
+          person: {
+            firstName: "",
+            lastName: "",
+            aboutPerson: "",
+            featured: "",
+          },
+        }),
       }));
     }
   }, [postId, paramCategory]); // Include singlePost in the dependency array
@@ -151,7 +165,7 @@ const CreateEditPost = () => {
   };
 
   const clearImage = () => {
-    setFeaturedImage(null);
+    setFeaturedImage("");
     setImageURL(""); // Clear image preview
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset file input
@@ -225,26 +239,30 @@ const CreateEditPost = () => {
 
   return (
     <div className="post">
-      <h2 className="text-center mt-5 mb-2">Add New Post</h2>
-      <div className="post-category bg-gray ">
-        <div className="category-select d-flex align-items-center p-1">
-          <label>Select category:</label>
-          <select
-            className=""
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="Person of Interest">Person of Interest</option>
-            <option value="News">News</option>
-            <option value="Partners">Partners</option>
-            <option value="About">About</option>
-            {/*             <option value="Button1">Button1Page</option> */}
-            <option value="Button2">Button2Page</option>
-            <option value="Soon">Soon Page</option>
-            <option value="Shop">Shop</option>
-          </select>
+      <h2 className="text-center mt-5 mb-2">
+        {postId ? "Edit Post" : "Add New Post"}
+      </h2>
+      {!postId && (
+        <div className="post-category bg-gray ">
+          <div className="category-select d-flex align-items-center p-1">
+            <label>Select category:</label>
+            <select
+              className=""
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="Person of Interest">Person of Interest</option>
+              <option value="News">News</option>
+              {/* <option value="Partners">Partners</option>
+              <option value="About">About</option>
+              <option value="Button1">Button1Page</option>
+              <option value="Button2">Button2Page</option>
+              <option value="Soon">Soon Page</option>
+              <option value="Shop">Shop</option> */}
+            </select>
+          </div>
         </div>
-      </div>
+      )}
       <div className="container mt-5">
         <h4>{category}</h4>
       </div>
@@ -470,7 +488,7 @@ const CreateEditPost = () => {
                         category
                       ) && (
                         <div className="featured">
-                          {imageURL !== "" && (
+                          {imageURL && imageURL !== "" && (
                             <div
                               className="featured-close"
                               onClick={() => clearImage()}

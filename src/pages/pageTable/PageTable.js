@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { useGlobalContext } from "../../context/bpikd/GlobalState";
 
-const PageTable = ({ page: post }) => {
+const PageTable = () => {
   const navigate = useNavigate();
 
-  const { category, listPages } = useGlobalContext();
+  const { category, listPages, singlePost, getPartnersData } =
+    useGlobalContext();
 
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (["Button1", "Button2", "About", "Shop", "Soon"].includes(category)) {
+      listPages(setLoading, category);
+    }
+    if (category === "Partners") {
+      getPartnersData(setLoading);
+    }
+  }, [category]);
+
+  const post = singlePost ?? singlePost;
 
   const handleNavigate = async (postId) => {
     // Ensure we have the post data before navigating

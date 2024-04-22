@@ -88,7 +88,7 @@ const Posts = () => {
         />
       )}
       {["Button1", "Button2", "About", "Shop", "Soon"].includes(category) && (
-        <PageTable page={singlePost} />
+        <PageTable />
       )}
       {category === "Partners" && (
         <div className="container mt-5 custom-table">
