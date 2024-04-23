@@ -15,8 +15,12 @@ const HeaderItems = () => {
   const [error, setError] = useState(false);
 
   const [logoImage, setLogoImage] = useState("");
-  const [imageURL, setImageURL] = useState(logoImgPath);
+  const [imageURL, setImageURL] = useState(logoImgPath ? logoImgPath : "");
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (logoImgPath) setImageURL(logoImgPath);
+  }, []);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -94,7 +98,7 @@ const HeaderItems = () => {
   };
 
   return (
-    <div className="my-5 container">
+    <div className="my-5 container header-items">
       <div className="text-center">{error && <Alerts />}</div>
       <h2 className="mb-5 pt-3 text-center font-bold">Header Items</h2>
       <div className="">
@@ -139,9 +143,9 @@ const HeaderItems = () => {
                         src={imageURL}
                         alt="Featured"
                         style={{
-                          width: "250px",
+                          width: "220px",
                           height: "100px",
-                          objectFit: "cover",
+                          objectFit: "contain",
                         }}
                       />
                     ) : (

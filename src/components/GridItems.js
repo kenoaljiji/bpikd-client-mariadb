@@ -142,7 +142,7 @@ const GridItems = () => {
               );
               return (
                 <div
-                  key={author.id}
+                  key={author.id + "ffe45g"}
                   className="slide-item"
                   onClick={() => navigate(`/author/${slugify(fullName)}`)}
                 >

@@ -69,10 +69,7 @@ const FooterAdmin = () => {
       </div>
       <div className="footer-company-grid">
         {footerCompanies?.map((company, index) => (
-          <div
-            key={index + "eer4" + index}
-            className="footer-company-form mb-3"
-          >
+          <div key={index + "eer4665"} className="footer-company-form mb-3">
             <div className="form-group">
               <div className="image-container">
                 <img src={company?.src} alt="Featured" />

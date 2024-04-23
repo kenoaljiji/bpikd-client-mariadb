@@ -14,8 +14,14 @@ const reorder = (list, startIndex, endIndex) => {
   return result;
 };
 
-const PersonSearch = () => {
+const PersonSortSearch = () => {
   const { user } = useAuthContext();
+
+  const initialPlaceholders = Array.from({ length: 4 }, (_, index) => ({
+    id: `placeholder-${index}`,
+    placeholder: true,
+    text: `Select person ${index + 1}`,
+  }));
 
   const { sortedItems, getSortedItems, updateSortedItems } =
     useSortedItemsContext();
@@ -35,14 +41,9 @@ const PersonSearch = () => {
   const [searchTermSecondRow, setSearchTermSecondRow] = useState("");
   const [searchResultsSecondRow, setSearchResultsSecondRow] = useState([]);
 
-  const initialPlaceholders = Array.from({ length: 4 }, (_, index) => ({
-    id: `placeholder-${index}`,
-    placeholder: true,
-    text: `Select person ${index + 1}`,
-  }));
-
-  const [selectedSecondRow, setSelectedSecondRow] =
-    useState(initialPlaceholders);
+  const [selectedSecondRow, setSelectedSecondRow] = useState(
+    sortedItems?.secondRowItems
+  );
 
   const [errorFirstRow, setErrorFirstRow] = useState("");
   const [errorSecondRow, setErrorSecondRow] = useState("");
@@ -179,14 +180,14 @@ const PersonSearch = () => {
     updateSortedItems(data);
   };
 
-  useEffect(() => {
+  /*  useEffect(() => {
     if (sortedItems) {
       setSelectedFirstRow(sortedItems.firstRowItems);
       setSelectedSecondRow(sortedItems.secondRowItems);
     } else {
       setSelectedSecondRow(initialPlaceholders);
     }
-  }, []);
+  }, []); */
 
   return (
     <div className="person-sort-search mb-5">
@@ -434,4 +435,4 @@ const PersonSearch = () => {
   );
 };
 
-export default PersonSearch;
+export default PersonSortSearch;

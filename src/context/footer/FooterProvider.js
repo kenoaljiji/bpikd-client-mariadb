@@ -19,12 +19,11 @@ export const useFooterContext = () => useContext(FooterContext);
 
 /* const footerConfig = JSON.parse(localStorage.getItem('footerConfig')); */
 
-const initialState = {
-  footerCompanies: [],
-  loading: false,
-};
-
 export const FooterProvaider = ({ children }) => {
+  const initialState = {
+    footerCompanies: [],
+    loading: false,
+  };
   const [state, dispatch] = useReducer(routeReducer, initialState);
 
   const { user } = useAuthContext();
@@ -70,15 +69,11 @@ export const FooterProvaider = ({ children }) => {
     }
 
     try {
-      const response = await axios.post(
-        `http://localhost:8000/footer`,
-        formData,
-        {
-          headers: {
-            Authorization: user.token, // Assuming 'user.token' is your auth token
-          },
-        }
-      );
+      const response = await axios.post(`${localhost}/footer`, formData, {
+        headers: {
+          Authorization: user.token, // Assuming 'user.token' is your auth token
+        },
+      });
       console.log("Server response:", response.data);
       setAlert("Footer updated successfully", "success");
       getFooterData(); // Refresh footer data from the server

@@ -1,3 +1,5 @@
+import { GET_HEADER_CONFIG } from "../types";
+
 export const routeReducer = (state, action) => {
   switch (action.type) {
     case "SET_LOADING":
@@ -5,11 +7,11 @@ export const routeReducer = (state, action) => {
         ...state,
         loading: true,
       };
-    case "GET_HEADER_CONFIG":
+    case GET_HEADER_CONFIG:
       return {
         ...state,
+        headersData: { ...action.payload },
         loading: false,
-        headersData: action.payload,
       };
     case "UPDATE_ROUTE_PATHS":
       const newState = {

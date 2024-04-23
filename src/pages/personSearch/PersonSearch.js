@@ -1,10 +1,10 @@
 // Import statements
-import React, { useState } from 'react';
-import axios from 'axios';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import React, { useState } from "react";
+import axios from "axios";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const PersonSearch = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedFirstRow, setSelectedFirstRow] = useState(null);
   const [selectedSecondRow, setSelectedSecondRow] = useState([]);
@@ -18,25 +18,25 @@ const PersonSearch = () => {
         const response = await axios.get(`/api/search?searchTerm=${term}`);
         setSearchResults(response.data);
       } catch (error) {
-        console.error('Error fetching search results', error);
+        console.error("Error fetching search results", error);
       }
     }
   };
 
   // Function to add a person to the first or second row
   const handleSelect = (person, row) => {
-    if (row === 'first') {
+    if (row === "first") {
       setSelectedFirstRow(person);
-    } else if (row === 'second' && selectedSecondRow.length < 4) {
+    } else if (row === "second" && selectedSecondRow.length < 4) {
       setSelectedSecondRow([...selectedSecondRow, person]);
     }
   };
 
   // Function to remove a person from a row
   const handleRemove = (index, row) => {
-    if (row === 'first') {
+    if (row === "first") {
       setSelectedFirstRow(null);
-    } else if (row === 'second') {
+    } else if (row === "second") {
       setSelectedSecondRow(selectedSecondRow.filter((_, i) => i !== index));
     }
   };
@@ -55,8 +55,8 @@ const PersonSearch = () => {
   return (
     <div>
       <input
-        type='text'
-        placeholder='Search persons...'
+        type="text"
+        placeholder="Search persons..."
         value={searchTerm}
         onChange={handleSearch}
       />
@@ -64,14 +64,14 @@ const PersonSearch = () => {
       <div>
         {selectedFirstRow && (
           <div>
-            <img src={selectedFirstRow.featured} alt='Selected' />
-            <button onClick={() => handleRemove(null, 'first')}>X</button>
+            <img src={selectedFirstRow.featured} alt="Selected" />
+            <button onClick={() => handleRemove(null, "first")}>X</button>
           </div>
         )}
       </div>
       {/* Search and select for the second row */}
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId='droppable'>
+        <Droppable droppableId="droppable">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               {selectedSecondRow.map((person, index) => (
@@ -86,8 +86,8 @@ const PersonSearch = () => {
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
                     >
-                      <img src={person.featured} alt='Selected' />
-                      <button onClick={() => handleRemove(index, 'second')}>
+                      <img src={person.featured} alt="Selected" />
+                      <button onClick={() => handleRemove(index, "second")}>
                         X
                       </button>
                     </div>
@@ -101,7 +101,7 @@ const PersonSearch = () => {
       </DragDropContext>
       {/* Display search results */}
       {searchResults.map((person) => (
-        <div key={person.id} onClick={() => handleSelect(person, 'second')}>
+        <div key={person.id} onClick={() => handleSelect(person, "second")}>
           <img src={person.featured} alt={person.name} />
         </div>
       ))}

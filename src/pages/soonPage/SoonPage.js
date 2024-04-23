@@ -4,6 +4,7 @@ import { useGlobalContext } from "../../context/bpikd/GlobalState";
 /* import "./about.scss"; */
 import moment from "moment";
 import DOMPurify from "dompurify";
+import Loader from "../../components/loader/Loader";
 
 export function ContentComponent({ content }) {
   const config = {
@@ -29,13 +30,17 @@ const SoonPage = () => {
   return (
     <section className="soon-page">
       <div className="container">
-        <div className="mb-5">
-          <h2 className="pb-0">{singlePost?.title}</h2>
-          <span>{moment(singlePost?.updatedAt).format("DD MMMM YYYY")}</span>
-          <div className="news-description">
-            <ContentComponent content={singlePost?.content} />
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="mb-5">
+            <h2 className="pb-0">{singlePost?.title}</h2>
+            <span>{moment(singlePost?.updatedAt).format("DD MMMM YYYY")}</span>
+            <div className="news-description">
+              <ContentComponent content={singlePost?.content} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

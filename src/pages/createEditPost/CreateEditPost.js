@@ -37,14 +37,17 @@ const CreateEditPost = () => {
 
   const { category: paramCategory, id: postId } = useParams();
 
+  const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+
   const [initialValues, setInitialValues] = useState({
     title: singlePost?.title || "",
     visibility: singlePost?.visibility || "Public",
-    publishTime: singlePost?.publishTime ? "Schedule" : "Now",
+    publishTime: singlePost?.publishTime || "Now",
     isPublished: Boolean(singlePost?.isPublished),
-    scheduledPublishTime: singlePost.scheduledPublishTime
-      ? new Date(singlePost.scheduledPublishTime)
-      : null,
+    scheduledPublishTime:
+      singlePost.publishTime === "Now"
+        ? null
+        : new Date(singlePost.scheduledPublishTime),
     externalSource: singlePost.externalSource || "",
     content: singlePost.content || "",
     category: category,
@@ -76,11 +79,13 @@ const CreateEditPost = () => {
       setInitialValues({
         title: data && data?.title,
         visibility: data?.visibility || "Public",
-        publishTime: data?.publishTime ? "Schedule" : "Now",
+        publishTime: data?.publishTime || "Now",
         isPublished: Boolean(data?.isPublished),
-        scheduledPublishTime: data.scheduledPublishTime
-          ? new Date(data.scheduledPublishTime)
-          : null,
+        scheduledPublishTime:
+          data.publishTime === "Now"
+            ? null
+            : new Date(data.scheduledPublishTime),
+
         externalSource: data.externalSource || "",
         content: data.content || "",
         category: category,
@@ -277,9 +282,7 @@ const CreateEditPost = () => {
               onSubmit={(values) => {
                 let submissionData = { ...values };
 
-                let today = moment().format("DD MMMM YYYY");
-
-                const newMediaData = cleanMedia(uploadedFiles);
+                /* const newMediaData = cleanMedia(uploadedFiles); */
 
                 /* 
               const scheduledTimeUTC = moment
@@ -303,8 +306,10 @@ const CreateEditPost = () => {
                     isPublished: isPublished,
                     scheduledPublishTime:
                       submissionData.publishTime === "Now"
-                        ? new Date()
-                        : submissionData.scheduledPublishTime,
+                        ? now // Use formatted current time if "Now"
+                        : moment(submissionData.scheduledPublishTime).format(
+                            "YYYY-MM-DD HH:mm:ss"
+                          ), // Format existing date
                     externalSource: submissionData.externalSource,
                   };
 
@@ -329,8 +334,10 @@ const CreateEditPost = () => {
                     publishTime: submissionData.publishTime,
                     scheduledPublishTime:
                       submissionData.publishTime === "Now"
-                        ? new Date()
-                        : submissionData.scheduledPublishTime,
+                        ? now // Use formatted current time if "Now"
+                        : moment(submissionData.scheduledPublishTime).format(
+                            "YYYY-MM-DD HH:mm:ss"
+                          ), // Format existing date
                     externalSource: submissionData.externalSource
                       ? submissionData.externalSource
                       : null,

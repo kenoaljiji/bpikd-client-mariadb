@@ -4,34 +4,39 @@ import { useAlertContext } from "../alert/AlertState";
 import axios from "axios";
 import { localhost } from "../../config/config";
 import { useAuthContext } from "../auth/AuthState";
+import { GET_HEADER_CONFIG } from "../types";
 
 const RouteContext = createContext();
 
 export const useRouteContext = () => useContext(RouteContext);
 
-const initialState = {
-  headersData: {
-    routes: {
-      person: "Person of Interest",
-      news: "News",
-      about: "About",
-      partners: "Partners",
-      shop: "Shop",
-      soon: "Soon",
-    },
-    buttons: {
-      button1: "Donate",
-      button2: "Submit",
-    },
-    logoImgPath: "",
-  },
-  loading: false,
-};
-
 export const RouteProvider = ({ children }) => {
+  const initialState = {
+    headersData: {
+      routes: {
+        person: "Person of Interest",
+        news: "News",
+        about: "About",
+        partners: "Partners",
+        shop: "Shop",
+        soon: "Soon",
+      },
+      buttons: {
+        button1: "Donate",
+        button2: "Submit",
+      },
+      logoImgPath: "",
+    },
+    loading: false,
+  };
   const { user } = useAuthContext();
   const [state, dispatch] = useReducer(routeReducer, initialState);
   const { setAlert, alerts } = useAlertContext();
+
+  useEffect(() => {
+    loadHeaderConfig();
+    console.log(state.headersData);
+  }, []);
 
   const changeHeaderAndRoutes = async (values) => {
     console.log(values);
@@ -72,25 +77,23 @@ export const RouteProvider = ({ children }) => {
   const loadHeaderConfig = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const res = await axios.get(`${localhost}/header/getHeader`, {
-        headers: { Authorization: user.token },
-      });
+      const res = await axios.get(`${localhost}/header/getHeader`);
+
+      /* console.log(res.data);
 
       // Parse JSON strings to objects
       const headerConfig = {
-        ...res.data,
         routes: JSON.parse(res.data.routes),
         buttons: JSON.parse(res.data.buttons),
-      };
-
-      console.log(headerConfig);
+        logoImgPath: res.data.logoImgPath,
+      }; */
 
       dispatch({
-        type: "GET_HEADER_CONFIG",
-        payload: headerConfig,
+        type: GET_HEADER_CONFIG,
+        payload: res.data,
       });
 
-      console.log("Processed Header Data:", headerConfig);
+      console.log("Processed Header Data:", res.data);
     } catch (error) {
       dispatch({
         type: "SET_ERROR",
@@ -99,14 +102,9 @@ export const RouteProvider = ({ children }) => {
             ? error.response.data.message
             : "Failed to load header configuration",
       });
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
     }
+    dispatch({ type: "SET_LOADING", payload: false });
   };
-
-  useEffect(() => {
-    loadHeaderConfig();
-  }, []);
 
   return (
     <RouteContext.Provider

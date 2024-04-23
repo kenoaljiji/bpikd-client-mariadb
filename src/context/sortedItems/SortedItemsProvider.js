@@ -2,14 +2,21 @@ import axios from "axios";
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { localhost } from "../../config/config";
 import { useAlertContext } from "../alert/AlertState";
-import { useAuthContext } from "../auth/AuthState";
 
 const SortedItemsContext = createContext();
 
 export const useSortedItemsContext = () => useContext(SortedItemsContext);
 
 export const SortedItemsProvider = ({ children }) => {
-  const [sortedItems, setSortedItems] = useState({});
+  const initialPlaceholders = Array.from({ length: 4 }, (_, index) => ({
+    id: `placeholder-${index}`,
+    placeholder: true,
+    text: `Select person ${index + 1}`,
+  }));
+  const [sortedItems, setSortedItems] = useState({
+    firstRowItems: {},
+    secondRowItems: initialPlaceholders,
+  });
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -20,12 +27,9 @@ export const SortedItemsProvider = ({ children }) => {
   }; */
 
   const updateSortedItems = async (data) => {
-    console.log(data);
-
     try {
       const response = await axios.put(`${localhost}/sort/data`, data);
 
-      console.log(response);
       setSortedItems(response.data);
       getSortedItems();
 
@@ -42,10 +46,7 @@ export const SortedItemsProvider = ({ children }) => {
   };
 
   const getSortedItems = async () => {
-    /*   console.log(requestBody); */
-
     try {
-      // Assuming the token is stored in state.user.token
       const config = {
         headers: {
           "Content-Type": "application/json",
@@ -53,10 +54,19 @@ export const SortedItemsProvider = ({ children }) => {
       };
 
       const res = await axios.get(`${localhost}/sort`, config);
-
+      if (
+        res.data &&
+        res.data.secondRowItems &&
+        res.data.secondRowItems.length === 0
+      ) {
+        // Set secondRowItems to initial placeholders if empty
+        res.data.secondRowItems = initialPlaceholders;
+      }
+      // Update the state with either modified or received data
       setSortedItems(res.data);
     } catch (err) {
-      console.log(err);
+      console.error("Error fetching sorted items:", err);
+      setAlert("Failed to fetch sorted items", "danger");
     }
   };
 
@@ -66,7 +76,7 @@ export const SortedItemsProvider = ({ children }) => {
 
   useEffect(() => {
     console.log(sortedItems);
-  }, [sortedItems]);
+  }, []);
 
   return (
     <SortedItemsContext.Provider

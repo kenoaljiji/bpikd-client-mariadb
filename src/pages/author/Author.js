@@ -139,154 +139,161 @@ const Authors = () => {
 
   return (
     <section className="author">
-      {loading && <Loader />}
-      <div className="container d-flex">
-        <div className="d-flex" style={{ gap: "10px" }}>
-          {author && (
-            <div className="box">
-              <div className="">
-                <img src={author?.featured} alt="persons" />
-              </div>
-              <div className="">
-                <p>{displayContentWithLineBreaks(author?.aboutPerson)}</p>
-              </div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="container d-flex">
+            <div className="d-flex" style={{ gap: "10px", width: "100%" }}>
+              {author && (
+                <div className="box">
+                  <div className="">
+                    <img src={author?.featured} alt="persons" />
+                  </div>
+                  <div className="">
+                    <p>{displayContentWithLineBreaks(author?.aboutPerson)}</p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
-      <div className="container">
-        <div className="works">
-          <div className="">
-            <div>
-              {author?.works?.map((work, index) => (
-                <>
-                  <a
-                    key={work.id}
-                    className="link"
-                    onClick={(e) => {
-                      handleWorkClick(index);
-                      e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
-                      toggleTextDisplay(work.id);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <span
-                      className={index === openWorkIndex ? "active" : ""}
-                      /*   onClick={(e) => {
+          </div>
+          <div className="container">
+            <div className="works">
+              <div className="">
+                <div>
+                  {author?.works?.map((work, index) => (
+                    <>
+                      <a
+                        key={"work" + work.id}
+                        className="link"
+                        onClick={(e) => {
+                          handleWorkClick(index);
+                          e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
+                          toggleTextDisplay(work.id);
+                        }}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <span
+                          className={index === openWorkIndex ? "active" : ""}
+                          /*   onClick={(e) => {
                         e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
                         toggleTextDisplay(work.id);
                       }} */
-                    >
-                      {expandedWorkId !== work.id && work.title.length > 10
-                        ? `${work.title.slice(0, 10)}...`
-                        : work.title}
-                    </span>
-                    <span style={{ color: "#333333", marginRight: "10px" }}>
-                      {` - ${moment(work.scheduledPublishTime).format(
-                        "DD MMMM YYYY"
-                      )}`}
-                    </span>
-                    {work.title.length > 10 && (
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
-                          /*   toggleTextDisplay(work.id); */
-                        }}
-                        style={{
-                          cursor: "pointer",
-                          color: "#0087d5",
-                          marginLeft: "5px",
-                        }}
-                      >
-                        {/*   {expandedWorkId === work.id ? "Hide" : "Show more"} */}
-                      </span>
-                    )}
-                    <span
-                      className={`arrow ${
-                        index === openWorkIndex ? "down" : "up"
-                      }`}
-                    >
-                      {/*  &#9660; */}
-                    </span>
-                  </a>
-                  {selectedWork && (
-                    <div
-                      className={`selected-work ${
-                        index === openWorkIndex ? "open" : "close"
-                      }`}
-                    >
-                      <div className="">
-                        <div className="tab-header">
-                          <div className="nav-tabs">
-                            <button
-                              className={
-                                selectedTab === "releases" ? "selected" : ""
-                              }
-                              onClick={() => handleTabClick("releases")}
-                            >
-                              Releases
-                              <span className="arrow">&#9660;</span>
-                            </button>
-                            <button
-                              className={
-                                selectedTab === "documents" ? "selected" : ""
-                              }
-                              onClick={() => handleTabClick("documents")}
-                            >
-                              Documents
-                              <span className="arrow">&#9660;</span>
-                            </button>
-                            <button
-                              className={
-                                selectedTab === "images" ? "selected" : ""
-                              }
-                              onClick={() => handleTabClick("images")}
-                            >
-                              Images
-                              <span className="arrow">&#9660;</span>
-                            </button>
-                            <button
-                              className={
-                                selectedTab === "audio" ? "selected" : ""
-                              }
-                              onClick={() => handleTabClick("audio")}
-                            >
-                              Audio
-                              <span className="arrow">&#9660;</span>
-                            </button>
-                            <button
-                              className={
-                                selectedTab === "video" ? "selected" : ""
-                              }
-                              onClick={() => handleTabClick("video")}
-                            >
-                              Video
-                              <span className="arrow">&#9660;</span>
-                            </button>
+                        >
+                          {expandedWorkId !== work.id && work.title.length > 10
+                            ? `${work.title.slice(0, 10)}...`
+                            : work.title}
+                        </span>
+                        <span style={{ color: "#333333", marginRight: "10px" }}>
+                          {` - ${moment(work.scheduledPublishTime).format(
+                            "DD MMMM YYYY"
+                          )}`}
+                        </span>
+                        {work.title.length > 10 && (
+                          <span
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
+                              /*   toggleTextDisplay(work.id); */
+                            }}
+                            style={{
+                              cursor: "pointer",
+                              color: "#0087d5",
+                              marginLeft: "5px",
+                            }}
+                          >
+                            {/*   {expandedWorkId === work.id ? "Hide" : "Show more"} */}
+                          </span>
+                        )}
+                        <span
+                          className={`arrow ${
+                            index === openWorkIndex ? "down" : "up"
+                          }`}
+                        >
+                          {/*  &#9660; */}
+                        </span>
+                      </a>
+                      {selectedWork && (
+                        <div
+                          className={`selected-work ${
+                            index === openWorkIndex ? "open" : "close"
+                          }`}
+                        >
+                          <div className="">
+                            <div className="tab-header">
+                              <div className="nav-tabs">
+                                <button
+                                  className={
+                                    selectedTab === "releases" ? "selected" : ""
+                                  }
+                                  onClick={() => handleTabClick("releases")}
+                                >
+                                  Releases
+                                  <span className="arrow">&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === "documents"
+                                      ? "selected"
+                                      : ""
+                                  }
+                                  onClick={() => handleTabClick("documents")}
+                                >
+                                  Documents
+                                  <span className="arrow">&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === "images" ? "selected" : ""
+                                  }
+                                  onClick={() => handleTabClick("images")}
+                                >
+                                  Images
+                                  <span className="arrow">&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === "audio" ? "selected" : ""
+                                  }
+                                  onClick={() => handleTabClick("audio")}
+                                >
+                                  Audio
+                                  <span className="arrow">&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === "video" ? "selected" : ""
+                                  }
+                                  onClick={() => handleTabClick("video")}
+                                >
+                                  Video
+                                  <span className="arrow">&#9660;</span>
+                                </button>
+                              </div>
+                            </div>
+                            <div className="tab-body">
+                              <TabContent
+                                tab={selectedTab}
+                                selectedWork={selectedWork}
+                                openModal={handleOpenModal}
+                                closeModal={handleCloseModal}
+                              />
+                            </div>
                           </div>
                         </div>
-                        <div className="tab-body">
-                          <TabContent
-                            tab={selectedTab}
-                            selectedWork={selectedWork}
-                            openModal={handleOpenModal}
-                            closeModal={handleCloseModal}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </>
-              ))}
+                      )}
+                    </>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <VideoModal
-        closeModal={handleCloseModal}
-        isVideoGalleryOpen={isVideoGalleryOpen}
-      />
+          <VideoModal
+            closeModal={handleCloseModal}
+            isVideoGalleryOpen={isVideoGalleryOpen}
+          />
+        </>
+      )}
     </section>
   );
 };

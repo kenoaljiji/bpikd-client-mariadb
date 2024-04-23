@@ -1,11 +1,12 @@
 .author {
   margin-top: 65px;
   .box {
-    border-bottom: 1px solid #dedede;
+    border-bottom: 1px solid #eee;
     padding-bottom: 65px;
-    max-width: 980px;
+    flex-direction: row;
     display: flex;
     gap: 20px;
+    width: 100%;
 
     img {
       height: 335px;
@@ -28,7 +29,6 @@
   }
 
   .works {
-    max-width: 980px;
     margin-top: 45px;
     /*     border-bottom: 1px solid #dedede;
     padding-bottom: 25px; */
@@ -62,12 +62,12 @@
 
   /* Style for the up arrow icon */
   .arrow.up::after {
-    content: '\25bc'; /* Unicode for upward arrow */
+    content: "\25bc"; /* Unicode for upward arrow */
   }
 
   /* Style for the down arrow icon */
   .arrow.down::after {
-    content: '\25b2'; /* Unicode for downward arrow */
+    content: "\25b2"; /* Unicode for downward arrow */
   }
 
   /* Style for the selected work item */

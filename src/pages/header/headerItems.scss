@@ -1,31 +1,37 @@
-.featured {
-  position: relative;
-  width: 250px;
-
-  input {
-    width: 100%;
-  }
-  &-close {
-    position: absolute;
-    font-weight: 600;
-    right: 0;
-    background-color: #fff;
-
-    margin: 2px 4px;
-    padding: 5px;
-
-    cursor: pointer;
-
-    i {
-      color: black;
-    }
-  }
-
-  &-close:hover i {
-    color: rgb(150, 36, 36);
-  }
-
-  .add-image-placeholder {
+.header-items {
+  .featured {
+    position: relative;
     width: 250px;
+
+    img {
+      object-fit: cover;
+    }
+
+    input {
+      width: 100%;
+    }
+    &-close {
+      position: absolute;
+      font-weight: 600;
+      right: 0;
+      background-color: #fff;
+
+      margin: 2px 4px;
+      padding: 5px;
+
+      cursor: pointer;
+
+      i {
+        color: black;
+      }
+    }
+
+    &-close:hover i {
+      color: rgb(150, 36, 36);
+    }
+
+    .add-image-placeholder {
+      width: 250px;
+    }
   }
 }

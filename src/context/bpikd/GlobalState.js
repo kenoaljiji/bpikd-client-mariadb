@@ -197,7 +197,7 @@ export const GlobalState = ({ children }) => {
 
   const createNewsAndPagePost = async (data, featuredImage, setIsLoading) => {
     const category = data.category?.toLowerCase();
-    console.log(category);
+    console.log(data);
     const formData = new FormData();
 
     if (featuredImage !== "") {

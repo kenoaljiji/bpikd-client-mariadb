@@ -24,9 +24,7 @@ const Posts = () => {
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log(singlePost);
-  }, [category, singlePost]);
+  useEffect(() => {}, [category, singlePost]);
 
   useEffect(() => {
     if (category === "News") {
@@ -76,6 +74,7 @@ const Posts = () => {
       {category === "News" && (
         <PostsTable
           posts={posts}
+          loading={loading}
           listPosts={() => listPosts(setLoading)}
           category={category}
         />
@@ -83,12 +82,13 @@ const Posts = () => {
       {category === "Person of Interest" && (
         <PostsTable
           posts={authors}
+          loading={loading}
           listPosts={() => listAuthors(setLoading)}
           category={category}
         />
       )}
       {["Button1", "Button2", "About", "Shop", "Soon"].includes(category) && (
-        <PageTable />
+        <PageTable loading={loading} setLoading={setLoading} />
       )}
       {category === "Partners" && (
         <div className="container mt-5 custom-table">

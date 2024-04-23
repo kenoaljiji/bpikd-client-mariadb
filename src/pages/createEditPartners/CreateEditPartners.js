@@ -29,7 +29,6 @@ function CreateEditPartners() {
 
     // Append all current image data to formData
     formData.append("images", JSON.stringify(imageFiles));
-    console.log(partners);
 
     imageFiles.forEach((img, index) => {
       if (img && img.file) {
@@ -40,7 +39,7 @@ function CreateEditPartners() {
     // Handle sending the request
     try {
       const response = await axios.post(
-        "http://localhost:8000/post/partners",
+        localhost + "/post/partners",
         formData,
         {
           headers: {
@@ -48,7 +47,7 @@ function CreateEditPartners() {
           },
         }
       );
-      console.log("Success:", response.data);
+
       getPartnersData(setLoading);
     } catch (error) {
       console.error("Error uploading images:", error);

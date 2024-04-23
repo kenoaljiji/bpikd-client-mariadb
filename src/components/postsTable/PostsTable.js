@@ -7,8 +7,9 @@ import { localhost } from "../../config/config";
 import ConfirmationModal from "../confirmationModal/ConfirmationModal";
 import moment from "moment";
 import transformPath from "../../utils/transformPath";
+import Loader from "../loader/Loader";
 
-const PostsTable = ({ posts, category, listPosts }) => {
+const PostsTable = ({ posts, category, listPosts, loading }) => {
   const { user } = useAuthContext();
   const [selectedPostIds, setSelectedPostIds] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -146,113 +147,122 @@ const PostsTable = ({ posts, category, listPosts }) => {
 
   return (
     <div className="custom-table mt-5">
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <button
-            className="btn btn-success"
-            onClick={() => navigate("/admin/posts/create-edit")}
-          >
-            <i className="fa fa-plus"></i> Add Post
-          </button>
-          <div className="search-bar">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
-        {filteredPosts?.length > 0 ? (
-          <table className="table table-striped text-start">
-            <thead>
-              <tr>
-                <th className="ps-4">{headers.name}</th>
-                <th>{headers.user}</th>
-                <th>{headers.date}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPosts?.length > 0 ? (
-                filteredPosts?.map((post) => (
-                  <tr key={post.id}>
-                    <td className="ps-4 text-start d-flex">
-                      <input
-                        className="me-2"
-                        type="checkbox"
-                        onChange={() => handleSelectPost(post.id)}
-                        checked={selectedPostIds.includes(post.id)}
-                      />
-                      <span className="w-75 d-flex align-items-center">
-                        {category !== "Person of Interest"
-                          ? post.title
-                          : `${post.firstName} ${post.lastName}`}
-                      </span>
-
-                      <div className="action-icons">
-                        <i
-                          className="fa fa-edit"
-                          onClick={() =>
-                            navigate(
-                              `/admin/posts/create-edit/${transformPath(
-                                category
-                              )}/${post.id}`
-                            )
-                          }
-                        ></i>
-
-                        <i
-                          className="fa fa-trash"
-                          onClick={() => handleDeleteClick(post)}
-                        ></i>
-                      </div>
-                    </td>
-                    {category === "Person of Interest" ? (
-                      <>
-                        <td>{post.createdBy}</td>
-                        <td>{moment(post.updatedAt).format("DD MMMM YYYY")}</td>
-                      </>
-                    ) : (
-                      <>
-                        <td>{post.createdBy}</td>
-                        <td>{moment(post.updatedAt).format("DD MMMM YYYY")}</td>
-                      </>
-                    )}
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    Cannot find user
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        ) : (
-          <p>No posts found.</p>
-        )}
-        <div className="d-flex justify-content-start">
-          {selectedPostIds?.length > 0 && (
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="container">
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <button
-              className="btn btn-sm btn-danger"
-              onClick={handleBulkDeleteClick}
+              className="btn btn-success"
+              onClick={() => navigate("/admin/posts/create-edit")}
             >
-              Delete
+              <i className="fa fa-plus"></i> Add Post
             </button>
+            <div className="search-bar">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {filteredPosts?.length > 0 ? (
+            <table className="table table-striped text-start">
+              <thead>
+                <tr>
+                  <th className="ps-4">{headers.name}</th>
+                  <th>{headers.user}</th>
+                  <th>{headers.date}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPosts?.length > 0 ? (
+                  filteredPosts?.map((post) => (
+                    <tr key={category + post.id}>
+                      <td className="ps-4 text-start d-flex">
+                        <input
+                          className="me-2"
+                          type="checkbox"
+                          onChange={() => handleSelectPost(post.id)}
+                          checked={selectedPostIds.includes(post.id)}
+                        />
+                        <span className="w-75 d-flex align-items-center">
+                          {category !== "Person of Interest"
+                            ? post.title
+                            : `${post.firstName} ${post.lastName}`}
+                        </span>
+
+                        <div className="action-icons">
+                          <i
+                            className="fa fa-edit"
+                            onClick={() =>
+                              navigate(
+                                `/admin/posts/create-edit/${transformPath(
+                                  category
+                                )}/${post.id}`
+                              )
+                            }
+                          ></i>
+
+                          <i
+                            className="fa fa-trash"
+                            onClick={() => handleDeleteClick(post)}
+                          ></i>
+                        </div>
+                      </td>
+                      {category === "Person of Interest" ? (
+                        <>
+                          <td>{post.createdBy}</td>
+                          <td>
+                            {moment(post.updatedAt).format("DD MMMM YYYY")}
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td>{post.createdBy}</td>
+                          <td>
+                            {moment(post.updatedAt).format("DD MMMM YYYY")}
+                          </td>
+                        </>
+                      )}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" style={{ textAlign: "center" }}>
+                      Cannot find user
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          ) : (
+            <p>No posts found.</p>
+          )}
+          <div className="d-flex justify-content-start">
+            {selectedPostIds?.length > 0 && (
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={handleBulkDeleteClick}
+              >
+                Delete
+              </button>
+            )}
+          </div>
+
+          {isModalOpen && (
+            <ConfirmationModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              onConfirm={modalContent.onConfirm}
+              message={modalContent.message}
+            />
           )}
         </div>
-
-        {isModalOpen && (
-          <ConfirmationModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            onConfirm={modalContent.onConfirm}
-            message={modalContent.message}
-          />
-        )}
-      </div>
+      )}
     </div>
   );
 };
