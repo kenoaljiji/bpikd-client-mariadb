@@ -17,4 +17,13 @@
     box-shadow: none;
     border: 1px solid black;
   }
+  &-display {
+    margin-top: 40px;
+    background: #ebebeb;
+    padding: 60px 0;
+
+    p {
+      font-size: 13.5px;
+    }
+  }
 }

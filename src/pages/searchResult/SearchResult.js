@@ -4,6 +4,9 @@ import { useFormik } from 'formik';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './searchResult.scss';
+import moment from 'moment';
+import axios from 'axios';
+import { localhost } from '../../config/config';
 
 const SearchResult = () => {
   const location = useLocation();
@@ -25,10 +28,21 @@ const SearchResult = () => {
       queryParams.get('includeExternalSources') === 'true' ? true : false,
   };
 
+  const handleSearch = async (data) => {
+    try {
+      const response = await axios.get(localhost + '/search', {
+        data,
+      });
+
+      console.log(response);
+
+      // Additional handling for pagination, etc., could be added here
+    } catch (err) {}
+  };
+
   const formik = useFormik({
     initialValues: initialValues,
-    onSubmit: (values) => {
-      // Filtering and submitting values
+    onSubmit: async (values) => {
       const filteredValues = {};
       Object.keys(values).forEach((key) => {
         if (values[key] && values[key] !== '') {
@@ -37,6 +51,8 @@ const SearchResult = () => {
               .split(',')
               .map((word) => word.trim())
               .filter((word) => word);
+          } else if (key.endsWith('Date')) {
+            filteredValues[key] = moment(values[key]).format('YYYY-MM-DD');
           } else {
             filteredValues[key] = values[key];
           }
@@ -44,7 +60,18 @@ const SearchResult = () => {
       });
 
       const queryString = new URLSearchParams(filteredValues).toString();
-      navigate(`/search?${queryString}`);
+
+      try {
+        const response = await axios.post(localhost + '/search', {
+          query: filteredValues,
+        });
+        console.log('Search results:', response.data);
+        // Navigate with queryString to reflect the search in URL
+        navigate(`/search?${queryString}`);
+      } catch (err) {
+        console.error('Search error:', err);
+        // Optionally handle errors in UI, e.g., display error message
+      }
     },
   });
 
@@ -82,6 +109,27 @@ const SearchResult = () => {
 
     return description;
   }
+
+  const results = [
+    {
+      id: 1,
+      title: 'Example Title One',
+      description: 'This is a description of the first search result.',
+      category: 'Person of Interest',
+      imageUrl: 'assets/images/default.png',
+      releaseDate: '2022-01-01',
+    },
+    {
+      id: 2,
+      title: 'Example Title Two',
+      category: 'News',
+      description: 'This is a description of the second search result.',
+      imageUrl: 'assets/images/default.png',
+      releaseDate: '2022-02-01',
+    },
+
+    // Add more items here
+  ];
 
   return (
     <div className='py-5 search-result'>
@@ -339,11 +387,93 @@ const SearchResult = () => {
           </div>
         </form>
       </div>
-      <div className='search-result-finall bg-gray text-white'>
+      <div className='search-result-display '>
         <div className='container'>
           <p>
-            Search for : <strong>{searchDescription}</strong>
+            Searching for : <strong>{searchDescription}</strong>
           </p>
+        </div>
+        <div className='container mt-4'>
+          <div className='row'>
+            <div className='col-md-3'>
+              {/* Filters column */}
+              <h5>
+                <strong>Filter results by leak</strong>
+              </h5>
+              <div className='form-check'>
+                <input
+                  className='form-check-input'
+                  type='checkbox'
+                  value=''
+                  id='category1'
+                />
+                <label className='form-check-label' htmlFor='category1'>
+                  Category 1
+                </label>
+              </div>
+              <div className='form-check'>
+                <input
+                  className='form-check-input'
+                  type='checkbox'
+                  value=''
+                  id='category2'
+                />
+                <label className='form-check-label' htmlFor='category2'>
+                  Category 2
+                </label>
+              </div>
+              {/* More filters can be added here */}
+            </div>
+            <div className='col-md-9 '>
+              {/* Search results column */}
+              <div className='form-group d-flex justify-content-between'>
+                <select
+                  className='form-control mb-2'
+                  style={{ width: '250px' }}
+                  id='sortSelect'
+                  name='sort'
+                >
+                  <option value='relevance'>Relevance</option>
+                  <option value='release_desc'>
+                    Release Date (Newest First)
+                  </option>
+                  <option value='release_asc'>
+                    Release Date (Oldest First)
+                  </option>
+                  <option value='document_desc'>
+                    Document Date (Newest First)
+                  </option>
+                  <option value='document_asc'>
+                    Document Date (Oldest First)
+                  </option>
+                </select>
+                <div className='mt-2'>
+                  Results: <strong>{results.length}</strong>
+                </div>
+              </div>
+              {results.map((result) => (
+                <div key={result.id} className='row mb-2 bg-white py-4 m-0'>
+                  <div className='col-md-8'>
+                    <h4
+                      style={{ textTransform: 'uppercase', color: '#004a7a' }}
+                    >
+                      {result.title}
+                    </h4>
+                    <p>{result.description}</p>
+                  </div>
+                  <div className='col-md-4 text-center'>
+                    <p className=''>{result.category}</p>
+                    <img
+                      src={result.imageUrl}
+                      alt='Result'
+                      className='img-fluid my-2'
+                    />
+                    <p>Released: {result.releaseDate}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
