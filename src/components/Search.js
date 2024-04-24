@@ -9,7 +9,7 @@ const Search = () => {
 
   const onSubmit = () => {
     console.log(value);
-    navigate(`/search?q=${value}`);
+    navigate(`/search?words=${value}`);
   };
 
   return (

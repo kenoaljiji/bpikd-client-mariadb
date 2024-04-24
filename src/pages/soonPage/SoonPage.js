@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import React, { useEffect, useState } from 'react';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
 /* import { ContentComponent } from "../../components/ContentComponent"; */
 /* import "./about.scss"; */
-import moment from "moment";
-import DOMPurify from "dompurify";
-import Loader from "../../components/loader/Loader";
+import moment from 'moment';
+import DOMPurify from 'dompurify';
+import Loader from '../../components/loader/Loader';
 
 export function ContentComponent({ content }) {
   const config = {
-    ADD_TAGS: ["img"],
-    ADD_ATTR: ["src", "alt", "title", "width", "height", "style"],
+    ADD_TAGS: ['img'],
+    ADD_ATTR: ['src', 'alt', 'title', 'width', 'height', 'style'],
     ALLOW_DATA_ATTR: true, // Allow data attributes which might be necessary for base64 images
   };
 
@@ -19,24 +19,24 @@ export function ContentComponent({ content }) {
 }
 
 const SoonPage = () => {
-  const { posts, listPosts, singlePost, listPages } = useGlobalContext();
+  const { singlePost, listPages } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    listPages(setLoading, "soon");
+    listPages(setLoading, 'soon');
   }, []);
 
   return (
-    <section className="soon-page">
-      <div className="container">
+    <section className='soon-page'>
+      <div className='container'>
         {loading ? (
           <Loader />
         ) : (
-          <div className="mb-5">
-            <h2 className="pb-0">{singlePost?.title}</h2>
-            <span>{moment(singlePost?.updatedAt).format("DD MMMM YYYY")}</span>
-            <div className="news-description">
+          <div className='mb-5'>
+            <h2 className='pb-0'>{singlePost?.title}</h2>
+            <span>{moment(singlePost?.updatedAt).format('DD MMMM YYYY')}</span>
+            <div className='news-description'>
               <ContentComponent content={singlePost?.content} />
             </div>
           </div>
