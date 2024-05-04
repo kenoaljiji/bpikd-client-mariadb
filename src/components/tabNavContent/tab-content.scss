@@ -28,11 +28,21 @@
   ul li {
     display: flex;
     align-items: center;
-    gap: 10px;
 
     a {
       margin-left: 5px;
       width: 100%;
     }
+  }
+}
+.tab-content .realesed {
+  a {
+    display: inline-block !important;
+  }
+}
+
+.custom-content {
+  a {
+    display: inline-block !important;
   }
 }

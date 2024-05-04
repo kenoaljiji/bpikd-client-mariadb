@@ -1,22 +1,26 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
-import AddImageIcon from "../../icons/AddImageIcon";
-import AddAudioIcon from "../../icons/AddAudioIcon";
-import AddVideoIcon from "../../icons/AddVideoIcon";
-import AddWordIcon from "../../icons/AddWordIcon";
-import "./createEditPost.scss";
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import MediaFileComponent from "../../components/mediaFileComponent/MediaFileComponent";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // for snow theme
-import Loader from "../../components/loader/Loader";
-import moment from "moment";
-import Partners from "../partners/Partners";
-import CreateEditPartners from "../createEditPartners/CreateEditPartners";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from 'react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import AddImageIcon from '../../icons/AddImageIcon';
+import AddAudioIcon from '../../icons/AddAudioIcon';
+import AddVideoIcon from '../../icons/AddVideoIcon';
+import AddWordIcon from '../../icons/AddWordIcon';
+import './createEditPost.scss';
+import ReactDatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import MediaFileComponent from '../../components/mediaFileComponent/MediaFileComponent';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // for snow theme
+import Loader from '../../components/loader/Loader';
+import moment from 'moment';
+import Partners from '../partners/Partners';
+import CreateEditPartners from '../createEditPartners/CreateEditPartners';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import Alerts from '../../components/Alerts';
+import { useAlertContext } from '../../context/alert/AlertState';
 
 const CreateEditPost = () => {
   const {
@@ -26,76 +30,104 @@ const CreateEditPost = () => {
     setCategory,
     singlePost,
     listPages,
+    getPostById,
   } = useGlobalContext();
 
-  const [imageURL, setImageURL] = useState("");
+  const [imageURL, setImageURL] = useState('');
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
-  const [featuredImage, setFeaturedImage] = useState("");
+  const [featuredImage, setFeaturedImage] = useState('');
+
+  const { setAlert } = useAlertContext();
 
   const fileInputRef = useRef(null);
 
   const { category: paramCategory, id: postId } = useParams();
 
-  const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
   const [initialValues, setInitialValues] = useState({
-    title: singlePost?.title || "",
-    visibility: singlePost?.visibility || "Public",
-    publishTime: singlePost?.publishTime || "Now",
-    isPublished: Boolean(singlePost?.isPublished),
+    title: singlePost?.title || '',
+    visibility: singlePost?.visibility || 'Public',
+    publishTime: singlePost?.publishTime || 'Now',
+    isPublished:
+      singlePost?.publishTime === 'Now' ? Boolean(true) : Boolean(false),
     scheduledPublishTime:
-      singlePost.publishTime === "Now"
-        ? null
-        : new Date(singlePost.scheduledPublishTime),
-    externalSource: singlePost.externalSource || "",
-    content: singlePost.content || "",
+      singlePost?.publishTime === 'Now'
+        ? new Date(singlePost.created_at)
+        : new Date(singlePost?.scheduledPublishTime),
+    externalSource: singlePost.externalSource || '',
+    content: singlePost.content || '',
     category: category,
-    featured: singlePost?.featured || "",
-    ...(category === "Person of Interest" && {
+    featured: singlePost?.featured || '',
+    ...(category === 'Person of Interest' && {
       person: {
-        firstName: "",
-        lastName: "",
-        aboutPerson: "",
-        featured: "",
+        firstName: '',
+        lastName: '',
+        aboutPerson: '',
+        featured: '',
       },
     }),
   });
 
+  const isEditing = postId !== undefined; // Determine if you are in edit mode
+
   useEffect(() => {
     if (singlePost && postId) {
+      console.log(new Date(singlePost.scheduledPublishTime));
       setImageURL(singlePost.featured);
       console.log(singlePost.featured);
     }
   }, [singlePost, postId]);
 
   useEffect(() => {
-    console.log("Checking singlePost:", singlePost);
-    listPages(setIsLoading, category);
+    console.log('Checking singlePost:', singlePost);
 
+    if (postId && category === 'News') {
+      getPostById(postId, 'news', setIsLoading);
+    } else {
+      listPages(setIsLoading, category);
+    }
+  }, [postId, paramCategory]); // Include singlePost in the dependency array
+
+  useEffect(() => {
+    /*  if (category === 'News') {
+      setInitialValues({
+        title: singlePost?.title,
+        content: singlePost?.content,
+        person_id: singlePost?.person_id,
+        publishTime: singlePost?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
+        isPublished: singlePost?.isPublished,
+        scheduledPublishTime:
+          singlePost?.scheduledPublishTime &&
+          new Date(singlePost.scheduledPublishTime),
+        externalSource: singlePost?.externalSource,
+      });
+    } */
     if (singlePost && postId) {
       // Ensures that singlePost is not null or empty
       const data = singlePost; // Directly use singlePost as it is already available
       setInitialValues({
         title: data && data?.title,
-        visibility: data?.visibility || "Public",
-        publishTime: data?.publishTime || "Now",
-        isPublished: Boolean(data?.isPublished),
+        visibility: data?.visibility || 'Public',
+        publishTime: data?.publishTime || 'Now',
+        isPublished:
+          data?.publishTime === 'Now' ? Boolean(true) : Boolean(false),
         scheduledPublishTime:
-          data.publishTime === "Now"
-            ? null
-            : new Date(data.scheduledPublishTime),
+          data?.publishTime === 'Now'
+            ? new Date(data.created_at)
+            : new Date(data?.scheduledPublishTime),
 
-        externalSource: data.externalSource || "",
-        content: data.content || "",
+        externalSource: data.externalSource || '',
+        content: data.content || '',
         category: category,
-        featured: data.featured || "",
-        ...(category === "Person of Interest" && {
+        featured: data.featured || '',
+        ...(category === 'Person of Interest' && {
           person: {
-            firstName: "",
-            lastName: "",
-            aboutPerson: "",
-            featured: "",
+            firstName: '',
+            lastName: '',
+            aboutPerson: '',
+            featured: '',
           },
         }),
       });
@@ -103,26 +135,26 @@ const CreateEditPost = () => {
       // Reset to defaults if no postId or singlePost is empty
       setInitialValues((prev) => ({
         ...prev,
-        title: "",
-        visibility: "Public",
-        publishTime: "Now",
+        title: '',
+        visibility: 'Public',
+        publishTime: 'Now',
         isPublished: true,
         scheduledPublishTime: null,
-        externalSource: "",
-        content: "",
+        externalSource: '',
+        content: '',
         category: category,
-        featured: "",
-        ...(category === "Person of Interest" && {
+        featured: '',
+        ...(category === 'Person of Interest' && {
           person: {
-            firstName: "",
-            lastName: "",
-            aboutPerson: "",
-            featured: "",
+            firstName: '',
+            lastName: '',
+            aboutPerson: '',
+            featured: '',
           },
         }),
       }));
     }
-  }, [postId, paramCategory]); // Include singlePost in the dependency array
+  }, [singlePost, postId]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -161,7 +193,7 @@ const CreateEditPost = () => {
     }));
 
     const targetKey =
-      fileType === "words" || fileType === "pdfs" ? "documents" : fileType;
+      fileType === 'words' || fileType === 'pdfs' ? 'documents' : fileType;
 
     setUploadedFiles((prev) => ({
       ...prev,
@@ -170,18 +202,18 @@ const CreateEditPost = () => {
   };
 
   const clearImage = () => {
-    setFeaturedImage("");
-    setImageURL(""); // Clear image preview
+    setFeaturedImage('');
+    setImageURL(''); // Clear image preview
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input
+      fileInputRef.current.value = ''; // Reset file input
     }
   };
 
   const personValidationSchema = Yup.object().shape({
     person: Yup.object({
-      firstName: Yup.string().required("First name is required"),
-      lastName: Yup.string().required("Last name is required"),
-      aboutPerson: Yup.string().required("About person is required"),
+      firstName: Yup.string().required('First name is required'),
+      lastName: Yup.string().required('Last name is required'),
+      aboutPerson: Yup.string().required('About person is required'),
     }),
   });
 
@@ -189,12 +221,12 @@ const CreateEditPost = () => {
   // Base validation schema
   // Validation schema
   const baseValidationSchema = Yup.object().shape({
-    title: Yup.string().required("Title is required"),
-    visibility: Yup.string().required("Visibility is required"),
-    publishTime: Yup.string().required("Publish time is required"),
+    title: Yup.string().required('Title is required'),
+    visibility: Yup.string().required('Visibility is required'),
+    publishTime: Yup.string().required('Publish time is required'),
     externalSource: Yup.string(),
     pendingReview: Yup.boolean(),
-    content: Yup.string().required("Content is required"),
+    content: Yup.string().required('Content is required'),
     scheduledPublishTime: null,
     isPublished: Yup.boolean(),
   });
@@ -203,7 +235,7 @@ const CreateEditPost = () => {
   const getValidationSchema = (category) => {
     let schema = baseValidationSchema;
 
-    if (category === "Person of Interest") {
+    if (category === 'Person of Interest') {
       schema = schema.concat(
         Yup.object().shape({
           person: personValidationSchema,
@@ -229,35 +261,71 @@ const CreateEditPost = () => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
       [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
       ],
-      ["link", "image"], // Link and image insertion
+      ['link', 'image'], // Link and image insertion
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      ["clean"], // remove formatting button
+      ['clean'], // remove formatting button
     ],
   };
 
+  const updateNewsPost = async (id, data, featuredImage, setIsLoading) => {
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+
+      if (featuredImage && featuredImage instanceof File) {
+        formData.append('featuredImage', featuredImage, featuredImage.name);
+      }
+
+      // Append other data as a JSON string under the key 'data'
+      formData.append('data', JSON.stringify(data));
+
+      // Make a PUT request with Axios, but use formData instead of just data
+      const response = await axios.put(
+        `${localhost}/post/news/${id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      setAlert('Update successful', 'success');
+
+      console.log('Update successful:', response.data);
+    } catch (error) {
+      console.error(
+        'Failed to update post:',
+        error.response ? error.response.data : error.message
+      );
+      setAlert('Error update', 'danger');
+    }
+    setIsLoading(false);
+  };
+
   return (
-    <div className="post">
-      <h2 className="text-center mt-5 mb-2">
-        {postId ? "Edit Post" : "Add New Post"}
+    <div className='post'>
+      <h2 className='text-center mt-5 mb-2'>
+        {postId ? 'Edit Post' : 'Add New Post'}
       </h2>
       {!postId && (
-        <div className="post-category bg-gray ">
-          <div className="category-select d-flex align-items-center p-1">
+        <div className='post-category bg-gray '>
+          <div className='category-select d-flex align-items-center p-1'>
             <label>Select category:</label>
             <select
-              className=""
+              className=''
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="Person of Interest">Person of Interest</option>
-              <option value="News">News</option>
+              <option value='Person of Interest'>Person of Interest</option>
+              <option value='News'>News</option>
               {/* <option value="Partners">Partners</option>
               <option value="About">About</option>
               <option value="Button1">Button1Page</option>
@@ -268,18 +336,19 @@ const CreateEditPost = () => {
           </div>
         </div>
       )}
-      <div className="container mt-5">
+      <div className='container mt-5'>
         <h4>{category}</h4>
       </div>
-      {category === "Partners" ? (
+      {category === 'Partners' ? (
         <CreateEditPartners />
       ) : (
-        <div className="position-relative">
-          <div className="container mt-5">
+        <div className='position-relative'>
+          <div className='container mt-5'>
             <Formik
               initialValues={initialValues}
               validationSchema={getValidationSchema}
-              onSubmit={(values) => {
+              enableReinitialize={true}
+              onSubmit={(values, { resetForm }) => {
                 let submissionData = { ...values };
 
                 /* const newMediaData = cleanMedia(uploadedFiles); */
@@ -290,12 +359,12 @@ const CreateEditPost = () => {
                 .utc()
                 .toISOString(); */
 
-                if (submissionData.externalSource === "") {
+                if (submissionData.externalSource === '') {
                   delete submissionData.externalSource;
                 }
 
                 // If the category is not 'Person of Interest', delete 'media' and 'featured' from submissionData
-                if (category !== "Person of Interest") {
+                if (category !== 'Person of Interest') {
                   delete submissionData.media;
                   delete submissionData.featured;
                   delete submissionData.person;
@@ -304,22 +373,29 @@ const CreateEditPost = () => {
                     ...submissionData,
                     category: category,
                     isPublished: isPublished,
+                    publishTime: submissionData.publishTime,
                     scheduledPublishTime:
-                      submissionData.publishTime === "Now"
-                        ? now // Use formatted current time if "Now"
-                        : moment(submissionData.scheduledPublishTime).format(
-                            "YYYY-MM-DD HH:mm:ss"
-                          ), // Format existing date
+                      submissionData.publishTime === 'Now'
+                        ? new Date(now) // Use formatted current time if "Now"
+                        : moment(
+                            new Date(submissionData.scheduledPublishTime)
+                          ).format('YYYY-MM-DD HH:mm:ss'), // Format existing date
                     externalSource: submissionData.externalSource,
                   };
 
-                  console.log(submissionData);
-
-                  createNewsAndPagePost(
-                    submissionData,
-                    featuredImage,
-                    setIsLoading
-                  );
+                  if (postId && category === 'News') {
+                    updateNewsPost(
+                      postId,
+                      submissionData,
+                      featuredImage,
+                      setIsLoading
+                    );
+                  } else
+                    createNewsAndPagePost(
+                      submissionData,
+                      featuredImage,
+                      setIsLoading
+                    );
                 } else {
                   // If 'Person-of-Interest', include 'media' and 'featured' in submissionData
                   // Assuming media and featured are handled outside Formik's initialValues
@@ -333,11 +409,11 @@ const CreateEditPost = () => {
                     category: category,
                     publishTime: submissionData.publishTime,
                     scheduledPublishTime:
-                      submissionData.publishTime === "Now"
-                        ? now // Use formatted current time if "Now"
-                        : moment(submissionData.scheduledPublishTime).format(
-                            "YYYY-MM-DD HH:mm:ss"
-                          ), // Format existing date
+                      submissionData.publishTime === 'Now'
+                        ? new Date(now) // Use formatted current time if "Now"
+                        : moment(
+                            new Date(submissionData.scheduledPublishTime)
+                          ).format('YYYY-MM-DD HH:mm:ss'), // Format existing date
                     externalSource: submissionData.externalSource
                       ? submissionData.externalSource
                       : null,
@@ -357,110 +433,110 @@ const CreateEditPost = () => {
             >
               {({ setFieldValue, values }) => (
                 <Form>
-                  <div className="row">
-                    <div className="col-md-8">
+                  <div className='row'>
+                    <div className='col-md-8'>
                       {/* First Column */}
                       <div
                         style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "20px",
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '20px',
                         }}
                       >
-                        {category === "Person of Interest" && (
+                        {category === 'Person of Interest' && (
                           <>
-                            <div className="d-flex">
-                              <div className="d-flex me-2 align-items-center">
-                                <label className="flex-shrink-0 me-2">
+                            <div className='d-flex'>
+                              <div className='d-flex me-2 align-items-center'>
+                                <label className='flex-shrink-0 me-2'>
                                   First Name:
                                 </label>
                                 <Field
-                                  className="form-control"
-                                  name="person.firstName"
+                                  className='form-control'
+                                  name='person.firstName'
                                 />
                               </div>
-                              <div className="d-flex ms-3 align-items-center">
-                                <label className="flex-shrink-0 me-2">
+                              <div className='d-flex ms-3 align-items-center'>
+                                <label className='flex-shrink-0 me-2'>
                                   Last Name:
                                 </label>
                                 <Field
-                                  className="form-control"
-                                  name="person.lastName"
+                                  className='form-control'
+                                  name='person.lastName'
                                 />
                               </div>
                             </div>
 
                             <Field
-                              as="textarea"
-                              className="form-control"
-                              style={{ padding: "20px" }}
-                              name="person.aboutPerson"
-                              placeholder="About person"
+                              as='textarea'
+                              className='form-control'
+                              style={{ padding: '20px' }}
+                              name='person.aboutPerson'
+                              placeholder='About person'
                             />
                           </>
                         )}
 
                         <Field
-                          as="textarea"
-                          className="form-control mb-1"
-                          style={{ padding: "20px", height: "280px" }}
-                          name="title"
-                          placeholder="Title"
+                          as='textarea'
+                          className='form-control mb-1'
+                          style={{ padding: '20px', height: '280px' }}
+                          name='title'
+                          placeholder='Title'
                         />
                       </div>
-                      {category === "Person of Interest" && (
-                        <div className="file-upload-grid">
+                      {category === 'Person of Interest' && (
+                        <div className='file-upload-grid'>
                           {[
                             {
-                              type: "Image",
-                              fileType: "images",
+                              type: 'Image',
+                              fileType: 'images',
                               Icon: AddImageIcon,
                             },
                             {
-                              type: "Audio",
-                              fileType: "audios",
+                              type: 'Audio',
+                              fileType: 'audios',
                               Icon: AddAudioIcon,
                             },
                             {
-                              type: "Video",
-                              fileType: "videos",
+                              type: 'Video',
+                              fileType: 'videos',
                               Icon: AddVideoIcon,
                             },
                             {
-                              type: "Word",
-                              fileType: "documents",
+                              type: 'Word',
+                              fileType: 'documents',
                               Icon: AddWordIcon,
                             },
                           ].map(({ type, fileType, Icon }) => {
                             const hasFiles = uploadedFiles[fileType].length > 0;
-                            const iconColor = hasFiles ? "#198754" : "#093A41"; // Example: Green if files exist, otherwise black
+                            const iconColor = hasFiles ? '#198754' : '#093A41'; // Example: Green if files exist, otherwise black
 
                             return (
-                              <div className="items" key={type}>
-                                <div className="items-box">
+                              <div className='items' key={type}>
+                                <div className='items-box'>
                                   <input
-                                    type="file"
+                                    type='file'
                                     multiple // Allow multiple file selection
                                     id={`file-upload-${fileType}`}
-                                    style={{ display: "none" }}
+                                    style={{ display: 'none' }}
                                     onChange={(e) =>
                                       handleFileUpload(e, fileType)
                                     }
                                     accept={
-                                      fileType === "images"
-                                        ? "image/*"
-                                        : fileType === "audios"
-                                        ? "audio/*"
-                                        : fileType === "videos"
-                                        ? "video/*"
-                                        : fileType === "documents"
-                                        ? ".pdf, .doc, .docx" // Accept both PDF and Word documents
-                                        : ""
+                                      fileType === 'images'
+                                        ? 'image/*'
+                                        : fileType === 'audios'
+                                        ? 'audio/*'
+                                        : fileType === 'videos'
+                                        ? 'video/*'
+                                        : fileType === 'documents'
+                                        ? '.pdf, .doc, .docx' // Accept both PDF and Word documents
+                                        : ''
                                     }
                                   />
                                   <label
                                     htmlFor={`file-upload-${fileType}`}
-                                    className="file-upload-label"
+                                    className='file-upload-label'
                                   >
                                     <div>
                                       <Icon color={iconColor} />
@@ -477,30 +553,30 @@ const CreateEditPost = () => {
                           })}
                         </div>
                       )}
-                      {category !== "Person of Interest" && (
+                      {category !== 'Person of Interest' && (
                         <ReactQuill
-                          className="react-quill"
-                          theme="snow"
+                          className='react-quill'
+                          theme='snow'
                           value={values.content}
                           onChange={(content) =>
-                            setFieldValue("content", content)
+                            setFieldValue('content', content)
                           }
                           modules={modules}
                         />
                       )}
                     </div>
 
-                    <div className="col-md-4 ">
-                      {["Person of Interest", "News", "Soon", "Shop"].includes(
+                    <div className='col-md-4 '>
+                      {['Person of Interest', 'News', 'Soon', 'Shop'].includes(
                         category
                       ) && (
-                        <div className="featured">
-                          {imageURL && imageURL !== "" && (
+                        <div className='featured'>
+                          {imageURL && imageURL !== '' && (
                             <div
-                              className="featured-close"
+                              className='featured-close'
                               onClick={() => clearImage()}
                             >
-                              <i class="fa-solid fa-trash"></i>
+                              <i class='fa-solid fa-trash'></i>
                             </div>
                           )}
 
@@ -508,144 +584,123 @@ const CreateEditPost = () => {
                           {imageURL ? (
                             <img
                               src={imageURL}
-                              alt="Featured"
+                              alt='Featured'
                               style={{
-                                width: "305px",
-                                height: "250px",
-                                objectFit: "cover",
+                                width: '305px',
+                                height: '250px',
+                                objectFit: 'cover',
                               }}
                             />
                           ) : (
                             <div
                               style={{
-                                width: "305px",
-                                height: "250px",
-                                border: "2px dashed #ccc",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
+                                width: '305px',
+                                height: '250px',
+                                border: '2px dashed #ccc',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                               }}
                             >
                               <span>Add Featured Image</span>
                             </div>
                           )}
                           <input
-                            type="file"
-                            id="featured-image-upload"
-                            style={{ display: "none" }}
+                            type='file'
+                            id='featured-image-upload'
+                            style={{ display: 'none' }}
                             ref={fileInputRef}
                             onChange={handleImageUpload}
-                            accept="image/*" // Accept images only
+                            accept='image/*' // Accept images only
                           />
                           <label
-                            htmlFor="featured-image-upload"
-                            className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
+                            htmlFor='featured-image-upload'
+                            className='featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer'
                           >
-                            <div className="add-image-placeholder">
-                              <i className="fas fa-plus"></i>{" "}
+                            <div className='add-image-placeholder'>
+                              <i className='fas fa-plus'></i>{' '}
                               <span>ADD FEATURE IMAGE</span>
                             </div>
                           </label>
                         </div>
                       )}
 
-                      <div className="border">
-                        <div className="d-flex justify-content-between align-items-center px-2 border-0 border-bottom py-2 ">
-                          <label className="w-50">Visibility:</label>
+                      <div className='border'>
+                        <div className='d-flex justify-content-between align-items-center px-2 border-0 border-bottom py-2 '>
+                          <label className='w-50'>Visibility:</label>
                           <Field
-                            as="select"
-                            name="visibility"
-                            className="select"
+                            as='select'
+                            name='visibility'
+                            className='select'
                           >
-                            <option value="Public">Public</option>
-                            <option value="Private">Private</option>
+                            <option value='Public'>Public</option>
                           </Field>
                         </div>
 
                         {/* Other form fields */}
-                        <div className="d-flex justify-content-between align-items-center px-2 py-2 border-0">
-                          <label className="w-50">Publish:</label>
+                        <div className='d-flex justify-content-between align-items-center px-2 py-2 border-0'>
+                          <label className='w-50'>Publish:</label>
                           <Field
-                            as="select"
-                            name="publishTime"
-                            className="select"
+                            as='select'
+                            name='publishTime'
+                            className='select'
                             onChange={(e) => {
                               const { value } = e.target;
-                              setFieldValue("publishTime", value);
-                              if (value === "Now") {
+                              setFieldValue('publishTime', value);
+                              if (value === 'Now') {
                                 // Clear the scheduledPublishTime if Now is selected
-                                setFieldValue("scheduledPublishTime", null);
+                                setFieldValue('scheduledPublishTime', null);
                               }
                             }}
                           >
-                            <option value="Now">Now</option>
-                            <option value="Schedule">Schedule</option>
+                            <option value='Now'>Now</option>
+                            <option value='Scheduled'>Scheduled</option>
                           </Field>
                         </div>
-                        {values.publishTime === "Schedule" && (
+                        {values.publishTime === 'Scheduled' && (
                           <ReactDatePicker
                             selected={values.scheduledPublishTime}
                             onChange={(date) =>
-                              setFieldValue("scheduledPublishTime", date)
+                              setFieldValue('scheduledPublishTime', date)
                             }
                             showTimeSelect
-                            dateFormat="Pp"
-                            className="form-control mb-2 mx-2"
-                            placeholderText="Select date"
-                            style={{ cursor: "pointer" }}
+                            dateFormat='Pp'
+                            className='form-control mb-2 mx-2'
+                            placeholderText='Select date'
+                            style={{ cursor: 'pointer' }}
                           />
                         )}
                         <div
-                          className="border-0 border-top pb-2 px-2"
-                          style={{ paddingTop: "10px" }}
+                          className='border-0 border-top pb-2 px-2'
+                          style={{ paddingTop: '10px' }}
                         >
                           <label>External source:</label>
                           <Field
-                            className="form-control mt-2"
-                            name="externalSource"
+                            className='form-control mt-2'
+                            name='externalSource'
                           />
                         </div>
 
-                        {/* Pending review checkbox */}
-                        {/* <div className='form-check mb-5 mx-1 mt-2 ps-0'>
-                        <Field
-                          type='checkbox'
-                          name='pendingReview'
-                          className='form-check-input'
-                          id='pendingReview'
-                          style={{
-                            marginLeft: '7px',
-                            paddingLeft: '0px',
-                            marginRight: '5px',
-                          }}
-                        />
-                        <label
-                          className='form-check-label'
-                          htmlFor='pendingReview'
-                        >
-                          Pending Review
-                        </label>
-                      </div> */}
-
-                        <div className="button-container px-2 my-3">
-                          <button type="button" className="me-2">
+                        <div className='button-container px-2 my-3'>
+                          <button type='button' className='me-2'>
                             Preview
                           </button>
-                          <button type="submit" className="btn btn-primary">
-                            Publish
+                          <button type='submit' className='btn btn-primary'>
+                            {postId ? 'Update' : 'Publish'}
                           </button>
+                          {postId && <Alerts />}
                         </div>
                       </div>
-                      <div className="mt-3">{loading && <Loader />}</div>
+                      <div className='mt-3'>{loading && <Loader />}</div>
                     </div>
                     <div>
-                      {category === "Person of Interest" && (
+                      {category === 'Person of Interest' && (
                         <ReactQuill
-                          className="react-quill"
-                          theme="snow"
+                          className='react-quill'
+                          theme='snow'
                           value={values.content}
                           onChange={(content) =>
-                            setFieldValue("content", content)
+                            setFieldValue('content', content)
                           }
                           modules={modules}
                         />
@@ -656,7 +711,7 @@ const CreateEditPost = () => {
               )}
             </Formik>
           </div>
-          {category === "Person of Interest" && (
+          {category === 'Person of Interest' && (
             <MediaFileComponent
               uploadedFiles={uploadedFiles}
               setUploadedFiles={setUploadedFiles}

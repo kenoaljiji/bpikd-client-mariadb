@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import UsersIcon from '../../icons/UsersIcon';
 import PostsIcon from '../../icons/PostsIcon';
 import FooterIcon from '../../icons/FooterIcon';
 import HeaderIcon from '../../icons/HeaderIcon';
 import SortPersonIcon from '../../icons/SortPersonIcon';
+import IPtrackIcon from '../../icons/IPtrackIcon';
 import './dashboard.scss';
 import { useAuthContext } from '../../context/auth/AuthState';
 
@@ -40,9 +41,13 @@ const Dashboard = () => {
           <FooterIcon />
         </Link>
       </div>
-      <div>
+      <div className='d-flex justify-content-center' style={{ gap: '55px' }}>
         <Link to='/admin/sort-person'>
           <SortPersonIcon />
+        </Link>
+
+        <Link to='/admin/ip-visitors'>
+          <IPtrackIcon />
         </Link>
       </div>
     </div>

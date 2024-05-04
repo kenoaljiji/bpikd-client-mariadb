@@ -1,8 +1,15 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import { localhost } from '../../config/config';
 import MediaButtonIcon from '../../icons/MediaButtonIcon';
 import './mediaFileComponent.scss';
 
-const MediaFileComponent = ({ uploadedFiles, setUploadedFiles }) => {
+const MediaFileComponent = ({
+  uploadedFiles,
+  setUploadedFiles,
+  fetchWorkDetails,
+  getPersonById,
+}) => {
   const [showMedia, setShowMedia] = useState(false);
   const [openFileIndex, setOpenFileIndex] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -40,7 +47,7 @@ const MediaFileComponent = ({ uploadedFiles, setUploadedFiles }) => {
   };
 
   // Handle the deletion of selected files
-  const deleteSelectedFiles = (fileType) => {
+  /* const deleteSelectedFiles = (fileType) => {
     const remainingFiles = uploadedFiles[fileType].filter(
       (file) =>
         !selectedFiles.find(
@@ -49,6 +56,54 @@ const MediaFileComponent = ({ uploadedFiles, setUploadedFiles }) => {
         )
     );
     setUploadedFiles((prev) => ({ ...prev, [fileType]: remainingFiles }));
+    // Reset selectedFiles state if needed
+    setSelectedFiles(
+      selectedFiles.filter((selectedFile) => selectedFile.type !== fileType)
+    );
+  };
+ */
+
+  const deleteSelectedFiles = async (fileType) => {
+    console.log(fileType);
+    // Split files into those with IDs (uploaded) and those without (not uploaded)
+    const uploadedFilesToDelete = uploadedFiles[fileType].filter(
+      (file) =>
+        file.mediaId &&
+        selectedFiles.some(
+          (selectedFile) =>
+            selectedFile.name === file.name && selectedFile.type === fileType
+        )
+    );
+    const filesToDeleteLocally = uploadedFiles[fileType].filter(
+      (file) =>
+        !file.mediaId &&
+        selectedFiles.some(
+          (selectedFile) =>
+            selectedFile.name === file.name && selectedFile.type === fileType
+        )
+    );
+
+    // Remove non-uploaded files locally
+    const remainingFiles = uploadedFiles[fileType].filter(
+      (file) => !filesToDeleteLocally.includes(file)
+    );
+    setUploadedFiles((prev) => ({ ...prev, [fileType]: remainingFiles }));
+
+    // Send requests to delete uploaded files from the server
+    for (const file of uploadedFilesToDelete) {
+      console.log(file.mediaId);
+      try {
+        const response = await axios.delete(
+          `${localhost}/post/persons/media/${file.mediaId}`
+        );
+
+        console.log('Deleted:', response.data.message);
+      } catch (error) {
+        console.error('Failed to delete media:', error);
+      }
+    }
+    fetchWorkDetails();
+
     // Reset selectedFiles state if needed
     setSelectedFiles(
       selectedFiles.filter((selectedFile) => selectedFile.type !== fileType)

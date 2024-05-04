@@ -1,4 +1,5 @@
 .search-result {
+  padding-top: 3rem;
   h2 {
     color: #093a41;
   }
@@ -17,10 +18,27 @@
     box-shadow: none;
     border: 1px solid black;
   }
+
+  .created-grid {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    .react-datepicker-wrapper {
+      width: 100%;
+    }
+  }
+  .created-grid > * {
+    /* Target all direct children */
+    flex-grow: 1; /* Allows each item to grow and fill the available space */
+  }
   &-display {
     margin-top: 40px;
     background: #ebebeb;
     padding: 60px 0;
+    padding-bottom: 100px;
 
     p {
       font-size: 13.5px;
@@ -32,10 +50,49 @@
       color: #fff;
       font-size: 20px;
 
-      padding: 5px 5px;
+      padding: 5px 10px;
       text-align: left;
       border-radius: 10px;
       border: 1px solid #eee;
     }
   }
+
+  .categories {
+    display: inline-block;
+    padding: 20px;
+    font-size: 15px;
+    position: relative;
+    margin-bottom: 10px;
+    background: #fff;
+
+    &-x {
+      color: #555555;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      cursor: pointer;
+    }
+  }
+
+  .categories:not(:first-child) {
+    margin-left: 5px;
+  }
+
+  .search-final-result {
+    min-height: 400px;
+  }
+
+  .search-loading {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.custom-pagination .page-item.active .page-link {
+  background: #428bca !important;
+  color: #eee;
+  border-color: #428bca;
+  border-radius: 0;
 }

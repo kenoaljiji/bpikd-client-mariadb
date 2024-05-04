@@ -28,9 +28,6 @@ const Donate = () => {
         <button type='button' className='btn btn-light px-3 py-2'>
           Bitcoin
         </button>
-        <button type='button' className='btn btn-light px-3 py-2'>
-          Bitcoin Cash
-        </button>
       </div>
       <div className='card-custom mt-3'>
         <h2

@@ -43,6 +43,7 @@
 
   .second-row-result {
     width: 239px;
+    margin-bottom: 5px;
 
     .result-box {
       position: relative;
@@ -97,6 +98,7 @@
 
   .delete {
     position: absolute;
+    z-index: 9999;
     top: 5px;
     right: 10px;
     color: #fff;

@@ -1,7 +1,7 @@
-import axios from "axios";
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { localhost } from "../../config/config";
-import { useAlertContext } from "../alert/AlertState";
+import axios from 'axios';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { localhost } from '../../config/config';
+import { useAlertContext } from '../alert/AlertState';
 
 const SortedItemsContext = createContext();
 
@@ -33,13 +33,13 @@ export const SortedItemsProvider = ({ children }) => {
       setSortedItems(response.data);
       getSortedItems();
 
-      setAlert("Sorted items successfully update", "success");
+      setAlert('Sorted items successfully update', 'success');
     } catch (error) {
       console.error(
-        "Error saving search results:",
+        'Error saving search results:',
         error.response ? error.response.data : error.message
       );
-      setAlert("Error saving sorted items", "danger");
+      setAlert('Error saving sorted items', 'danger');
     }
     setSuccess(false);
     setError(false);
@@ -49,24 +49,31 @@ export const SortedItemsProvider = ({ children }) => {
     try {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       };
 
       const res = await axios.get(`${localhost}/sort`, config);
-      if (
-        res.data &&
-        res.data.secondRowItems &&
-        res.data.secondRowItems.length === 0
-      ) {
-        // Set secondRowItems to initial placeholders if empty
+      if (res.data && res.data.secondRowItems) {
+        // Check how many items were received
+        const receivedItemsCount = res.data.secondRowItems.length;
+
+        // If fewer than 4 items are received, fill in the rest with placeholders
+        if (receivedItemsCount < 4) {
+          res.data.secondRowItems = [
+            ...res.data.secondRowItems,
+            ...initialPlaceholders.slice(receivedItemsCount, 4),
+          ];
+        }
+      } else {
+        // Set to initial placeholders if data is missing or secondRowItems is not present
         res.data.secondRowItems = initialPlaceholders;
       }
       // Update the state with either modified or received data
       setSortedItems(res.data);
     } catch (err) {
-      console.error("Error fetching sorted items:", err);
-      setAlert("Failed to fetch sorted items", "danger");
+      console.error('Error fetching sorted items:', err);
+      setAlert('Failed to fetch sorted items', 'danger');
     }
   };
 

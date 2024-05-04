@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './style/footer.scss';
 import BackTopButton from '../components/BackTopButton';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useFooterContext } from '../context/footer/FooterProvider';
-import { localhost } from '../config/config';
 
 const Footer = () => {
   const { footerCompanies, getFooterData } = useFooterContext();
 
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log(location);
+  }, [location]);
+
   return (
     <>
-      <footer className='footer mt-6'>
+      <footer className={`footer ${location.pathname !== '/search' && 'mt-6'}`}>
         <BackTopButton />
         <div className='container'>
           <div className='grid'>

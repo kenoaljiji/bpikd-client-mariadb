@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomVideoPlayer from "../customvideoplayer/CustomVideoPlayer";
+import { useGlobalContext } from "../../context/bpikd/GlobalState";
 
 const VideoModal = ({ closeModal, isVideoGalleryOpen }) => {
-  const videos = [
-    "/assets/videos/video-test.mp4",
-    "/assets/videos/video-test.mp4",
-    "/assets/videos/video-test.mp4",
-  ]; // Array of video URLs
+  const { videosData } = useGlobalContext();
+
+  const videos = videosData.videos;
+
+  useEffect(() => {
+    console.log(videos);
+  }, [videos]);
+
   return (
     <CustomVideoPlayer
       videos={videos}

@@ -1,0 +1,12 @@
+.partners {
+  h2 {
+    margin-bottom: 0;
+    padding-bottom: 0 !important;
+  }
+
+  .grid-5 {
+    @media only screen and (max-width: 940px) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    }
+  }
+}

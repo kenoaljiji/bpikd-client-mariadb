@@ -1,6 +1,8 @@
 // eslint-disable-next-line
 import {
+  COUNT_VISITORS,
   GET_PARTNERS_DATA,
+  GET_VIDEOS_DATA,
   LIST_AUTHORS,
   LIST_POSTS,
   LIST_POSTS_FAIL,
@@ -71,6 +73,16 @@ const globalReducers = (state, action) => {
         ...state,
         category: action.payload,
         loading: false,
+      };
+    case COUNT_VISITORS:
+      return {
+        ...state,
+        visitorsCout: action.payload,
+      };
+    case GET_VIDEOS_DATA:
+      return {
+        ...state,
+        videosData: action.payload,
       };
 
     case "SEARCH_QUERY":

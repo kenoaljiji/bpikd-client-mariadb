@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect, useReducer } from "react";
-import { routeReducer } from "./routeReducer";
-import { useAlertContext } from "../alert/AlertState";
-import axios from "axios";
-import { localhost } from "../../config/config";
-import { useAuthContext } from "../auth/AuthState";
-import { GET_HEADER_CONFIG } from "../types";
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import { routeReducer } from './routeReducer';
+import { useAlertContext } from '../alert/AlertState';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import { useAuthContext } from '../auth/AuthState';
+import { GET_HEADER_CONFIG } from '../types';
 
 const RouteContext = createContext();
 
@@ -14,18 +14,18 @@ export const RouteProvider = ({ children }) => {
   const initialState = {
     headersData: {
       routes: {
-        person: "Person of Interest",
-        news: "News",
-        about: "About",
-        partners: "Partners",
-        shop: "Shop",
-        soon: "Soon",
+        person: 'Person of Interest',
+        news: 'News',
+        about: 'About',
+        partners: 'Partners',
+        shop: 'Shop',
+        soon: 'Coming',
       },
       buttons: {
-        button1: "Donate",
-        button2: "Submit",
+        button1: 'Donate',
+        button2: 'Submit',
       },
-      logoImgPath: "",
+      logoImgPath: '',
     },
     loading: false,
   };
@@ -41,10 +41,10 @@ export const RouteProvider = ({ children }) => {
   const changeHeaderAndRoutes = async (values) => {
     console.log(values);
     const formData = new FormData();
-    formData.append("routes", JSON.stringify(values.routes));
-    formData.append("buttons", JSON.stringify(values.buttons));
+    formData.append('routes', JSON.stringify(values.routes));
+    formData.append('buttons', JSON.stringify(values.buttons));
     if (values.logoImgPath) {
-      formData.append("logoImg", values.logoImgPath, values.logoImgPath.name);
+      formData.append('logoImg', values.logoImgPath, values.logoImgPath.name);
     }
 
     /*  for (let [key, value] of formData.entries()) {
@@ -66,16 +66,16 @@ export const RouteProvider = ({ children }) => {
         payload: res.data,
       }); */
       loadHeaderConfig();
-      setAlert("Header updated successfully", "success");
-      console.log("Server response:", res.data);
+      setAlert('Header updated successfully', 'success');
+      console.log('Server response:', res.data);
     } catch (error) {
-      console.error("Error updating header:", error);
-      setAlert("Error updating header", "danger");
+      console.error('Error updating header:', error);
+      setAlert('Error updating header', 'danger');
     }
   };
 
   const loadHeaderConfig = async () => {
-    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const res = await axios.get(`${localhost}/header/getHeader`);
 
@@ -93,17 +93,17 @@ export const RouteProvider = ({ children }) => {
         payload: res.data,
       });
 
-      console.log("Processed Header Data:", res.data);
+      console.log('Processed Header Data:', res.data);
     } catch (error) {
       dispatch({
-        type: "SET_ERROR",
+        type: 'SET_ERROR',
         payload:
           error.response && error.response.data.message
             ? error.response.data.message
-            : "Failed to load header configuration",
+            : 'Failed to load header configuration',
       });
     }
-    dispatch({ type: "SET_LOADING", payload: false });
+    dispatch({ type: 'SET_LOADING', payload: false });
   };
 
   return (

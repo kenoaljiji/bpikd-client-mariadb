@@ -93,14 +93,13 @@
 
   .button-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
 
     button {
       width: 100%;
       text-transform: uppercase;
       border-radius: 2px;
       border: 0;
-      margin-bottom: 5px;
     }
     button:hover {
       opacity: 0.9;
@@ -126,4 +125,12 @@
       }
     }
   }
+}
+
+.work-title-select {
+  display: flex;
+  gap: 20px;
+  min-width: 400px;
+  width: 400px;
+  margin-bottom: 20px;
 }

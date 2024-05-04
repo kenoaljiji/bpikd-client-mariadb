@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import "./createEditPartners.scss";
-import { localhost } from "../../config/config";
-import axios from "axios";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import React, { useEffect, useState } from 'react';
+import './createEditPartners.scss';
+import { localhost } from '../../config/config';
+import axios from 'axios';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
 
 function CreateEditPartners() {
   const { partners, getPartnersData, category } = useGlobalContext();
@@ -28,7 +28,7 @@ function CreateEditPartners() {
     const formData = new FormData();
 
     // Append all current image data to formData
-    formData.append("images", JSON.stringify(imageFiles));
+    formData.append('images', JSON.stringify(imageFiles));
 
     imageFiles.forEach((img, index) => {
       if (img && img.file) {
@@ -39,26 +39,26 @@ function CreateEditPartners() {
     // Handle sending the request
     try {
       const response = await axios.post(
-        localhost + "/post/partners",
+        localhost + '/post/partners',
         formData,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
 
       getPartnersData(setLoading);
     } catch (error) {
-      console.error("Error uploading images:", error);
+      console.error('Error uploading images:', error);
       if (error.response) {
-        console.error("Server response:", error.response.data);
-        console.error("Status code:", error.response.status);
-        console.error("Headers:", error.response.headers);
+        console.error('Server response:', error.response.data);
+        console.error('Status code:', error.response.status);
+        console.error('Headers:', error.response.headers);
       } else if (error.request) {
-        console.error("Axios request error:", error.request);
+        console.error('Axios request error:', error.request);
       } else {
-        console.error("Error", error.message);
+        console.error('Error', error.message);
       }
     }
   };
@@ -102,15 +102,15 @@ function CreateEditPartners() {
 
     try {
       const response = await axios.put(
-        "http://localhost:8000/post/partners",
+        'http://localhost:8000/post/partners',
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { 'Content-Type': 'multipart/form-data' },
         }
       );
-      console.log("Success:", response.data);
+      console.log('Success:', response.data);
     } catch (error) {
-      console.error("Error updating partners:", error);
+      console.error('Error updating partners:', error);
     }
   };
 
@@ -120,17 +120,15 @@ function CreateEditPartners() {
     updatePartners();
   };
 
-  // Additional methods for handling file changes, adding new files, etc.
-
   return (
-    <div className="container partners mt-5">
-      <div className="partners-create">
+    <div className='container partners mt-5'>
+      <div className='partners-create'>
         {!loading &&
           imageFiles.map((img, index) => (
-            <div className="image-container" key={`partnersImages-${index}`}>
+            <div className='image-container' key={`partnersImages-${index}`}>
               {img && (
                 <div
-                  className="featured-close"
+                  className='featured-close'
                   onClick={() => clearImage(index)}
                 ></div>
               )}
@@ -139,53 +137,53 @@ function CreateEditPartners() {
                 <img
                   src={img.preview}
                   alt={`Preview ${index}`}
-                  style={{ objectFit: "cover" }}
+                  style={{ objectFit: 'cover' }}
                   onLoad={() => URL.revokeObjectURL(img.preview)}
                 />
               ) : (
                 <div
                   style={{
-                    border: "2px dashed #ccc",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    minHeight: "165px",
+                    border: '2px dashed #ccc',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: '165px',
                   }}
                 >
                   <span>ADD IMAGE</span>
                 </div>
               )}
               <input
-                type="file"
+                type='file'
                 id={`featured-image-upload-${index}`}
                 name={`partnersImages-${index}`}
-                style={{ display: "none" }}
+                style={{ display: 'none' }}
                 onChange={(e) => handleImageChange(e, index)}
-                accept="image/*"
+                accept='image/*'
               />
               <label
                 htmlFor={`featured-image-upload-${index}`}
-                className="bg-success text-white p-1 w-100 mt-1 cursor-pointer"
+                className='bg-success text-white p-1 w-100 mt-1 cursor-pointer'
               >
-                <div className="add-image-placeholder">
-                  <i className="fas fa-plus"></i> <span>ADD IMAGE</span>
+                <div className='add-image-placeholder'>
+                  <i className='fas fa-plus'></i> <span>ADD IMAGE</span>
                 </div>
               </label>
               <button
-                type="button"
+                type='button'
                 onClick={() => removeImageField(index)}
-                className="btn btn-danger mt-2 w-100"
+                className='btn btn-danger mt-2 w-100'
               >
                 Remove Field
               </button>
             </div>
           ))}
       </div>
-      <button onClick={handleAddImage} className="add-field-button">
+      <button onClick={handleAddImage} className='add-field-button'>
         ADD FIELD
       </button>
       <button
-        className="btn btn-success my-3"
+        className='btn btn-success my-3'
         onClick={uploadAddDeletePartnersImages}
       >
         Submit

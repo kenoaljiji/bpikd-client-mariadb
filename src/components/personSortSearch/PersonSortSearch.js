@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { localhost } from "../../config/config";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import "./personSortSearch.scss";
-import { useAuthContext } from "../../context/auth/AuthState";
-import { useSortedItemsContext } from "../../context/sortedItems/SortedItemsProvider";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import './personSortSearch.scss';
+import { useAuthContext } from '../../context/auth/AuthState';
+import { useSortedItemsContext } from '../../context/sortedItems/SortedItemsProvider';
 
 // A simple reordering function
 const reorder = (list, startIndex, endIndex) => {
@@ -32,25 +32,25 @@ const PersonSortSearch = () => {
 
   // Initial states
 
-  const [searchTermFirstRow, setSearchTermFirstRow] = useState("");
+  const [searchTermFirstRow, setSearchTermFirstRow] = useState('');
   const [searchResultsFirstRow, setSearchResultsFirstRow] = useState([]);
   const [selectedFirstRow, setSelectedFirstRow] = useState(
     sortedItems?.firstRowItems
   );
 
-  const [searchTermSecondRow, setSearchTermSecondRow] = useState("");
+  const [searchTermSecondRow, setSearchTermSecondRow] = useState('');
   const [searchResultsSecondRow, setSearchResultsSecondRow] = useState([]);
 
   const [selectedSecondRow, setSelectedSecondRow] = useState(
     sortedItems?.secondRowItems
   );
 
-  const [errorFirstRow, setErrorFirstRow] = useState("");
-  const [errorSecondRow, setErrorSecondRow] = useState("");
+  const [errorFirstRow, setErrorFirstRow] = useState('');
+  const [errorSecondRow, setErrorSecondRow] = useState('');
 
   // Odraditi debounce ovdje
 
-  const handleSearch = async (term, setResults, row = "firstRow") => {
+  const handleSearch = async (term, setResults, row) => {
     if (term.length >= 3) {
       try {
         const response = await axios.get(
@@ -59,21 +59,21 @@ const PersonSortSearch = () => {
         setResults(response.data);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          if (row === "firstRow") {
-            setErrorFirstRow("No results found for your search.");
+          if (row === 'firstRow') {
+            setErrorFirstRow('No results found for your search.');
             setSearchResultsFirstRow([]); // Clear previous results
-          } else if (row === "secondRow") {
-            setErrorSecondRow("No results found for your search.");
+          } else if (row === 'secondRow') {
+            setErrorSecondRow('No results found for your search.');
             setSearchResultsSecondRow([]); // Clear previous results
           }
         }
       }
     } else {
-      if (row === "firstRow") {
-        setErrorFirstRow("");
+      if (row === 'firstRow') {
+        setErrorFirstRow('');
         setSearchResultsFirstRow([]);
-      } else if (row === "secondRow") {
-        setErrorSecondRow("");
+      } else if (row === 'secondRow') {
+        setErrorSecondRow('');
         setSearchResultsSecondRow([]);
       }
       // Set search results for the successful search
@@ -99,7 +99,7 @@ const PersonSortSearch = () => {
   // Selection handlers
   const handleSelectFirstRow = (person) => {
     setSelectedFirstRow(person);
-    setSearchTermFirstRow("");
+    setSearchTermFirstRow('');
   };
 
   const handleSelectSecondRow = (person) => {
@@ -111,7 +111,7 @@ const PersonSortSearch = () => {
 
     // If the person is already selected, exit the function to avoid adding them again
     if (isPersonAlreadySelected) {
-      console.log("This person is already selected.");
+      console.log('This person is already selected.');
       return;
     }
 
@@ -133,7 +133,7 @@ const PersonSortSearch = () => {
 
     // Update the state with the modified array
     setSelectedSecondRow(updatedRow);
-    setSearchTermSecondRow("");
+    setSearchTermSecondRow('');
   };
 
   const removeSelectedSecondRow = (personId) => {
@@ -190,38 +190,38 @@ const PersonSortSearch = () => {
   }, []); */
 
   return (
-    <div className="person-sort-search mb-5">
-      <div className="sort-search">
+    <div className='person-sort-search mb-5'>
+      <div className='sort-search'>
         <div>
           {/* First Row Search and Selection */}
           <input
-            type="text"
-            placeholder="Search for the first row..."
+            type='text'
+            placeholder='Search for the first row...'
             value={searchTermFirstRow}
             onChange={(e) => {
               setSearchTermFirstRow(e.target.value);
               debouncedSearch(
                 e.target.value,
                 setSearchResultsFirstRow,
-                "firstRow"
+                'firstRow'
               );
             }}
           />
-          <div className="search-row-result">
+          <div className='search-row-result'>
             {searchResultsFirstRow.length > 0 ? (
               searchResultsFirstRow?.map((person) => (
                 <div
-                  className="second-row-result"
+                  className='second-row-result'
                   key={person.id}
                   onClick={() => handleSelectFirstRow(person)}
                 >
-                  <div className="result-box">
+                  <div className='result-box'>
                     <img
                       src={person.featured}
-                      alt="featured"
+                      alt='featured'
                       style={{ width: 50, height: 50 }}
                     />
-                    <div className="row-names">
+                    <div className='row-names'>
                       <span>
                         {person.firstName} {person.lastName}
                       </span>
@@ -231,17 +231,17 @@ const PersonSortSearch = () => {
               ))
             ) : (
               <div
-                className="second-row-result"
+                className='second-row-result'
                 style={{
-                  width: "239px",
-                  height: "150px",
-                  display: "flex",
-                  textAlign: "center",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  width: '239px',
+                  height: '150px',
+                  display: 'flex',
+                  textAlign: 'center',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {errorFirstRow ? errorFirstRow : "Search a person"}
+                {errorFirstRow ? errorFirstRow : 'Search a person'}
               </div>
             )}
           </div>
@@ -250,33 +250,33 @@ const PersonSortSearch = () => {
         <div>
           {/* Second Row Search and Selection */}
           <input
-            type="text"
-            placeholder="Search for the second row..."
+            type='text'
+            placeholder='Search for the second row...'
             value={searchTermSecondRow}
             onChange={(e) => {
               setSearchTermSecondRow(e.target.value);
               debouncedSearch(
                 e.target.value,
                 setSearchResultsSecondRow,
-                "secondRow"
+                'secondRow'
               );
             }}
           />
-          <div className="search-row-result">
+          <div className='search-row-result'>
             {searchResultsSecondRow.length > 0 ? (
               searchResultsSecondRow?.map((person) => (
                 <div
                   key={person.id}
                   onClick={() => handleSelectSecondRow(person)}
-                  className="second-row-result"
+                  className='second-row-result'
                 >
-                  <div className="result-box">
+                  <div className='result-box'>
                     <img
                       src={person.featured}
-                      alt="featured"
+                      alt='featured'
                       style={{ width: 50, height: 50 }}
                     />
-                    <div className="row-names">
+                    <div className='row-names'>
                       <span>
                         {person.firstName} {person.lastName}
                       </span>
@@ -286,39 +286,39 @@ const PersonSortSearch = () => {
               ))
             ) : (
               <div
-                className="second-row-result"
+                className='second-row-result'
                 style={{
-                  width: "239px",
-                  height: "150px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  width: '239px',
+                  height: '150px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {errorSecondRow ? errorSecondRow : "Search a person"}
+                {errorSecondRow ? errorSecondRow : 'Search a person'}
               </div>
             )}
           </div>
         </div>
       </div>
       {/* Display Selected Persons for     Second Row */}
-      <div className="sort-result">
-        {" "}
+      <div className='sort-result'>
+        {' '}
         {/* Display Selected Person for First Row */}
         {selectedFirstRow && selectedFirstRow ? (
-          <div className="first-row">
+          <div className='first-row'>
             <h5>Row One</h5>
-            <div className="row-items">
+            <div className='row-items'>
               <img
                 src={selectedFirstRow.featured}
-                alt="selected"
+                alt='selected'
                 style={{
                   width: 150,
-                  height: "auto",
-                  marginRight: "8px",
+                  height: 'auto',
+                  marginRight: '8px',
                 }}
               />
-              <div className="row-names">
+              <div className='row-names'>
                 <span>
                   {selectedFirstRow.firstName} {selectedFirstRow.lastName}
                 </span>
@@ -326,27 +326,27 @@ const PersonSortSearch = () => {
             </div>
           </div>
         ) : (
-          <div className="first-row">
+          <div className='first-row'>
             <h5>Row One</h5>
             <div
               style={{
-                width: "150px",
-                height: "150px",
-                display: "flex",
-                alignItems: "center",
-                border: "1px solid #eee",
-                justifyContent: "center",
+                width: '150px',
+                height: '150px',
+                display: 'flex',
+                alignItems: 'center',
+                border: '1px solid #eee',
+                justifyContent: 'center',
               }}
             >
               Select Person
             </div>
           </div>
         )}
-        <div className="second-row mt-2">
+        <div className='second-row mt-2'>
           <h5>Row Two</h5>
 
           <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable" direction="horizontal">
+            <Droppable droppableId='droppable' direction='horizontal'>
               {(provided, snapshot) => (
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {selectedSecondRow &&
@@ -363,18 +363,18 @@ const PersonSortSearch = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             style={provided.draggableProps.style}
-                            className="second-row droppable-container"
+                            className='second-row droppable-container'
                           >
-                            <div className="row-items">
+                            <div className='row-items'>
                               {item.placeholder ? (
                                 <div
                                   style={{
-                                    width: "150px",
-                                    height: "150px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    border: "1px solid #eee",
-                                    justifyContent: "center",
+                                    width: '150px',
+                                    height: '150px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    border: '1px solid #eee',
+                                    justifyContent: 'center',
                                   }}
                                 >
                                   {item.text}
@@ -382,7 +382,7 @@ const PersonSortSearch = () => {
                               ) : (
                                 <>
                                   <div
-                                    className="delete"
+                                    className='delete'
                                     onClick={() =>
                                       removeSelectedSecondRow(item.id)
                                     }
@@ -391,14 +391,14 @@ const PersonSortSearch = () => {
                                   </div>
                                   <img
                                     src={item.featured}
-                                    alt="selected"
+                                    alt='selected'
                                     style={{
                                       width: 150,
-                                      height: "auto",
-                                      marginRight: "8px",
+                                      height: 'auto',
+                                      marginRight: '8px',
                                     }}
                                   />
-                                  <div className="row-names">
+                                  <div className='row-names'>
                                     <span>
                                       {item.firstName} {item.lastName}
                                     </span>
@@ -417,14 +417,14 @@ const PersonSortSearch = () => {
           </DragDropContext>
         </div>
       </div>
-      <div className="container">
-        <div className="button-container px-2 my-3">
+      <div className='container'>
+        <div className='button-container px-2 my-3'>
           {/* <button type='button' className='me-2'>
             Preview
           </button> */}
           <button
-            type="submit"
-            className="btn btn-primary"
+            type='submit'
+            className='btn btn-primary'
             onClick={addUpdateSortedItems}
           >
             Update

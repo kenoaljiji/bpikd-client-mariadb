@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { authors } from "../../helpers/people";
-import "./personOfInterst.scss";
-import { useRouteContext } from "../../context/route/RouteProvider";
-import { slugify } from "../../utils/slugify";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
-import Loader from "../../components/loader/Loader";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { authors } from '../../helpers/people';
+import './personOfInterst.scss';
+import { useRouteContext } from '../../context/route/RouteProvider';
+import { slugify } from '../../utils/slugify';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import Loader from '../../components/loader/Loader';
 
 const PersonOfInterest = () => {
   const { state } = useRouteContext();
@@ -22,33 +22,33 @@ const PersonOfInterest = () => {
   }, []);
 
   return (
-    <section className="persons">
+    <section className='persons'>
       {loading ? (
         <Loader />
       ) : (
-        <div className="container">
+        <div className='container'>
           <h2>{routes.person}</h2>
           <div
-            className="grid grid-5"
-            style={{ columnGap: "18px", rowGap: "25px" }}
+            className='grid grid-5'
+            style={{ columnGap: '18px', rowGap: '25px' }}
           >
             {authors?.map((author, index) => {
               return (
                 <div
-                  key={"aut456" + author._id}
-                  className="img-container"
+                  key={'aut456' + author._id}
+                  className='img-container'
                   onClick={() =>
                     navigate(
-                      `/author/${slugify(
-                        author.firstName + "-" + author.lastName
+                      `/person/${slugify(
+                        author.firstName + '-' + author.lastName
                       )}`
                     )
                   }
                 >
                   <img
                     src={author.featured}
-                    alt=""
-                    className="img-fluid w-100"
+                    alt=''
+                    className='img-fluid w-100'
                   />
                   <h5>
                     {author.firstName} <br /> {author.lastName}

@@ -1,6 +1,10 @@
 .news {
   padding-top: 40px;
 
+  @media only screen and (max-width: 600px) {
+    padding-top: 10px;
+  }
+
   h3 {
     cursor: pointer;
     margin-bottom: 0;
@@ -20,9 +24,7 @@
 
   &-body {
     padding-top: 5px;
-    margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #7d939f;
   }
 
   img {
@@ -35,4 +37,11 @@
     color: #333333;
     letter-spacing: 0.5px;
   }
+}
+
+.news-content:not(:last-of-type) {
+  border-bottom: 1px solid #7d939f;
+}
+.news-content {
+  margin-bottom: 15px;
 }

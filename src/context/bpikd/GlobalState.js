@@ -12,8 +12,11 @@ import {
   LIST_SINGLE_POST,
   LIST_SINGLE_POST_FAIL,
   SET_CATEGORY,
+  COUNT_VISITORS,
+  GET_VIDEOS_DATA,
 } from "../types";
 import { useAlertContext } from "../alert/AlertState";
+import { Action } from "@remix-run/router";
 
 const GlobalContext = createContext();
 
@@ -35,6 +38,10 @@ export const GlobalState = ({ children }) => {
     searchResult: "",
     category: "Person of Interest",
     partners: [],
+    videosData: {
+      index: 0,
+      videos: [],
+    },
   };
   const [state, dispatch] = useReducer(globalReducer, initialState);
 
@@ -79,6 +86,14 @@ export const GlobalState = ({ children }) => {
     }
   };
 
+  const getVideosData = async (data) => {
+    console.log(data);
+    dispatch({
+      type: GET_VIDEOS_DATA,
+      payload: data,
+    });
+  };
+
   const listAuthors = async (setLoading) => {
     setLoading(true);
     try {
@@ -115,9 +130,51 @@ export const GlobalState = ({ children }) => {
     }
   };
 
-  const getPostById = async (id, slugRoute) => {
+  useEffect(() => {
+    let hasVisited = false;
+    const fetchVisitors = async () => {
+      try {
+        const res = await axios.get(`${localhost}/visitors`); // Adjust this URL to your API endpoint
+        console.log(res);
+        hasVisited = true;
+      } catch (error) {
+        console.error("Error fetching visitor data:", error);
+      }
+    };
+
+    if (!hasVisited) {
+      fetchVisitors();
+    }
+  }, []);
+
+  useEffect(() => {
+    let hasVisited = false;
+    const fetchVisitors = async () => {
+      try {
+        const res = await axios.get(`${localhost}/total`); // Adjust this URL to your API endpoint
+        console.log(res);
+        dispatch({ type: COUNT_VISITORS, payload: res });
+      } catch (error) {
+        console.error("Error fetching visitor data:", error);
+      }
+    };
+
+    if (!hasVisited) {
+      fetchVisitors();
+    }
+  }, []);
+
+  const getPostById = async (
+    id,
+    slugRoute = "news",
+    setIsLoading,
+    title = ""
+  ) => {
     try {
-      const res = await axios.get(`${localhost}/post/news/${id}`);
+      setIsLoading && setIsLoading(true);
+      const res = await axios.get(`${localhost}/post/${slugRoute}/${id}`);
+
+      console.log(res);
 
       dispatch({
         type: LIST_SINGLE_POST,
@@ -131,6 +188,11 @@ export const GlobalState = ({ children }) => {
             ? error.response.data.message
             : error.message,
       });
+    }
+    setIsLoading && setIsLoading(false);
+    if (title !== "") {
+      // Navigate to the news detail page with the shortened title
+      navigate(`/news/${title}`);
     }
   };
 
@@ -176,7 +238,7 @@ export const GlobalState = ({ children }) => {
 
     setIsLoading(false);
 
-    /* navigate("/admin/posts"); */
+    navigate("/admin/posts");
   };
 
   const getPartnersData = async (setLoading) => {
@@ -197,14 +259,12 @@ export const GlobalState = ({ children }) => {
 
   const createNewsAndPagePost = async (data, featuredImage, setIsLoading) => {
     const category = data.category?.toLowerCase();
-    console.log(data);
     const formData = new FormData();
 
     if (featuredImage !== "") {
       formData.append("featuredImage", featuredImage, featuredImage.name);
     }
 
-    console.log(data);
     formData.append("data", JSON.stringify(data));
 
     // Append files to formData
@@ -231,7 +291,7 @@ export const GlobalState = ({ children }) => {
     }
 
     setIsLoading(false);
-    /*  navigate("/admin/posts"); */
+    navigate("/admin/posts");
   };
 
   const editPost = async (id, data) => {
@@ -330,7 +390,10 @@ export const GlobalState = ({ children }) => {
         listPersonsData,
         listPages,
         getPartnersData,
+        dispatch,
+        getVideosData,
         partners: state.partners,
+        videosData: state.videosData,
         authors: state.authors,
         error: state.error,
         category: state.category,
