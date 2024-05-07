@@ -1,0 +1,16 @@
+.persons {
+  .img-container {
+    max-width: 100%;
+
+    h3 {
+      font-weight: 400;
+    }
+  }
+  .grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+
+    @media only screen and (max-width: 940px) {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+}

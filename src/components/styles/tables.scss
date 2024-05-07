@@ -1,0 +1,70 @@
+.custom-table {
+  button {
+    min-width: 150px;
+    padding: 8px 0;
+  }
+  button .btn .btn-success {
+    background-color: #0c9200 !important;
+    border-radius: 1px !important;
+  }
+
+  .search-bar {
+    display: flex;
+    position: relative;
+
+    input {
+      padding: 7px 10px;
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+    }
+
+    input:focus {
+      box-shadow: none;
+    }
+
+    span {
+      position: relative;
+      width: 50px;
+      right: 2px;
+    }
+  }
+  table {
+    font-weight: 400;
+  }
+  table {
+    th {
+      background: #093a41;
+      padding: 15px 0;
+      color: #fff;
+      font-weight: 400;
+    }
+    td {
+      padding: 10px 0;
+    }
+  }
+}
+.custom-table {
+  span {
+    width: 60px;
+  }
+}
+.custom-table td .action-icons {
+  visibility: visible;
+  opacity: 0;
+  transition: all 0.1s;
+
+  i {
+    color: #093a41;
+    margin-right: 5px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .fa-trash {
+    color: rgb(104, 20, 20);
+  }
+}
+
+.custom-table tr:hover td .action-icons {
+  visibility: visible;
+  opacity: 1;
+}

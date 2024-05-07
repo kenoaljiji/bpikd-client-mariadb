@@ -1,0 +1,32 @@
+.partners {
+  .partners-create {
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+
+    .image-container {
+    }
+  }
+
+  .add-field-button {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #eee;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 165px;
+    &:hover {
+      border: 1px solid #04df0488;
+    }
+  }
+
+  img {
+    width: 100%;
+    object-fit: contain !important;
+    height: 165px;
+  }
+}

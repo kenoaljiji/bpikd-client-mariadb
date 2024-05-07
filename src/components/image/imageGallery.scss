@@ -1,0 +1,12 @@
+.lg-react-element {
+  display: grid;
+  gap: 10px;
+
+  grid-template-columns: repeat(5, 1fr);
+  a {
+    padding: 0 !important;
+    img {
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,14 @@
+.video-gallery {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(5, 1fr);
+
+  div {
+    cursor: pointer;
+    opacity: 0.8;
+  }
+
+  img {
+    width: 100%;
+  }
+}

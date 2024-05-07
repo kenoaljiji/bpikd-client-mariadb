@@ -1,0 +1,30 @@
+.social-share-component {
+  text-align: center;
+  /*  position: absolute;
+  bottom: 39px;
+  right: 10px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all 0.2s; */
+}
+
+.social-share-component.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.social-share-container {
+  display: flex;
+  font-size: 20px;
+
+  .social-icons {
+    svg {
+      font-size: 20px;
+    }
+  }
+  .social-icons {
+    svg:hover {
+      background-color: aliceblue;
+    }
+  }
+}

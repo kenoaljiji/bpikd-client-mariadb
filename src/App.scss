@@ -1,0 +1,161 @@
+// Functions first
+@import 'bootstrap/scss/bootstrap';
+
+$primary: #317eac;
+$success: #0c9200;
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1140px !important;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1100px !important;
+  }
+}
+
+@font-face {
+  font-family: 'HelveticaNeue';
+  src: url('../public/assets/fonts/HelveticaNeueLight.otf') format('truetype'); /* Adjust path as needed */
+  font-weight: 300; /* Specifies the font weight */
+}
+
+body {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 400; /* Apply the light font weight */
+  letter-spacing: 1px;
+}
+
+p {
+  font-weight: 400;
+  font-family: 'Helvetica';
+  letter-spacing: 0;
+  color: #333333;
+  line-height: 28px;
+}
+h3 {
+  color: #093a41;
+  font-weight: 400;
+}
+
+section {
+  h2 {
+    font-weight: 400;
+    padding: 2rem 0;
+
+    @media only screen and (max-width: 700px) {
+      padding: 15px 0;
+    }
+  }
+  margin-top: 2rem;
+  margin-bottom: 7rem;
+
+  @media only screen and (max-width: 700px) {
+    margin-top: 10px;
+    margin-bottom: 3rem;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 10px;
+}
+ul,
+li {
+  list-style: none;
+}
+ul li,
+blockquote {
+  letter-spacing: 0;
+  line-height: 28px;
+  color: #333333;
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr); // Space between grid items
+  align-items: center; // Center items vertically
+  padding-top: 20px;
+  padding-bottom: 40px;
+
+  @media only screen and (max-width: 940px) {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+.grid-5 {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.items-center {
+  align-items: center;
+}
+.button-backTop svg {
+  @media only screen and (max-width: 1024px) {
+    width: 50px;
+  }
+  cursor: pointer;
+}
+.img-container {
+  position: relative;
+  cursor: pointer;
+  max-width: 200px;
+
+  &:hover {
+    opacity: 0.8;
+  }
+  h5 {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    margin-bottom: 0;
+    padding-bottom: 4px;
+    background-color: rgba(0, 0, 0, 0.568);
+    color: #eee;
+    font-size: 20px;
+    text-align: center;
+    font-weight: 400;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+  img {
+    width: 100%; // Make the images fill the entire card
+    /* height: 100%; */
+    height: 240px; // Preserve aspect ratio
+
+    @media only screen and (max-width: 700px) {
+      height: 100%;
+      width: 100%;
+    }
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+}
+img {
+  border-radius: 5px;
+}
+
+// Ulitillity
+
+.mt-6 {
+  margin-top: 6rem;
+}
+
+form.custom-search-2 {
+  display: none !important;
+
+  @media only screen and (max-width: 993px) {
+    display: flex !important;
+
+    border-bottom: solid 1px #dedede;
+    border-top: solid 1px #ebebeb;
+
+    padding: 5px;
+    margin: 0 !important;
+    input {
+      width: 100%;
+      border: none !important;
+      letter-spacing: 2px;
+    }
+  }
+}

@@ -1,0 +1,149 @@
+.author {
+  margin-top: 65px;
+  .box {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 65px;
+    flex-direction: row;
+    display: flex;
+    gap: 20px;
+    width: 100%;
+
+    img {
+      height: 335px;
+      object-fit: contain;
+    }
+
+    @media only screen and (max-width: 940px) {
+      flex-direction: column;
+      height: auto;
+    }
+  }
+  img {
+    @media only screen and (max-width: 940px) {
+      width: 100% !important;
+    }
+  }
+
+  ul {
+    padding-left: 0;
+  }
+
+  .works {
+    margin-top: 45px;
+    /*     border-bottom: 1px solid #dedede;
+    padding-bottom: 25px; */
+  }
+
+  span.link {
+    text-decoration: none;
+    color: #0087d5;
+    cursor: pointer;
+    display: block;
+    padding: 10px 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: #0087d5;
+    text-decoration: none;
+    color: #0087d5;
+    cursor: pointer;
+    display: block;
+    padding: 10px 0;
+  }
+
+  .selected-work:not(:last-child) {
+    border-bottom: 1px solid #eee;
+  }
+  /* Style for the arrow icon */
+  .arrow {
+    margin-left: auto;
+  }
+
+  /* Style for the up arrow icon */
+  .arrow.up::after {
+    content: "\25bc"; /* Unicode for upward arrow */
+  }
+
+  /* Style for the down arrow icon */
+  .arrow.down::after {
+    content: "\25b2"; /* Unicode for downward arrow */
+  }
+
+  /* Style for the selected work item */
+  .selected-work {
+    display: none; /* Initially hide all selected work items */
+    overflow: hidden;
+    transition: max-height 0.5s ease; /* Add smooth transition effect */
+  }
+
+  /* Style for the open selected work item */
+  .selected-work.open {
+    display: block; /* Show the selected work item when open */
+    /* Adjust the max-height as needed */
+  }
+
+  /* Style for the close selected work item */
+  .selected-work.close {
+    display: block; /* Show the selected work item when closed */
+    max-height: 0; /* Collapse the selected work item */
+  }
+
+  /* Add additional styles as needed */
+
+  .tab-header {
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+
+    @media only screen and (max-width: 700px) {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+  }
+
+  .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: none;
+  }
+
+  .nav-tabs button {
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    margin-right: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    position: relative;
+    letter-spacing: 1px;
+    font-weight: 600;
+    width: 150px;
+    color: #093a41;
+  }
+
+  .nav-tabs button:hover {
+    background: #ebebeb;
+  }
+
+  .nav-tabs button.selected {
+    background: #ebebeb;
+  }
+
+  .arrow {
+    position: relative;
+  }
+
+  p {
+    text-align: justify;
+  }
+
+  .fa-file-word {
+    margin-right: 12px;
+  }
+  i {
+    margin-bottom: 10px;
+  }
+}
