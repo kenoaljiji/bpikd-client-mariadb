@@ -4,6 +4,7 @@ import PostsTable from '../../components/postsTable/PostsTable';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import PageTable from '../pageTable/PageTable';
 import { useNavigate } from 'react-router-dom';
+import { usePreviewContext } from '../../context/previewContext/PreviewState';
 
 const Posts = () => {
   const {
@@ -18,13 +19,15 @@ const Posts = () => {
     category,
   } = useGlobalContext();
 
-  /* const [data, setData] = useState([]); */
-
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  useEffect(() => {}, [category, singlePost]);
+  const { listPosts: previewPost, previewSinglePost } = usePreviewContext();
+
+  useEffect(() => {
+    previewSinglePost({});
+  }, []);
 
   useEffect(() => {
     if (category === 'News') {
@@ -115,11 +118,6 @@ const Posts = () => {
 
                   <div className='action-icons'>
                     <i className='fa fa-edit'></i>
-
-                    {/*  <i
-                  className="fa fa-trash"
-                  onClick={() => handleDeleteClick(post)}
-                ></i> */}
                   </div>
                 </td>
               </tr>

@@ -7,6 +7,7 @@ import './news.scss';
 import Loader from '../../components/loader/Loader';
 import DOMPurify from 'dompurify';
 import { useNavigate } from 'react-router-dom';
+import LoaderPage from '../../components/loader/LoaderPage';
 
 export function ContentComponent({ content }) {
   const [shortenedContent, setShortenedContent] = useState('');
@@ -73,7 +74,7 @@ const News = () => {
     <section className='news container'>
       {/*     <h2>{routes.news}</h2> */}
       {loading ? (
-        <Loader />
+        <LoaderPage />
       ) : (
         posts?.map((news) => {
           if (news.isPublished) {

@@ -5,6 +5,7 @@ import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import moment from 'moment';
 import DOMPurify from 'dompurify';
 import Loader from '../../components/loader/Loader';
+import LoaderPage from '../../components/loader/LoaderPage';
 
 export function ContentComponent({ content }) {
   const config = {
@@ -31,7 +32,7 @@ const SoonPage = () => {
     <section className='soon-page'>
       <div className='container'>
         {loading ? (
-          <Loader />
+          <LoaderPage />
         ) : (
           <div className='mb-5'>
             <h2 className='pb-0'>{singlePost?.title}</h2>

@@ -5,11 +5,10 @@ import TabContent from '../../components/tabNavContent/TabContent';
 import '../author/author.scss';
 import VideoModal from '../../components/VideoModal/VideoModal';
 import { slugify } from '../../utils/slugify';
-import { useGlobalContext } from '../../context/bpikd/GlobalState';
-
 import moment from 'moment';
 import Loader from '../../components/loader/Loader';
 import { usePreviewContext } from '../../context/previewContext/PreviewState';
+import './previewAuthor.scss';
 
 const displayContentWithLineBreaks = (content) => {
   if (content) {
@@ -35,16 +34,14 @@ const Authors = () => {
 
   useEffect(() => {
     setAuthor(singlePost);
-    console.log(author);
   }, []);
 
   useEffect(() => {
     if (author && author.works) {
-      console.log(author);
       setSelectedWork(author.works[0]);
-      console.log(author);
       setOpenWorkItems(new Array(author.works.length).fill(false)); // Init with the length of works
-      setOpenWorkIndex(-1);
+      setOpenWorkIndex(0);
+      setExpandedWorkId(author.works[0].workId);
     } else {
       // Reset states if author or works are not available
       setSelectedWork(null);
@@ -117,16 +114,19 @@ const Authors = () => {
 
   return (
     <section className='author'>
-      <div className='preview-mode p-2 bg-gray text-center'>
-        <button
-          onClick={() => {
-            navigate('/admin/posts/create-edit');
-            togglePreviewMode(false);
-          }}
-        >
-          Exit Perview
-        </button>
+      <div className='container'>
+        <div className='preview-mode p-2 bg-gray text-end mb-3'>
+          <button
+            onClick={() => {
+              navigate('/admin/posts/create-edit');
+              togglePreviewMode(false);
+            }}
+          >
+            Exit Perview
+          </button>
+        </div>
       </div>
+
       {loading ? (
         <Loader />
       ) : (
@@ -134,11 +134,11 @@ const Authors = () => {
           <div className='container d-flex'>
             <div className='d-flex' style={{ gap: '10px', width: '100%' }}>
               {author && (
-                <div className='box'>
+                <div className='box w-100'>
                   <div className=''>
                     <img src={author?.person.featured} alt='persons' />
                   </div>
-                  <div className=''>
+                  <div className='w-100'>
                     <p>
                       {displayContentWithLineBreaks(author?.person.aboutPerson)}
                     </p>

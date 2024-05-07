@@ -14,6 +14,7 @@ import Slider from 'react-slick';
 import { useSortedItemsContext } from '../context/sortedItems/SortedItemsProvider';
 import { useGlobalContext } from '../context/bpikd/GlobalState';
 import Loader from './loader/Loader';
+import LoaderPage from './loader/LoaderPage';
 
 const GridItems = () => {
   const navigate = useNavigate();

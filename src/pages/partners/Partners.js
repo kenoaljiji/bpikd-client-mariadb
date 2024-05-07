@@ -4,6 +4,7 @@ import { useRouteContext } from '../../context/route/RouteProvider';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import './partners.scss';
 import Loader from '../../components/loader/Loader';
+import LoaderPage from '../../components/loader/LoaderPage';
 
 const Partners = () => {
   const { state } = useRouteContext();
@@ -20,7 +21,7 @@ const Partners = () => {
   return (
     <section className='partners'>
       {loading ? (
-        <Loader />
+        <LoaderPage />
       ) : (
         <div className='container'>
           <h2>{routes?.partners}</h2>

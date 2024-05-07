@@ -6,7 +6,6 @@
     flex-direction: row;
     display: flex;
     gap: 20px;
-    width: 100%;
 
     img {
       height: 335px;
@@ -62,12 +61,12 @@
 
   /* Style for the up arrow icon */
   .arrow.up::after {
-    content: "\25bc"; /* Unicode for upward arrow */
+    content: '\25bc'; /* Unicode for upward arrow */
   }
 
   /* Style for the down arrow icon */
   .arrow.down::after {
-    content: "\25b2"; /* Unicode for downward arrow */
+    content: '\25b2'; /* Unicode for downward arrow */
   }
 
   /* Style for the selected work item */
@@ -145,5 +144,9 @@
   }
   i {
     margin-bottom: 10px;
+  }
+
+  .loader-image {
+    width: 45px !important;
   }
 }

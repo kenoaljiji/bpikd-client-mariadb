@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
-import Loader from "../../components/loader/Loader";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import LoaderPage from '../../components/loader/LoaderPage';
 
 const PageTable = ({ loading, setLoading }) => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const PageTable = ({ loading, setLoading }) => {
     /* if (["Button1", "Button2", "About", "Shop", "Soon"].includes(category)) {
       listPages(setLoading, category);
     } */
-    if (category === "Partners") {
+    if (category === 'Partners') {
       getPartnersData(setLoading);
     }
   }, [category]);
@@ -30,14 +30,14 @@ const PageTable = ({ loading, setLoading }) => {
   };
 
   return (
-    <div className="container mt-5 custom-table">
+    <div className='container mt-5 custom-table'>
       {loading ? (
-        <Loader />
+        <LoaderPage />
       ) : (
-        <table className="table table-striped text-start">
+        <table className='table table-striped text-start'>
           <thead>
             <tr>
-              <th className="ps-4">Page Title</th>
+              <th className='ps-4'>Page Title</th>
               <th>Created By</th>
               <th>Date</th>
             </tr>
@@ -48,16 +48,16 @@ const PageTable = ({ loading, setLoading }) => {
                 `/admin/posts/create-edit/${category.toLowerCase()}/${post.id}`
               )
             }
-            style={{ cursor: "pointer" }}
+            style={{ cursor: 'pointer' }}
           >
             <tr key={post.id}>
-              <td className="ps-4 text-start d-flex">
-                <span className="w-75 d-flex align-items-center">
+              <td className='ps-4 text-start d-flex'>
+                <span className='w-75 d-flex align-items-center'>
                   {post.title}
                 </span>
 
-                <div className="action-icons">
-                  <i className="fa fa-edit"></i>
+                <div className='action-icons'>
+                  <i className='fa fa-edit'></i>
 
                   {/*  <i
                   className="fa fa-trash"
@@ -68,7 +68,7 @@ const PageTable = ({ loading, setLoading }) => {
 
               <>
                 <td>{post.createdBy}</td>
-                <td>{moment(post.updatedAt).format("DD MMMM YYYY")}</td>
+                <td>{moment(post.updatedAt).format('DD MMMM YYYY')}</td>
               </>
             </tr>
           </tbody>

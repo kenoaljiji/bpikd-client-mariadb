@@ -6,6 +6,7 @@ import { useRouteContext } from '../../context/route/RouteProvider';
 import { slugify } from '../../utils/slugify';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import Loader from '../../components/loader/Loader';
+import LoaderPage from '../../components/loader/LoaderPage';
 
 const PersonOfInterest = () => {
   const { state } = useRouteContext();
@@ -24,7 +25,7 @@ const PersonOfInterest = () => {
   return (
     <section className='persons'>
       {loading ? (
-        <Loader />
+        <LoaderPage />
       ) : (
         <div className='container'>
           <h2>{routes.person}</h2>

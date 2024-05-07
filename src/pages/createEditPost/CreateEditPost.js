@@ -38,6 +38,7 @@ const CreateEditPost = () => {
   const formRef = useRef();
 
   const [imageURL, setImageURL] = useState('');
+
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
   const [featuredImage, setFeaturedImage] = useState('');
@@ -108,20 +109,47 @@ const CreateEditPost = () => {
     }
   }, [postId, paramCategory]); // Include singlePost in the dependency array
 
+  const resetData = () => {
+    setInitialValues({
+      ...initialValues,
+      title: '',
+      visibility: 'Public',
+      publishTime: 'Now',
+      isPublished: 'Now' ? Boolean(true) : Boolean(false),
+      scheduledPublishTime: null,
+      externalSource: '',
+      content: '',
+      category: category,
+      featured: '',
+      ...(category === 'Person of Interest' && {
+        person: {
+          firstName: '',
+          lastName: '',
+          aboutPerson: '',
+          featured: '',
+        },
+      }),
+    });
+    togglePreviewMode(false);
+    previewSinglePost(null);
+    setUploadedFiles({
+      images: [],
+      audios: [],
+      videos: [],
+      documents: [],
+    });
+    setFeaturedImage(null);
+    setImageURL('');
+    setSelectedPerson('');
+  };
+
+  const categoryAndReset = (value) => {
+    const data = {};
+    setCategory(value);
+    resetData();
+  };
+
   useEffect(() => {
-    /*  if (category === 'News') {
-      setInitialValues({
-        title: singlePost?.title,
-        content: singlePost?.content,
-        person_id: singlePost?.person_id,
-        publishTime: singlePost?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
-        isPublished: singlePost?.isPublished,
-        scheduledPublishTime:
-          singlePost?.scheduledPublishTime &&
-          new Date(singlePost.scheduledPublishTime),
-        externalSource: singlePost?.externalSource,
-      });
-    } */
     if (singlePost && postId) {
       console.log(singlePost);
       // Ensures that singlePost is not null or empty
@@ -211,6 +239,12 @@ const CreateEditPost = () => {
       setUploadedFiles([]);
     }
   }, [singlePost, postId]);
+
+  /*  useEffect(() => {
+    if (category && !isPreview) {
+      setInitialValues({});
+    }
+  }, [category]); */
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -376,6 +410,7 @@ const CreateEditPost = () => {
 
   const handleChange = (event) => {
     const authorId = event.target.value;
+
     if (authorId) {
       const authorObject = authors.find((author) => author.id == authorId);
       const { firstName, lastName, featured, aboutPerson, id } = authorObject;
@@ -421,7 +456,7 @@ const CreateEditPost = () => {
             <select
               className=''
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => categoryAndReset(e.target.value)}
             >
               <option value='Person of Interest'>Person of Interest</option>
               <option value='News'>News</option>

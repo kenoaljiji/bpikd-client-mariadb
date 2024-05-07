@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 const SingleNews = () => {
   const { singlePost, getPostById } = useGlobalContext();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState();
 
   const { slug } = useParams();
 
@@ -30,7 +30,11 @@ const SingleNews = () => {
         <div className='news-body mt-3'>
           {singlePost?.featured && (
             <div className=''>
-              <img src={singlePost?.featured} alt='news'></img>
+              <img
+                src={singlePost?.featured}
+                alt='news'
+                className='single-post-image'
+              ></img>
             </div>
           )}
           <div className='news-description'>

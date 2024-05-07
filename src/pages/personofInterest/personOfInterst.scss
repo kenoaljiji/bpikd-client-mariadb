@@ -7,7 +7,16 @@
     }
   }
   .grid-5 {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, 170px);
+
+    .img-container {
+      width: 200px;
+
+      img {
+        height: 200px;
+        object-fit: cover;
+      }
+    }
 
     @media only screen and (max-width: 940px) {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

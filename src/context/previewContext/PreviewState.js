@@ -39,7 +39,7 @@ export const PreviewState = ({ children }) => {
       payload: data,
     });
 
-    await navigate('/admin/post/preview');
+    state.isPreview && (await navigate('/admin/post/preview'));
   };
 
   const togglePreviewMode = (bol) => {
@@ -52,7 +52,7 @@ export const PreviewState = ({ children }) => {
       payload: data,
     });
 
-    await navigate('/admin/news-page/preview');
+    state.isPreview && (await navigate('/admin/news-page/preview'));
   };
 
   const setCategory = (category) => {
