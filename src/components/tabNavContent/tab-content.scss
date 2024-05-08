@@ -1,6 +1,32 @@
 .tab-content {
   margin: 25px 0;
 
+  .counter-date {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-top: 70px;
+    bottom: -8px;
+    right: 2px;
+
+    i {
+      position: relative;
+      top: 5px;
+      color: #093a41;
+    }
+
+    span:first-child {
+      display: flex;
+      align-items: flex-end;
+    }
+
+    span:not(:first-child) {
+      display: flex;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+  }
+
   p {
     margin-bottom: 0;
     padding-bottom: 0;
@@ -35,7 +61,7 @@
     }
   }
 }
-.tab-content .realesed {
+.tab-content .realeses {
   a {
     display: inline-block !important;
   }
