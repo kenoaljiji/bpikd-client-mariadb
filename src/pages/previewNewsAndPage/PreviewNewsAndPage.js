@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import './previewPage.scss';
 import { ContentComponent } from '../../components/ContentComponent';
@@ -11,13 +11,16 @@ const PreviewNewsAndPage = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    togglePreviewMode(false);
+  }, []);
+
   return (
     <section className='single-news container'>
       <div className='preview-mode bg-gray text-end'>
         <button
           onClick={() => {
             navigate('/admin/posts/create-edit');
-            togglePreviewMode(false);
           }}
         >
           Exit Perview

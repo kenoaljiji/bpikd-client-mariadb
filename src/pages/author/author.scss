@@ -5,16 +5,61 @@
     padding-bottom: 65px;
     flex-direction: row;
     display: flex;
+    width: 100%;
     gap: 20px;
 
     img {
       height: 335px;
-      object-fit: contain;
+      object-fit: cover;
+      max-width: 300px;
+    }
+
+    .item-1 {
+      max-width: 300px;
+      flex-shrink: 0;
+    }
+
+    .item-2 {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+      p {
+        margin-bottom: 0;
+      }
+
+      .counter-date {
+        display: flex;
+        align-items: flex-end;
+        justify-content: end;
+        padding-top: 70px;
+        bottom: -8px;
+        right: 2px;
+
+        i {
+          position: relative;
+          top: 5px;
+          color: #093a41;
+        }
+
+        span:first-child {
+          display: flex;
+          align-items: flex-end;
+        }
+
+        span:not(:first-child) {
+          display: flex;
+          font-weight: 600;
+          margin-left: 4px;
+        }
+      }
     }
 
     @media only screen and (max-width: 940px) {
       flex-direction: column;
       height: auto;
+      max-width: 100%;
     }
   }
   img {

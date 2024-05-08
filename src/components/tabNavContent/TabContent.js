@@ -79,7 +79,16 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
       return (
         <div className='tab-content releases'>
           {selectedWork.content?.length > 0 ? (
-            <ContentComponent content={selectedWork?.content} />
+            <div>
+              <ContentComponent content={selectedWork?.content} />
+              <div className='counter-date' style={{ marginTop: '70px' }}>
+                <span>
+                  <i className='fa-solid fa-eye'></i>
+                </span>
+                <span>1.4K</span>
+                <span>8:30 01.Maj.2023</span>
+              </div>
+            </div>
           ) : (
             <p>There is no content</p>
           )}

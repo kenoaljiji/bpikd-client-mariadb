@@ -110,6 +110,10 @@ const Authors = () => {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    togglePreviewMode(false);
+  }, []);
+
   const { togglePreviewMode } = usePreviewContext();
 
   return (
@@ -119,7 +123,6 @@ const Authors = () => {
           <button
             onClick={() => {
               navigate('/admin/posts/create-edit');
-              togglePreviewMode(false);
             }}
           >
             Exit Perview
