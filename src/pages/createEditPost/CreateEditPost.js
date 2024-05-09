@@ -144,7 +144,6 @@ const CreateEditPost = () => {
   };
 
   const categoryAndReset = (value) => {
-    const data = {};
     setCategory(value);
     resetData();
   };
@@ -155,7 +154,7 @@ const CreateEditPost = () => {
       // Ensures that singlePost is not null or empty
       const data = singlePost; // Directly use singlePost as it is already available
       setInitialValues({
-        title: (data && data?.title) || 'Halo',
+        title: (data && data?.title) || '',
         visibility: data?.visibility || 'Public',
         publishTime: data?.publishTime || 'Now',
         isPublished:
@@ -166,9 +165,9 @@ const CreateEditPost = () => {
             : new Date(data?.scheduledPublishTime),
 
         externalSource: data.externalSource || '',
-        content: data.content || '',
+        content: data?.content || '',
         category: category,
-        featured: data.featured || '',
+        featured: data?.featured || '',
         ...(category === 'Person of Interest' && {
           person: {
             firstName: '',
@@ -178,6 +177,7 @@ const CreateEditPost = () => {
           },
         }),
       });
+      setImageURL(data?.featured || '');
     } else if (previewPost) {
       // Reset to defaults if no postId or singlePost is empty
 

@@ -1,49 +1,41 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Formik, Form, Field } from "formik";
-import * as Yup from "yup";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
-import AddImageIcon from "../../icons/AddImageIcon";
-import AddAudioIcon from "../../icons/AddAudioIcon";
-import AddVideoIcon from "../../icons/AddVideoIcon";
-import AddWordIcon from "../../icons/AddWordIcon";
-import "./personEditPost.scss";
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import MediaFileComponent from "../../components/mediaFileComponent/MediaFileComponent";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // for snow theme
-import Loader from "../../components/loader/Loader";
-import moment from "moment";
-import CreateEditPartners from "../createEditPartners/CreateEditPartners";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { localhost } from "../../config/config";
-import { LIST_SINGLE_POST, LIST_SINGLE_POST_FAIL } from "../../context/types";
-import { useAuthContext } from "../../context/auth/AuthState";
-import Alerts from "../../components/Alerts";
-import { useAlertContext } from "../../context/alert/AlertState";
+import React, { useEffect, useRef, useState } from 'react';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import AddImageIcon from '../../icons/AddImageIcon';
+import AddAudioIcon from '../../icons/AddAudioIcon';
+import AddVideoIcon from '../../icons/AddVideoIcon';
+import AddWordIcon from '../../icons/AddWordIcon';
+import './personEditPost.scss';
+import ReactDatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import MediaFileComponent from '../../components/mediaFileComponent/MediaFileComponent';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // for snow theme
+import Loader from '../../components/loader/Loader';
+import moment from 'moment';
+import CreateEditPartners from '../createEditPartners/CreateEditPartners';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import { LIST_SINGLE_POST, LIST_SINGLE_POST_FAIL } from '../../context/types';
+import { useAuthContext } from '../../context/auth/AuthState';
+import Alerts from '../../components/Alerts';
+import { useAlertContext } from '../../context/alert/AlertState';
 
 const PersonEditPage = () => {
-  const {
-    createPersonsPost,
-    createNewsAndPagePost,
-    category,
-    setCategory,
-    singlePost,
-    getPostById,
-    dispatch,
-  } = useGlobalContext();
+  const { category, setCategory, singlePost, dispatch } = useGlobalContext();
 
-  const [imageURL, setImageURL] = useState("");
+  const [imageURL, setImageURL] = useState('');
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
-  const [featuredImage, setFeaturedImage] = useState("");
+  const [featuredImage, setFeaturedImage] = useState('');
 
   const [media, setMedia] = useState([]);
   const [works, setWorks] = useState([singlePost?.works]);
 
   const [singleWork, setSingleWork] = useState();
-  const [selectedWorkId, setSelectedWorkId] = useState("");
+  const [selectedWorkId, setSelectedWorkId] = useState('');
 
   const { setAlert } = useAlertContext();
 
@@ -51,7 +43,7 @@ const PersonEditPage = () => {
 
   const { id: postId } = useParams();
 
-  const now = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  const now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
   const getPersonById = async (id) => {
     try {
@@ -90,28 +82,23 @@ const PersonEditPage = () => {
     /* console.log(featuredImage); */
 
     if (featuredImage instanceof Blob) {
-      formData.append("featuredImage", featuredImage, featuredImage.name);
+      formData.append('featuredImage', featuredImage, featuredImage.name);
     }
 
-    formData.append("data", JSON.stringify(data));
+    formData.append('data', JSON.stringify(data));
 
     try {
       setIsLoading(true);
 
       const res = await axios.put(`${localhost}/post/persons/${id}`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log(res);
-      setAlert("Person Updated", "success");
-      /* 
-      console.log(res);
-
-      console.log(res.data); */
+      setAlert('Person Updated', 'success');
     } catch (error) {
-      setAlert(error.message, "danger");
+      setAlert(error.message, 'danger');
       dispatch({
         type: LIST_SINGLE_POST_FAIL,
         payload:
@@ -120,53 +107,67 @@ const PersonEditPage = () => {
             : error.message,
       });
     }
+
     setIsLoading(false);
   };
 
   useEffect(() => {
     if (postId) {
-      getPersonById(postId, "persons", setIsLoading);
+      getPersonById(postId, 'persons', setIsLoading);
     }
   }, [postId]);
 
   const [initialValues, setInitialValues] = useState({
-    firstName: singlePost.firstName || "",
-    lastName: singlePost.lastName || "",
-    aboutPerson: singlePost.aboutPerson || "",
-    featured: singlePost.featured || "",
+    firstName: singlePost?.firstName || '',
+    lastName: singlePost?.lastName || '',
+    aboutPerson: singlePost?.aboutPerson || '',
+    featured: singlePost?.featured || '',
   });
 
   const [initialValuesWork, setInitialValuesWork] = useState({
-    title: singleWork?.title || "",
-    content: singleWork?.content || "",
-    person_id: singleWork?.person_id || "",
-    publishTime: singleWork?.publishTime || "Now", // Adjust logic for handling "Now" if necessary
+    title: singleWork?.title || '',
+    content: singleWork?.content || '',
+    person_id: singleWork?.person_id || '',
+    publishTime: singleWork?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
     isPublished: singleWork?.isPublished || true,
     scheduledPublishTime:
-      singleWork?.publishTime === "Now"
+      singleWork?.publishTime === 'Now'
         ? null
         : new Date(singleWork?.scheduledPublishTime),
-    externalSource: singleWork?.externalSource || "",
+    externalSource: singleWork?.externalSource || '',
   });
 
   useEffect(() => {
     if (singlePost && postId) {
       console.log(singlePost);
       setImageURL(singlePost.featured);
+      console.log(works);
     }
   }, [singlePost, postId]);
 
   useEffect(() => {
-    console.log("Checking singlePost:", singlePost);
+    console.log('Checking singlePost:', singlePost);
 
     if (singlePost) {
       // Ensures that singlePost is not null or empty
-
       setInitialValues({
         firstName: singlePost.firstName,
         lastName: singlePost.lastName,
         aboutPerson: singlePost.aboutPerson,
         featured: singlePost.featured,
+      });
+
+      setInitialValuesWork({
+        title: singleWork?.title,
+        content: singleWork?.content,
+        person_id: singleWork?.person_id,
+        publishTime: singleWork?.publishTime, // Adjust logic for handling "Now" if necessary
+        isPublished: singleWork?.isPublished,
+        scheduledPublishTime:
+          singleWork?.publishTime === 'Now'
+            ? null
+            : new Date(singleWork?.scheduledPublishTime),
+        externalSource: singleWork?.externalSource,
       });
     }
   }, [postId, singlePost]); // Include singlePost in the dependency array
@@ -190,9 +191,22 @@ const PersonEditPage = () => {
     documents: [],
   });
 
-  useEffect(() => {
+  const checkFilesNotEmpty = (uploadedFiles) => {
+    // Destructure each file type array from the state
+    const { images, audios, videos, documents } = uploadedFiles;
+
+    // Check if each array is not empty
+    return (
+      images.length > 0 &&
+      audios.length > 0 &&
+      videos.length > 0 &&
+      documents.length > 0
+    );
+  };
+
+  /* useEffect(() => {
     console.log(uploadedFiles);
-  }, [uploadedFiles]);
+  }, [uploadedFiles]); */
 
   // Handling multiple file uploads
   const handleFileUpload = (event, fileType) => {
@@ -209,7 +223,7 @@ const PersonEditPage = () => {
     }));
 
     const targetKey =
-      fileType === "words" || fileType === "pdfs" ? "documents" : fileType;
+      fileType === 'words' || fileType === 'pdfs' ? 'documents' : fileType;
 
     setUploadedFiles((prev) => ({
       ...prev,
@@ -218,17 +232,17 @@ const PersonEditPage = () => {
   };
 
   const clearImage = () => {
-    setFeaturedImage("");
-    setImageURL(""); // Clear image preview
+    setFeaturedImage('');
+    setImageURL(''); // Clear image preview
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input
+      fileInputRef.current.value = ''; // Reset file input
     }
   };
 
   const personValidationSchema = Yup.object().shape({
-    firstName: Yup.string().required("First name is required"),
-    lastName: Yup.string().required("Last name is required"),
-    aboutPerson: Yup.string().required("About person is required"),
+    firstName: Yup.string().required('First name is required'),
+    lastName: Yup.string().required('Last name is required'),
+    aboutPerson: Yup.string().required('About person is required'),
   });
 
   // Base validation schema
@@ -236,10 +250,10 @@ const PersonEditPage = () => {
   // Validation schema
 
   const worksSchema = Yup.object().shape({
-    title: Yup.string().required("Title is required"),
+    title: Yup.string().required('Title is required'),
     externalSource: Yup.string(),
     publishTime: Yup.string(),
-    content: Yup.string().required("Content is required"),
+    content: Yup.string().required('Content is required'),
     scheduledPublishTime: Yup.date(),
     isPublished: Yup.boolean(),
     category: Yup.string(),
@@ -258,16 +272,16 @@ const PersonEditPage = () => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
       [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
       ],
-      ["link", "image"], // Link and image insertion
+      ['link', 'image'], // Link and image insertion
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      ["clean"], // remove formatting button
+      ['clean'], // remove formatting button
     ],
   };
 
@@ -279,16 +293,17 @@ const PersonEditPage = () => {
       );
 
       setSingleWork(response.data);
+
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
 
-      console.error("Error fetching work details:", err);
+      console.error('Error fetching work details:', err);
     }
   };
 
   useEffect(() => {
-    if (selectedWorkId !== "") {
+    if (selectedWorkId !== '') {
       fetchWorkDetails(selectedWorkId);
     }
     console.log(singleWork);
@@ -296,10 +311,10 @@ const PersonEditPage = () => {
 
   useEffect(() => {
     setInitialValuesWork({
-      title: singleWork?.title || "",
-      content: singleWork?.content || "",
+      title: singleWork?.title || '',
+      content: singleWork?.content || '',
       person_id: singleWork?.person_id,
-      publishTime: singleWork?.publishTime || "Now", // Adjust logic for handling "Now" if necessary
+      publishTime: singleWork?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
       isPublished: singleWork?.isPublished,
       scheduledPublishTime:
         singleWork?.scheduledPublishTime &&
@@ -307,7 +322,8 @@ const PersonEditPage = () => {
       externalSource: singleWork?.externalSource,
     });
     if (singleWork) {
-      setUploadedFiles(singleWork.media);
+      setUploadedFiles(singleWork?.media);
+      console.log(singleWork.media);
     }
   }, [singleWork]);
 
@@ -319,12 +335,12 @@ const PersonEditPage = () => {
       );
 
       getPersonById(postId);
-      setSelectedWorkId("");
+      setSelectedWorkId('');
       alert(response.data.message);
     } catch (error) {
-      console.error("Error deleting work:", error);
+      console.error('Error deleting work:', error);
       alert(
-        "Failed to delete work: " +
+        'Failed to delete work: ' +
           (error.response ? error.response.data.error : error.message)
       );
     }
@@ -337,13 +353,13 @@ const PersonEditPage = () => {
     Object.keys(uploadedFiles).forEach((type) => {
       // Map the type to the expected form field name
       const fieldName =
-        type === "images"
-          ? "images"
-          : type === "videos"
-          ? "videos"
-          : type === "audios"
-          ? "audios"
-          : "documents"; // Adjust based on actual keys if different
+        type === 'images'
+          ? 'images'
+          : type === 'videos'
+          ? 'videos'
+          : type === 'audios'
+          ? 'audios'
+          : 'documents'; // Adjust based on actual keys if different
 
       uploadedFiles[type].forEach((file, index) => {
         if (file.isNew) {
@@ -366,29 +382,39 @@ const PersonEditPage = () => {
         formData
       );
 
-      setAlert("Update successful:", "success");
+      setAlert('Update successful:', 'success');
     } catch (error) {
-      setAlert("Error updating", "danger");
+      setAlert('Error updating', 'danger');
     }
     setIsLoading(false);
   };
 
+  const allFilesUploaded = () => {
+    const { images, audios, videos, documents } = uploadedFiles;
+    return (
+      images.length > 0 &&
+      audios.length > 0 &&
+      videos.length > 0 &&
+      documents.length > 0
+    );
+  };
+
   return (
-    <div className="post">
-      <h2 className="text-center mt-5 mb-2">
-        {postId ? "Edit Post" : "Add New Post"}
+    <div className='post'>
+      <h2 className='text-center mt-5 mb-2'>
+        {postId ? 'Edit Post' : 'Add New Post'}
       </h2>
       {!postId && (
-        <div className="post-category bg-gray ">
-          <div className="category-select d-flex align-items-center p-1">
+        <div className='post-category bg-gray '>
+          <div className='category-select d-flex align-items-center p-1'>
             <label>Select category:</label>
             <select
-              className=""
+              className=''
               value={category}
               onChange={(e) => setCategory(e.target.value)}
             >
-              <option value="Person of Interest">Person of Interest</option>
-              <option value="News">News</option>
+              <option value='Person of Interest'>Person of Interest</option>
+              <option value='News'>News</option>
               {/* <option value="Partners">Partners</option>
               <option value="About">About</option>
               <option value="Button1">Button1Page</option>
@@ -399,77 +425,84 @@ const PersonEditPage = () => {
           </div>
         </div>
       )}
-      <div className="container mt-5">
+      <div className='container mt-5'>
         <h4>{category}</h4>
       </div>
 
-      <div className="position-relative">
+      <div className='position-relative'>
         {loading ? (
           <Loader />
         ) : (
           <>
-            <div className="container mt-5">
+            <div className='container mt-5'>
               <Formik
                 initialValues={initialValues}
                 validationSchema={personValidationSchema}
                 enableReinitialize={true}
-                onSubmit={(values) => {
-                  /*     console.log(values); */
-                  updatePersonById(postId, values);
+                onSubmit={(values, { setSubmitting }) => {
+                  updatePersonById(postId, values)
+                    .then(() => {
+                      getPersonById(postId); // Fetch latest person data after update
+                      setSubmitting(false); // Set submitting to false after operation
+                    })
+                    .catch((error) => {
+                      console.error('Error updating person:', error);
+                      setSubmitting(false); // Ensure submitting is set to false on error as well
+                    });
                 }}
               >
                 {({ setFieldValue, values }) => (
                   <Form>
-                    <div className="row">
-                      <div className="col-md-8">
+                    <div className='row'>
+                      <div className='col-md-8'>
                         {/* First Column */}
                         <div
                           style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "20px",
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '20px',
                           }}
                         >
                           <>
-                            <div className="d-flex">
-                              <div className="d-flex me-2 align-items-center">
-                                <label className="flex-shrink-0 me-2">
+                            <div className='d-flex'>
+                              <div className='d-flex me-2 align-items-center'>
+                                <label className='flex-shrink-0 me-2'>
                                   First Name:
                                 </label>
                                 <Field
-                                  className="form-control"
-                                  name="firstName"
+                                  className='form-control'
+                                  name='firstName'
                                 />
                               </div>
-                              <div className="d-flex ms-3 align-items-center">
-                                <label className="flex-shrink-0 me-2">
+                              <div className='d-flex ms-3 align-items-center'>
+                                <label className='flex-shrink-0 me-2'>
                                   Last Name:
                                 </label>
                                 <Field
-                                  className="form-control"
-                                  name="lastName"
+                                  className='form-control'
+                                  name='lastName'
                                 />
                               </div>
                             </div>
 
                             <Field
-                              as="textarea"
-                              className="form-control"
-                              style={{ padding: "20px", minHeight: "270px" }}
-                              name="aboutPerson"
-                              placeholder="About person"
+                              as='textarea'
+                              className='form-control'
+                              style={{ padding: '20px', minHeight: '270px' }}
+                              name='aboutPerson'
+                              placeholder='About person'
                             />
                           </>
                         </div>
                       </div>
-                      <div className="col-md-4 ">
-                        <div className="featured">
-                          {imageURL && imageURL !== "" && (
+                      <div className='col-md-4 '>
+                        <div className='featured'>
+                          {imageURL && imageURL !== '' && (
                             <div
-                              className="featured-close"
+                              className='featured-close'
                               onClick={() => clearImage()}
                             >
-                              <i class="fa-solid fa-trash"></i>
+                              <i class='fa-solid fa-trash'></i>
                             </div>
                           )}
 
@@ -477,52 +510,52 @@ const PersonEditPage = () => {
                           {imageURL ? (
                             <img
                               src={imageURL}
-                              alt="Featured"
+                              alt='Featured'
                               style={{
-                                width: "305px",
-                                height: "250px",
-                                objectFit: "cover",
+                                width: '305px',
+                                height: '250px',
+                                objectFit: 'cover',
                               }}
                             />
                           ) : (
                             <div
                               style={{
-                                width: "305px",
-                                height: "250px",
-                                border: "2px dashed #ccc",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
+                                width: '305px',
+                                height: '250px',
+                                border: '2px dashed #ccc',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                               }}
                             >
                               <span>Add Featured Image</span>
                             </div>
                           )}
                           <input
-                            type="file"
-                            id="featured-image-upload"
-                            style={{ display: "none" }}
+                            type='file'
+                            id='featured-image-upload'
+                            style={{ display: 'none' }}
                             ref={fileInputRef}
                             onChange={handleImageUpload}
-                            accept="image/*" // Accept images only
+                            accept='image/*' // Accept images only
                           />
                           <label
-                            htmlFor="featured-image-upload"
-                            className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
+                            htmlFor='featured-image-upload'
+                            className='featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer'
                           >
-                            <div className="add-image-placeholder">
-                              <i className="fas fa-plus"></i>{" "}
+                            <div className='add-image-placeholder'>
+                              <i className='fas fa-plus'></i>{' '}
                               <span>ADD FEATURE IMAGE</span>
                             </div>
                           </label>
-                          <div className="button-container my-1">
+                          <div className='button-container my-1'>
                             <button
-                              type="submit"
-                              className="btn btn-primary d-block"
+                              type='submit'
+                              className='btn btn-primary d-block'
                             >
                               UPDATE PERSON
                             </button>
-                            <div className="mt-3">{loading && <Loader />}</div>
+                            <div className='mt-3'>{loading && <Loader />}</div>
                             <Alerts />
                           </div>
                         </div>
@@ -532,14 +565,14 @@ const PersonEditPage = () => {
                 )}
               </Formik>
             </div>
-            <div className="work-media container">
-              <div className="work-title-select">
+            <div className='work-media container'>
+              <div className='work-title-select'>
                 <select
                   value={selectedWorkId}
                   onChange={(event) => setSelectedWorkId(event.target.value)}
-                  className="form-control px-2"
+                  className='form-control px-2'
                 >
-                  <option value="">Select a Title</option>
+                  <option value=''>Select a Title</option>
                   {works?.map((work) => (
                     <>
                       <option key={work?.workId} value={work?.workId}>
@@ -550,7 +583,7 @@ const PersonEditPage = () => {
                 </select>
                 {selectedWorkId && (
                   <button
-                    className="btn btn-danger me-2 p-1 border-0"
+                    className='btn btn-danger me-2 p-1 border-0'
                     onClick={() => handleDelete(selectedWorkId)}
                   >
                     Delete
@@ -561,7 +594,7 @@ const PersonEditPage = () => {
                 <Formik
                   initialValues={initialValuesWork}
                   enableReinitialize={true}
-                  onSubmit={async (values) => {
+                  onSubmit={async (values, { setSubmitting }) => {
                     let submissionData = { ...values };
 
                     submissionData = {
@@ -570,10 +603,10 @@ const PersonEditPage = () => {
                       category: category,
                       publishTime: submissionData.publishTime,
                       scheduledPublishTime:
-                        submissionData.publishTime === "Now"
+                        submissionData.publishTime === 'Now'
                           ? now // Use formatted current time if "Now"
                           : moment(submissionData.scheduledPublishTime).format(
-                              "YYYY-MM-DD HH:mm:ss"
+                              'YYYY-MM-DD HH:mm:ss'
                             ), // Format existing date
                       externalSource: submissionData.externalSource
                         ? submissionData.externalSource
@@ -582,79 +615,96 @@ const PersonEditPage = () => {
                       isPublished: isPublished,
                     };
 
-                    const res = await axios.put(
+                    /* const res = await axios.put(
                       `${localhost}/post/persons/work/${singleWork.id}`,
                       submissionData
                     );
-                    uploadFiles();
+                    uploadFiles(); */
+
+                    try {
+                      const res = await axios.put(
+                        `${localhost}/post/persons/work/${singleWork.id}`,
+                        submissionData
+                      );
+
+                      await uploadFiles();
+
+                      await fetchWorkDetails(singleWork.id);
+                      await getPersonById(postId);
+                      // Fetch the person data after update
+                    } catch (error) {
+                      console.error('Error during form submission:', error);
+                    } finally {
+                      setSubmitting(false); // Ensure to turn off submitting state in any case
+                    }
                   }}
                 >
                   {({ setFieldValue, values }) => (
                     <Form>
-                      <div className="row">
-                        <div className="col-md-8">
+                      <div className='row'>
+                        <div className='col-md-8'>
                           <Field
-                            as="textarea"
-                            className="form-control mb-1"
-                            style={{ padding: "20px", height: "280px" }}
-                            name="title"
-                            placeholder="Title"
+                            as='textarea'
+                            className='form-control mb-1'
+                            style={{ padding: '20px', height: '280px' }}
+                            name='title'
+                            placeholder='Title'
                           />
-                          <div className="file-upload-grid">
+                          <div className='file-upload-grid'>
                             {[
                               {
-                                type: "Image",
-                                fileType: "images",
+                                type: 'Image',
+                                fileType: 'images',
                                 Icon: AddImageIcon,
                               },
                               {
-                                type: "Audio",
-                                fileType: "audios",
+                                type: 'Audio',
+                                fileType: 'audios',
                                 Icon: AddAudioIcon,
                               },
                               {
-                                type: "Video",
-                                fileType: "videos",
+                                type: 'Video',
+                                fileType: 'videos',
                                 Icon: AddVideoIcon,
                               },
                               {
-                                type: "Word",
-                                fileType: "documents",
+                                type: 'Word',
+                                fileType: 'documents',
                                 Icon: AddWordIcon,
                               },
                             ].map(({ type, fileType, Icon }) => {
                               const hasFiles =
                                 uploadedFiles[fileType].length > 0;
                               const iconColor = hasFiles
-                                ? "#198754"
-                                : "#093A41"; // Example: Green if files exist, otherwise black
+                                ? '#198754'
+                                : '#093A41'; // Example: Green if files exist, otherwise black
 
                               return (
-                                <div className="items" key={type}>
-                                  <div className="items-box">
+                                <div className='items' key={type}>
+                                  <div className='items-box'>
                                     <input
-                                      type="file"
+                                      type='file'
                                       multiple // Allow multiple file selection
                                       id={`file-upload-${fileType}`}
-                                      style={{ display: "none" }}
+                                      style={{ display: 'none' }}
                                       onChange={(e) =>
                                         handleFileUpload(e, fileType)
                                       }
                                       accept={
-                                        fileType === "images"
-                                          ? "image/*"
-                                          : fileType === "audios"
-                                          ? "audio/*"
-                                          : fileType === "videos"
-                                          ? "video/*"
-                                          : fileType === "documents"
-                                          ? ".pdf, .doc, .docx" // Accept both PDF and Word documents
-                                          : ""
+                                        fileType === 'images'
+                                          ? 'image/*'
+                                          : fileType === 'audios'
+                                          ? 'audio/*'
+                                          : fileType === 'videos'
+                                          ? 'video/*'
+                                          : fileType === 'documents'
+                                          ? '.pdf, .doc, .docx' // Accept both PDF and Word documents
+                                          : ''
                                       }
                                     />
                                     <label
                                       htmlFor={`file-upload-${fileType}`}
-                                      className="file-upload-label"
+                                      className='file-upload-label'
                                     >
                                       <div>
                                         <Icon color={iconColor} />
@@ -671,62 +721,62 @@ const PersonEditPage = () => {
                             })}
                           </div>
                         </div>
-                        <div className="col-md-4">
-                          <div className="border mt-4">
+                        <div className='col-md-4'>
+                          <div className='border mt-4'>
                             {/* Other form fields */}
-                            <div className="d-flex justify-content-between align-items-center px-2 py-2 border-0">
-                              <label className="w-50">Publish:</label>
+                            <div className='d-flex justify-content-between align-items-center px-2 py-2 border-0'>
+                              <label className='w-50'>Publish:</label>
                               <Field
-                                as="select"
-                                name="publishTime"
-                                className="select"
+                                as='select'
+                                name='publishTime'
+                                className='select'
                                 onChange={(e) => {
                                   const { value } = e.target;
-                                  setFieldValue("publishTime", value);
-                                  if (value === "Now") {
+                                  setFieldValue('publishTime', value);
+                                  if (value === 'Now') {
                                     // Clear the scheduledPublishTime if Now is selected
-                                    setFieldValue("scheduledPublishTime", null);
+                                    setFieldValue('scheduledPublishTime', null);
                                   }
                                 }}
                               >
-                                <option value="Now">Now</option>
-                                <option value="Scheduled">Scheduled</option>
+                                <option value='Now'>Now</option>
+                                <option value='Scheduled'>Scheduled</option>
                               </Field>
                             </div>
-                            {values.publishTime === "Scheduled" && (
+                            {values.publishTime === 'Scheduled' && (
                               <ReactDatePicker
                                 selected={values.scheduledPublishTime}
                                 onChange={(date) =>
-                                  setFieldValue("scheduledPublishTime", date)
+                                  setFieldValue('scheduledPublishTime', date)
                                 }
                                 showTimeSelect
-                                dateFormat="Pp"
-                                className="form-control mb-2 mx-2"
-                                placeholderText="Select date"
-                                style={{ cursor: "pointer" }}
+                                dateFormat='Pp'
+                                className='form-control mb-2 mx-2'
+                                placeholderText='Select date'
+                                style={{ cursor: 'pointer' }}
                               />
                             )}
                             <div
-                              className="border-0 border-top pb-2 px-2"
-                              style={{ paddingTop: "10px" }}
+                              className='border-0 border-top pb-2 px-2'
+                              style={{ paddingTop: '10px' }}
                             >
                               <label>External source:</label>
                               <Field
-                                className="form-control mt-2"
-                                name="externalSource"
+                                className='form-control mt-2'
+                                name='externalSource'
                               />
                             </div>
 
-                            <div className="button-container px-2 my-3">
+                            <div className='button-container px-2 my-3'>
                               <button
-                                type="button"
-                                className="me-2 w-100 d-block"
+                                type='button'
+                                className='me-2 w-100 d-block'
                               >
                                 PREVIEW
                               </button>
                               <button
-                                type="submit"
-                                className="btn btn-primary d-block"
+                                type='submit'
+                                className='btn btn-primary d-block'
                               >
                                 UPDATE TITLE
                               </button>
@@ -737,11 +787,11 @@ const PersonEditPage = () => {
 
                       <div>
                         <ReactQuill
-                          className="react-quill"
-                          theme="snow"
+                          className='react-quill'
+                          theme='snow'
                           value={values.content}
                           onChange={(content) =>
-                            setFieldValue("content", content)
+                            setFieldValue('content', content)
                           }
                           modules={modules}
                         />

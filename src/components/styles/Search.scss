@@ -1,16 +1,19 @@
 .search {
+  margin-top: 78px;
+  margin-bottom: 80px;
+
   form {
-    max-width: 700px;
+    max-width: 671.6px;
     margin: 0 auto;
   }
-  svg {
+  img {
     position: absolute;
-    right: 16px;
-    top: 14px;
+    right: 11px;
+    top: 13px;
     background-repeat: no-repeat;
     background-size: 20px;
     background-position: 0.5em 50%;
-    width: 20px;
+    width: 19px;
     cursor: pointer;
   }
 
@@ -24,8 +27,9 @@
     border: #cccccc 1px solid;
     border-radius: 4px;
     color: #7d939f;
-    font-size: 1.1em;
+    font-size: 1.2em;
     font-weight: normal;
+    height: 53.8px;
     letter-spacing: 2px;
     outline: 0;
     padding: 0.7em 1.7em 0.7em 1em !important;

@@ -35,13 +35,19 @@
 
   .teaser {
     display: table-cell;
-    height: 120px;
+    height: 130px;
     vertical-align: middle;
+
+    img {
+      height: 120px;
+      object-fit: contain;
+    }
   }
   .grid {
     display: grid;
+    padding: 0 70px;
     grid-template-columns: repeat(5, 1fr);
-    gap: 40px;
+    gap: 20px;
     align-items: center;
 
     @media only screen and (max-width: 1024px) {

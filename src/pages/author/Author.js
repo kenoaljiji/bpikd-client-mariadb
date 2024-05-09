@@ -170,7 +170,7 @@ const Authors = () => {
                         <i className='fa-solid fa-eye'></i>
                       </span>
                       <span>1.4K</span>
-                      <span>8:30 12.Maj.2023</span>
+                      <span>8:30h 12.Maj.2023</span>
                     </div>
                   </div>
                 </div>

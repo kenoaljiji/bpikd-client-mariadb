@@ -6,7 +6,7 @@ $success: #0c9200;
 
 @media (min-width: 1400px) {
   .container {
-    max-width: 1140px !important;
+    max-width: 1068px !important;
   }
 }
 @media (min-width: 1200px) {
@@ -25,6 +25,7 @@ body {
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: 400; /* Apply the light font weight */
   letter-spacing: 1px;
+  overflow-x: hidden;
 }
 
 p {
