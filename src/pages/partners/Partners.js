@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { footerCompanies } from '../../helpers/people';
-import { useRouteContext } from '../../context/route/RouteProvider';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import { useRouteContext } from '../../context/route/RouteProvider';
+import { footerCompanies } from '../../helpers/people';
 import './partners.scss';
-import Loader from '../../components/loader/Loader';
-import LoaderPage from '../../components/loader/LoaderPage';
 
 const Partners = () => {
   const { state } = useRouteContext();
@@ -20,23 +18,15 @@ const Partners = () => {
 
   return (
     <section className='partners'>
-      {loading ? (
-        <LoaderPage />
-      ) : (
-        <div className='container'>
-          <h2>{routes?.partners}</h2>
+      <div className='container'>
+        {partners.length > 0 && <h2>{routes?.partners}</h2>}
 
-          <div className='grid grid-5 items-center mt-4'>
-            {partners.length > 0 ? (
-              partners.map((img) => (
-                <img src={img.imagePath} alt={'partners-' + img.id} />
-              ))
-            ) : (
-              <p> There is no partners data</p>
-            )}
-          </div>
+        <div className='grid grid-5 items-center mt-4'>
+          {partners?.map((img) => (
+            <img src={img.imagePath} alt={'partners-' + img.id} />
+          ))}
         </div>
-      )}
+      </div>
     </section>
   );
 };

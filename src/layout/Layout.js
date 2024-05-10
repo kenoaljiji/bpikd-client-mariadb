@@ -35,7 +35,7 @@ function Layout({ children }) {
           </div>
         </>
       )}
-      <main>
+      <main style={{ minHeight: pathname === '/' ? '1366.43px' : '' }}>
         <Outlet />
       </main>
       {shouldRenderHeaderFooter() && <Footer />}{' '}

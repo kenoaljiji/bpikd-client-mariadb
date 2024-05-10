@@ -11,48 +11,46 @@ const Navbar = () => {
   const { headersData } = state;
   const { routes, buttons } = headersData;
 
+  const CustomLink = ({ to, children }) => {
+    const handleClick = (event) => {
+      event.preventDefault(); // Prevent Link default behavior
+      window.location.href = to; // Manually change the location to force reload
+    };
+
+    return (
+      <Link to={to} onClick={handleClick} className={styles['navbar-link']}>
+        {children}
+      </Link>
+    );
+  };
+
   return (
     <div className={styles.navbar}>
       <ul className={styles['navbar-list']}>
         <li className={styles['navbar-item']}>
-          <Link
-            to={transformPath(routes.person)}
-            className={styles['navbar-link']}
-          >
+          <CustomLink to={'/' + transformPath(routes.person)}>
             {routes.person}
-          </Link>
+          </CustomLink>
         </li>
         <li className={styles['navbar-item']}>
-          <Link
-            to={transformPath(routes.soon)}
-            className={styles['navbar-link']}
-          >
+          <CustomLink to={'/' + transformPath(routes.soon)}>
             {routes.soon}
-          </Link>
+          </CustomLink>
         </li>
         <li className={styles['navbar-item']}>
-          <Link
-            to={transformPath(routes.news)}
-            className={styles['navbar-link']}
-          >
+          <CustomLink to={'/' + transformPath(routes.news)}>
             {routes.news}
-          </Link>
+          </CustomLink>
         </li>
         <li className={styles['navbar-item']}>
-          <Link
-            to={transformPath(routes.about)}
-            className={styles['navbar-link']}
-          >
+          <CustomLink to={'/' + transformPath(routes.about)}>
             {routes.about}
-          </Link>
+          </CustomLink>
         </li>
         <li className={styles['navbar-item']}>
-          <Link
-            to={transformPath(routes.partners)}
-            className={styles['navbar-link']}
-          >
+          <CustomLink to={'/' + transformPath(routes.partners)}>
             {routes.partners}
-          </Link>
+          </CustomLink>
         </li>
       </ul>
     </div>
@@ -60,3 +58,42 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+/*  <div className={styles.navbar}>
+   <ul className={styles['navbar-list']}>
+     <li className={styles['navbar-item']}>
+       <Link
+         to={transformPath(routes.person)}
+         className={styles['navbar-link']}
+       >
+         {routes.person}
+       </Link>
+       <CustomLink to={transformPath(routes.person)}>
+         {routes.person}
+       </CustomLink>
+     </li>
+     <li className={styles['navbar-item']}>
+       <Link to={transformPath(routes.soon)} className={styles['navbar-link']}>
+         {routes.soon}
+       </Link>
+     </li>
+     <li className={styles['navbar-item']}>
+       <Link to={transformPath(routes.news)} className={styles['navbar-link']}>
+         {routes.news}
+       </Link>
+     </li>
+     <li className={styles['navbar-item']}>
+       <Link to={transformPath(routes.about)} className={styles['navbar-link']}>
+         {routes.about}
+       </Link>
+     </li>
+     <li className={styles['navbar-item']}>
+       <Link
+         to={transformPath(routes.partners)}
+         className={styles['navbar-link']}
+       >
+         {routes.partners}
+       </Link>
+     </li>
+   </ul>
+ </div>; */

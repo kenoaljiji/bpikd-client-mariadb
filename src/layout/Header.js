@@ -20,10 +20,25 @@ const Header = ({ handleClick, isActive }) => {
     left: isActive ? '10px' : '-6px',
   };
 
+  const CustomLink = ({ to, children }) => {
+    const handleClick = (event) => {
+      event.preventDefault(); // Prevent Link default behavior
+      window.location.href = to; // Manually change the location to force reload
+    };
+
+    return (
+      <Link to={to} onClick={handleClick}>
+        {children}
+      </Link>
+    );
+  };
+
   return (
     <header
       className='header'
-      style={{ borderBottom: pathname !== '/' && '1px solid #eee' }}
+      style={{
+        borderBottom: pathname !== '/' && '1px solid #dedede',
+      }}
     >
       <div className='d-flex justify-content-between'>
         <div className='col-sm d-flex'>
@@ -39,14 +54,14 @@ const Header = ({ handleClick, isActive }) => {
             <span className={`bar bar-middle ${isActive ? 'hide' : ''}`} />
             <span className={`bar bar-bottom ${isActive ? 'animate2' : ''}`} />
           </div>
-          <Link to='/'>
+          <CustomLink to={'/'}>
             <img
               src={logoImgPath ? logoImgPath : '/assets/images/logo.png'}
               alt='Logo'
               className='d-inline-block align-top mt-1 logo'
               width='100px'
             />
-          </Link>
+          </CustomLink>
           <Navbar />
         </div>
 
@@ -58,24 +73,24 @@ const Header = ({ handleClick, isActive }) => {
               <button
                 type='button'
                 className=''
-                onClick={() => navigate(routes?.shop)}
+                onClick={() => (window.location.href = '/' + routes?.shop)}
               >
                 {routes?.shop}
               </button>
               <button
                 type='button'
                 className='button1'
-                onClick={() => navigate(buttons.button1)}
+                onClick={() => (window.location.href = '/' + buttons?.button1)}
               >
                 {/* Donat e*/}
-                {buttons.button1}
+                {buttons?.button1}
               </button>
               <button
                 type='button'
                 className='button2 btn-last'
-                onClick={() => navigate(buttons.button2)}
+                onClick={() => (window.location.href = '/' + buttons?.button2)}
               >
-                {buttons.button2}
+                {buttons?.button2}
               </button>
             </div>
           </div>

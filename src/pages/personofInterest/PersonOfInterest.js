@@ -11,6 +11,10 @@ import LoaderPage from '../../components/loader/LoaderPage';
 const PersonOfInterest = () => {
   const { state } = useRouteContext();
 
+  useEffect(() => {
+    listAuthors(setLoading);
+  }, []);
+
   const [loading, setLoading] = useState(false);
 
   const { routes } = state.headersData;
@@ -18,48 +22,36 @@ const PersonOfInterest = () => {
 
   const { listAuthors, authors } = useGlobalContext();
 
-  useEffect(() => {
-    listAuthors(setLoading);
-  }, []);
-
   return (
     <section className='persons'>
-      {loading ? (
-        <LoaderPage />
-      ) : (
-        <div className='container'>
-          <h2>{routes.person}</h2>
-          <div
-            className='grid grid-5'
-            style={{ columnGap: '18px', rowGap: '25px' }}
-          >
-            {authors?.map((author, index) => {
-              return (
-                <div
-                  key={'aut456' + author._id}
-                  className='img-container'
-                  onClick={() =>
-                    navigate(
-                      `/person/${slugify(
-                        author.firstName + '-' + author.lastName
-                      )}`
-                    )
-                  }
-                >
-                  <img
-                    src={author.featured}
-                    alt=''
-                    className='img-fluid w-100'
-                  />
-                  <h5>
-                    {author.firstName} <br /> {author.lastName}
-                  </h5>
-                </div>
-              );
-            })}
-          </div>
+      <div className='container'>
+        <h2>{routes.person}</h2>
+        <div
+          className='grid grid-5'
+          style={{ columnGap: '18px', rowGap: '25px' }}
+        >
+          {authors?.map((author, index) => {
+            return (
+              <div
+                key={'aut456' + author._id}
+                className='img-container'
+                onClick={() =>
+                  navigate(
+                    `/person/${slugify(
+                      author.firstName + '-' + author.lastName
+                    )}`
+                  )
+                }
+              >
+                <img src={author.featured} alt='' className='img-fluid w-100' />
+                <h5>
+                  {author.firstName} <br /> {author.lastName}
+                </h5>
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </section>
   );
 };

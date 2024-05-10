@@ -111,10 +111,13 @@ const Authors = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    togglePreviewMode(false);
+    if (isPreview)
+      setTimeout(() => {
+        togglePreviewMode(false);
+      }, 150);
   }, []);
 
-  const { togglePreviewMode } = usePreviewContext();
+  const { togglePreviewMode, isPreview } = usePreviewContext();
 
   return (
     <section className='author'>

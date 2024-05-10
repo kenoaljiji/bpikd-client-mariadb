@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
 import { useNavigate } from 'react-router-dom';
-
 import { slugify } from '../utils/slugify';
-
 import 'swiper/css/bundle'; // Import all Swiper styles
 import './styles/GridItems.scss';
 import 'slick-carousel/slick/slick.css';
@@ -18,7 +15,7 @@ import Loader from './loader/Loader';
 const GridItems = () => {
   const navigate = useNavigate();
 
-  const { sortedItems, getSortedItems } = useSortedItemsContext();
+  const { sortedItems } = useSortedItemsContext();
 
   const { listAuthors, authors } = useGlobalContext();
 
@@ -28,9 +25,7 @@ const GridItems = () => {
     listAuthors(setLoading);
   }, []);
 
-  useEffect(() => {
-    console.log(authors);
-  }, [authors]);
+  useEffect(() => {}, [authors]);
 
   const { firstRowItems, secondRowItems } = sortedItems;
 
@@ -93,30 +88,49 @@ const GridItems = () => {
 
   return (
     <div className='authors'>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className='container-md pb-4'>
-          <div className={'flex-center mb-3'}>
-            <div
-              className='img-container'
-              onClick={() =>
-                navigate(
-                  `/person/${slugify(
-                    firstRowItems?.firstName + '-' + firstRowItems?.lastName
-                  )}`
-                )
-              }
-            >
-              <img src={firstRowItems?.featured} alt='' />
-              <h5>
-                {firstRowItems?.firstName} <br /> {firstRowItems?.lastName}
-              </h5>
-            </div>
+      <div className='container-md pb-4'>
+        <div className={'flex-center mb-3'}>
+          <div
+            className='img-container'
+            onClick={() =>
+              navigate(
+                `/person/${slugify(
+                  firstRowItems?.firstName + '-' + firstRowItems?.lastName
+                )}`
+              )
+            }
+          >
+            <img src={firstRowItems?.featured} alt='' />
+            <h5>
+              {firstRowItems?.firstName} <br /> {firstRowItems?.lastName}
+            </h5>
           </div>
+        </div>
 
-          <div className='grid mb-4'>
-            {secondRowItems?.map((author, index) => {
+        <div className='grid mb-4'>
+          {secondRowItems?.map((author, index) => {
+            const { firstName, lastName } = author;
+
+            const fullName = slugify(author.firstName + '-' + author.lastName);
+            return (
+              <div
+                className={`items div${index + 1}`}
+                onClick={() => navigate(`/person/${fullName}`)}
+                key={author.id + 'e5er45'}
+              >
+                <div className='img-container'>
+                  <img src={author?.featured} alt='' />
+                  <h5>
+                    {firstName} <br /> {lastName}
+                  </h5>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className='custom-slider'>
+          <Slider {...settings} ref={sliderRef}>
+            {authors?.map((author, index) => {
               const { firstName, lastName } = author;
 
               const fullName = slugify(
@@ -124,49 +138,24 @@ const GridItems = () => {
               );
               return (
                 <div
-                  className={`items div${index + 1}`}
-                  onClick={() => navigate(`/person/${fullName}`)}
-                  key={author.id + 'e5er45'}
+                  key={author.id + 'ffe45g'}
+                  className='slide-item'
+                  onClick={() => navigate(`/person/${slugify(fullName)}`)}
                 >
                   <div className='img-container'>
                     <img src={author?.featured} alt='' />
                     <h5>
-                      {firstName} <br /> {lastName}
+                      {firstName}
+                      <br />
+                      {lastName}
                     </h5>
                   </div>
                 </div>
               );
             })}
-          </div>
-          <div className='custom-slider'>
-            <Slider {...settings} ref={sliderRef}>
-              {authors?.map((author, index) => {
-                const { firstName, lastName } = author;
-
-                const fullName = slugify(
-                  author.firstName + '-' + author.lastName
-                );
-                return (
-                  <div
-                    key={author.id + 'ffe45g'}
-                    className='slide-item'
-                    onClick={() => navigate(`/person/${slugify(fullName)}`)}
-                  >
-                    <div className='img-container'>
-                      <img src={author?.featured} alt='' />
-                      <h5>
-                        {firstName}
-                        <br />
-                        {lastName}
-                      </h5>
-                    </div>
-                  </div>
-                );
-              })}
-            </Slider>
-          </div>
+          </Slider>
         </div>
-      )}
+      </div>
     </div>
   );
 };

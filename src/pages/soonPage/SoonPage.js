@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 /* import { ContentComponent } from "../../components/ContentComponent"; */
 /* import "./about.scss"; */
-import moment from 'moment';
 import DOMPurify from 'dompurify';
 import Loader from '../../components/loader/Loader';
 import LoaderPage from '../../components/loader/LoaderPage';
@@ -20,28 +20,28 @@ export function ContentComponent({ content }) {
 }
 
 const SoonPage = () => {
-  const { singlePost, listPages } = useGlobalContext();
-
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     listPages(setLoading, 'soon');
   }, []);
 
+  const { singlePost, listPages } = useGlobalContext();
+
+  const [loading, setLoading] = useState(false);
+
   return (
     <section className='soon-page'>
       <div className='container'>
-        {loading ? (
-          <LoaderPage />
-        ) : (
-          <div className='mb-5'>
-            <h2 className='pb-0'>{singlePost?.title}</h2>
+        <div className='mb-5'>
+          <h2 className='pb-0'>{singlePost?.title}</h2>
+          {singlePost && (
             <span>{moment(singlePost?.updatedAt).format('DD MMMM YYYY')}</span>
+          )}
+          {singlePost && (
             <div className='news-description'>
               <ContentComponent content={singlePost?.content} />
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );

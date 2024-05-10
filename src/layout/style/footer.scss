@@ -3,9 +3,11 @@
     display: none;
   }
   background: #ebebeb;
-  padding: 140px 0;
+  padding-top: 90px;
+  padding-bottom: 140px;
   position: relative;
   border-top: 1px solid #cccccc;
+  min-height: 516.27px;
 
   .button-backTop {
     position: absolute;
@@ -45,13 +47,14 @@
   }
   .grid {
     display: grid;
-    padding: 0 70px;
+    padding: 0 90px;
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
-    align-items: center;
+    align-items: baseline;
 
     @media only screen and (max-width: 1024px) {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      padding: 0 70px;
     }
 
     img {

@@ -32,7 +32,6 @@ const CreateEditPost = () => {
     listPages,
     getPostById,
     authors,
-    dispatch,
   } = useGlobalContext();
 
   const formRef = useRef();
@@ -48,6 +47,7 @@ const CreateEditPost = () => {
     previewSinglePost,
     singlePost: previewPost,
     previewNewsAndPagePost,
+    dispatch,
   } = usePreviewContext();
 
   const { setAlert } = useAlertContext();
@@ -71,13 +71,11 @@ const CreateEditPost = () => {
     externalSource: singlePost.externalSource || '',
     content: singlePost.content || '',
     category: category,
-    featured: singlePost?.featured || '',
     ...(category === 'Person of Interest' && {
       person: {
         firstName: '',
         lastName: '',
         aboutPerson: '',
-        featured: '',
       },
     }),
   });
@@ -111,7 +109,6 @@ const CreateEditPost = () => {
 
   const resetData = () => {
     setInitialValues({
-      ...initialValues,
       title: '',
       visibility: 'Public',
       publishTime: 'Now',
@@ -120,13 +117,11 @@ const CreateEditPost = () => {
       externalSource: '',
       content: '',
       category: category,
-      featured: '',
       ...(category === 'Person of Interest' && {
         person: {
           firstName: '',
           lastName: '',
           aboutPerson: '',
-          featured: '',
         },
       }),
     });
@@ -145,7 +140,7 @@ const CreateEditPost = () => {
 
   const categoryAndReset = (value) => {
     setCategory(value);
-    resetData();
+    /* resetData(); */
   };
 
   useEffect(() => {
@@ -167,13 +162,11 @@ const CreateEditPost = () => {
         externalSource: data.externalSource || '',
         content: data?.content || '',
         category: category,
-        featured: data?.featured || '',
         ...(category === 'Person of Interest' && {
           person: {
             firstName: '',
             lastName: '',
             aboutPerson: '',
-            featured: '',
           },
         }),
       });
@@ -191,22 +184,20 @@ const CreateEditPost = () => {
         externalSource: '',
         content: previewPost.content || '',
         category: category,
-        featured: previewPost ? imageURL : '',
         ...(category === 'Person of Interest' && {
           person: {
-            firstName: previewPost.person?.firstName || '',
-            lastName: previewPost.person?.lastName || '',
-            aboutPerson: previewPost.person?.aboutPerson || '',
+            firstName: previewPost?.person?.firstName || '',
+            lastName: previewPost?.person?.lastName || '',
+            aboutPerson: previewPost?.person?.aboutPerson || '',
           },
         }),
       }));
 
       setImageURL(previewPost?.person?.featured || previewPost.featured);
       setFeaturedImage(
-        previewPost?.person
-          ? previewPost?.person.featuredImage
-          : previewPost.featuredImage
+        previewPost?.person ? previewPost?.person.featuredImage : ''
       );
+      /*    setSelectedPerson(previewPost?.person?.id || ''); */
 
       setUploadedFiles({
         images: previewPost.media?.images || [],
@@ -225,7 +216,6 @@ const CreateEditPost = () => {
         externalSource: '',
         content: '',
         category: category,
-        featured: '',
         ...(category === 'Person of Interest' && {
           person: {
             firstName: '',
@@ -416,13 +406,11 @@ const CreateEditPost = () => {
       const { firstName, lastName, featured, aboutPerson, id } = authorObject;
       setInitialValues({
         ...initialValues,
-        featured: authorObject,
         ...(category === 'Person of Interest' && {
           person: {
             firstName,
             lastName,
             aboutPerson,
-            featured,
           },
         }),
       });
@@ -435,7 +423,6 @@ const CreateEditPost = () => {
             firstName: '',
             lastName: '',
             aboutPerson: '',
-            featured: '',
           },
         }),
       });
@@ -444,6 +431,11 @@ const CreateEditPost = () => {
 
     setSelectedPerson(authorId); // Set the full author object in state
   };
+
+  useEffect(() => {
+    console.log(featuredImage);
+  }, [featuredImage]);
+
   return (
     <div className='post'>
       <h2 className='text-center mt-5 mb-2'>
@@ -539,7 +531,7 @@ const CreateEditPost = () => {
                   if (isPreview) {
                     const data = {
                       ...submissionData,
-                      featuredImage,
+                      featuredImage: featuredImage ? featuredImage : '',
                       featured: imageURL,
                     };
                     previewNewsAndPagePost(data);
@@ -566,6 +558,7 @@ const CreateEditPost = () => {
                       ...submissionData.person,
                       id: selectedPerson && selectedPerson,
                     },
+
                     title: submissionData.title,
                     media: cleanMedia(uploadedFiles),
                     content: submissionData.content,

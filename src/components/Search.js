@@ -38,7 +38,11 @@ const Search = () => {
               fill='#093A41'
             />
           </svg> */}
-          <img src='/assets/images/magnifier-green.png' alt='' />
+          <img
+            src='/assets/images/magnifier-green.png'
+            alt=''
+            onClick={onSubmit}
+          />
         </div>
       </form>
     </div>

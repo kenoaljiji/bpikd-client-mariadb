@@ -121,7 +121,6 @@ const PersonEditPage = () => {
     firstName: singlePost?.firstName || '',
     lastName: singlePost?.lastName || '',
     aboutPerson: singlePost?.aboutPerson || '',
-    featured: singlePost?.featured || '',
   });
 
   const [initialValuesWork, setInitialValuesWork] = useState({
@@ -154,8 +153,9 @@ const PersonEditPage = () => {
         firstName: singlePost.firstName,
         lastName: singlePost.lastName,
         aboutPerson: singlePost.aboutPerson,
-        featured: singlePost.featured,
       });
+
+      setImageURL(singlePost.featured);
 
       setInitialValuesWork({
         title: singleWork?.title,
@@ -768,12 +768,12 @@ const PersonEditPage = () => {
                             </div>
 
                             <div className='button-container px-2 my-3'>
-                              <button
+                              {/* <button
                                 type='button'
                                 className='me-2 w-100 d-block'
                               >
                                 PREVIEW
-                              </button>
+                              </button> */}
                               <button
                                 type='submit'
                                 className='btn btn-primary d-block'
