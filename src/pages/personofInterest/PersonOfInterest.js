@@ -26,6 +26,7 @@ const PersonOfInterest = () => {
     <section className='persons'>
       <div className='container'>
         <h2>{routes.person}</h2>
+
         <div
           className='grid grid-5'
           style={{ columnGap: '18px', rowGap: '25px' }}

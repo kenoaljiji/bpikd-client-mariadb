@@ -84,8 +84,7 @@ const News = () => {
                   {news.title}
                 </h3>
                 <span className='news-date'>
-                  {news.scheduledPublisTime &&
-                    moment(news.scheduledPublishTime).format('DD MMMM YYYY')}
+                  {moment(news?.scheduledPublishTime).format('DD MMMM YYYY')}
                 </span>
               </div>
               <div className='news-body'>

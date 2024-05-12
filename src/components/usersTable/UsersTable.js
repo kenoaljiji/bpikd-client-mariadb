@@ -75,6 +75,10 @@ const UsersTable = ({ loadUsers }) => {
     });
   };
 
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   // Call this when the bulk delete button is clicked
   const handleBulkDeleteClick = () => {
     setIsModalOpen(true);
@@ -160,24 +164,26 @@ const UsersTable = ({ loadUsers }) => {
                       type='checkbox'
                       onChange={() => handleSelectUser(user.id)}
                       checked={selectedUserIds.includes(user.id)}
-                      disabled={user.id === userId}
+                      disabled={user.id === userId || user.role === 'owner'}
                     />
                     <span>{user.role}</span>
                     {/* Container for icons */}
-                    <div className='action-icons'>
-                      <i
-                        className='fa fa-edit'
-                        onClick={() =>
-                          navigate(`/admin/users/create-edit/${user.id}`)
-                        }
-                      ></i>
-                      {user.id !== userId && (
+                    {user.role !== 'owner' && (
+                      <div className='action-icons'>
                         <i
-                          className='fa fa-trash'
-                          onClick={() => handleDeleteClick(user)}
+                          className='fa fa-edit'
+                          onClick={() =>
+                            navigate(`/admin/users/create-edit/${user.id}`)
+                          }
                         ></i>
-                      )}
-                    </div>
+                        {user.id !== userId && (
+                          <i
+                            className='fa fa-trash'
+                            onClick={() => handleDeleteClick(user)}
+                          ></i>
+                        )}
+                      </div>
+                    )}
                   </td>
                   <td>{user.firstname}</td>
                   <td>{user.lastname}</td>

@@ -4,8 +4,7 @@ import { useGlobalContext } from '../../context/bpikd/GlobalState';
 /* import { ContentComponent } from "../../components/ContentComponent"; */
 /* import "./about.scss"; */
 import DOMPurify from 'dompurify';
-import Loader from '../../components/loader/Loader';
-import LoaderPage from '../../components/loader/LoaderPage';
+import './soon.scss';
 
 export function ContentComponent({ content }) {
   const config = {

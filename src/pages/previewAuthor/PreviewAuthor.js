@@ -125,7 +125,7 @@ const Authors = () => {
         <div className='preview-mode p-2 bg-gray text-end mb-3'>
           <button
             onClick={() => {
-              navigate('/admin/posts/create-edit');
+              navigate(-1);
             }}
           >
             Exit Perview
@@ -142,7 +142,7 @@ const Authors = () => {
               {author && (
                 <div className='box w-100'>
                   <div className=''>
-                    <img src={author?.person.featured} alt='persons' />
+                    <img src={author?.person?.featured} alt='persons' />
                   </div>
                   <div className='w-100'>
                     <p>

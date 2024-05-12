@@ -14,6 +14,7 @@ import {
   SET_CATEGORY,
   COUNT_VISITORS,
   GET_VIDEOS_DATA,
+  PROGRESS_UPLOAD,
 } from '../types';
 import { useAlertContext } from '../alert/AlertState';
 import { Action } from '@remix-run/router';
@@ -38,6 +39,7 @@ export const GlobalState = ({ children }) => {
     searchResult: '',
     category: 'Person of Interest',
     partners: [],
+    progress: 0,
     videosData: {
       index: 0,
       videos: [],
@@ -144,8 +146,6 @@ export const GlobalState = ({ children }) => {
             'platformVersion',
             'fullVersionList',
           ]);
-
-          console.log(ua);
           deviceInfo = ua['model'] ? ua['model'] : null;
         } else {
           console.error(
@@ -220,10 +220,12 @@ export const GlobalState = ({ children }) => {
     data,
     uploadedFiles,
     featuredImage,
-    setIsLoading
+    setIsLoading,
+    abortController // Pass this controller from the component
   ) => {
     const formData = new FormData();
 
+    // Append uploaded files and featured image to formData
     Object.entries(uploadedFiles).forEach(([key, files]) => {
       files.forEach(({ file }) => {
         formData.append(key, file, file.name);
@@ -236,29 +238,36 @@ export const GlobalState = ({ children }) => {
 
     formData.append('data', JSON.stringify(data));
 
-    // Append files to formData
-
     try {
       setIsLoading(true);
 
       const response = await axios.post(`${localhost}/post/persons`, formData, {
         headers: {
-          Authorization: user.token, // Include authorization if needed
+          Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+          'Content-Type': 'multipart/form-data',
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+        },
+        signal: abortController.signal, // Use AbortController signal
       });
 
       setAlert('Post created successfully', 'success');
-
       console.log(response);
+      navigate('/admin/posts');
     } catch (error) {
-      console.log(error);
-
-      setAlert(error.message, 'danger');
+      if (axios.isCancel(error)) {
+        console.log('Upload canceled');
+      } else {
+        console.log(error);
+        setAlert(error.message, 'danger');
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
-
-    navigate('/admin/posts');
   };
 
   const getPartnersData = async (setLoading) => {
@@ -277,7 +286,12 @@ export const GlobalState = ({ children }) => {
     }
   };
 
-  const createNewsAndPagePost = async (data, featuredImage, setIsLoading) => {
+  const createNewsAndPagePost = async (
+    data,
+    featuredImage,
+    setIsLoading,
+    abortController
+  ) => {
     const category = data.category?.toLowerCase();
     const formData = new FormData();
 
@@ -297,8 +311,16 @@ export const GlobalState = ({ children }) => {
         formData,
         {
           headers: {
-            Authorization: user.token, // Include authorization if needed
+            Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+            'Content-Type': 'multipart/form-data',
           },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+          },
+          signal: abortController.signal,
         }
       );
 
@@ -392,6 +414,9 @@ export const GlobalState = ({ children }) => {
   const setCategory = (category) => {
     dispatch({ type: SET_CATEGORY, payload: category });
   };
+  const resetProgressUpload = () => {
+    dispatch({ type: PROGRESS_UPLOAD, payload: 0 });
+  };
 
   const setSmallLoading = () => dispatch({ type: 'SET_SMALL_LOADING' });
 
@@ -412,7 +437,9 @@ export const GlobalState = ({ children }) => {
         getPartnersData,
         dispatch,
         getVideosData,
+        resetProgressUpload,
         partners: state.partners,
+        progress: state.progress,
         videosData: state.videosData,
         authors: state.authors,
         error: state.error,

@@ -21,6 +21,8 @@ import { localhost } from '../../config/config';
 import Alerts from '../../components/Alerts';
 import { useAlertContext } from '../../context/alert/AlertState';
 import { usePreviewContext } from '../../context/previewContext/PreviewState';
+import ProgressUpload from '../../components/ProgressUpload';
+import { PROGRESS_UPLOAD } from '../../context/types';
 
 const CreateEditPost = () => {
   const {
@@ -32,6 +34,8 @@ const CreateEditPost = () => {
     listPages,
     getPostById,
     authors,
+    progress,
+    resetProgressUpload,
   } = useGlobalContext();
 
   const formRef = useRef();
@@ -205,6 +209,7 @@ const CreateEditPost = () => {
         videos: previewPost.media?.videos || [],
         documents: previewPost.media?.documents || [],
       });
+      setSelectedPerson(previewPost?.person?.id || '');
     } else {
       setInitialValues((prev) => ({
         ...prev,
@@ -230,11 +235,15 @@ const CreateEditPost = () => {
     }
   }, [singlePost, postId]);
 
-  /*  useEffect(() => {
+  /* useEffect(() => {
     if (category && !isPreview) {
       setInitialValues({});
     }
   }, [category]); */
+
+  useEffect(() => {
+    togglePreviewMode(false);
+  }, []);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -347,17 +356,6 @@ const CreateEditPost = () => {
     ],
   };
 
-  /* const formik = useFormikContext();
-
-  const { touched, errors, values, onSubmit } = formik;
-
-  useEffect(() => {
-    if (isPreview && formik) {
-      console.log(formik);
-    }
-    console.log(isPreview);
-  }, [isPreview]); */
-
   useEffect(() => {
     console.log(selectedPerson);
   }, [selectedPerson]);
@@ -386,8 +384,6 @@ const CreateEditPost = () => {
       );
 
       setAlert('Update successful', 'success');
-
-      console.log('Update successful:', response.data);
     } catch (error) {
       console.error(
         'Failed to update post:',
@@ -432,9 +428,12 @@ const CreateEditPost = () => {
     setSelectedPerson(authorId); // Set the full author object in state
   };
 
+  const abortController = new AbortController();
+
   useEffect(() => {
-    console.log(featuredImage);
-  }, [featuredImage]);
+    resetProgressUpload();
+    return () => abortController.abort();
+  }, []);
 
   return (
     <div className='post'>
@@ -496,45 +495,49 @@ const CreateEditPost = () => {
               onSubmit={(values, { resetForm }) => {
                 let submissionData = { ...values };
 
-                /* const newMediaData = cleanMedia(uploadedFiles); */
-
-                /* 
-              const scheduledTimeUTC = moment
-                .tz(submissionData.scheduledPublishTime, 'Europe/Berlin')
-                .utc()
-                .toISOString(); */
-
-                if (submissionData.externalSource === '') {
+                // Remove externalSource if it's empty
+                if (!submissionData.externalSource) {
                   delete submissionData.externalSource;
                 }
 
-                // If the category is not 'Person of Interest', delete 'media' and 'featured' from submissionData
-                if (category !== 'Person of Interest') {
-                  delete submissionData.media;
-                  delete submissionData.featured;
-                  delete submissionData.person;
+                // Handle date formatting
+                function formatScheduledPublishTime() {
+                  return submissionData.publishTime === 'Now'
+                    ? new Date(now)
+                    : moment(
+                        new Date(submissionData.scheduledPublishTime)
+                      ).format('YYYY-MM-DD HH:mm:ss');
+                }
 
-                  submissionData = {
-                    ...submissionData,
-                    category: category,
-                    isPublished: isPublished,
-                    publishTime: submissionData.publishTime,
-                    scheduledPublishTime:
-                      submissionData.publishTime === 'Now'
-                        ? new Date(now) // Use formatted current time if "Now"
-                        : moment(
-                            new Date(submissionData.scheduledPublishTime)
-                          ).format('YYYY-MM-DD HH:mm:ss'), // Format existing date
-                    externalSource: submissionData.externalSource,
-                  };
+                // Common properties for all categories
+                submissionData = {
+                  person: {
+                    ...submissionData.person,
+                    id: selectedPerson && selectedPerson,
+                  },
+                  ...submissionData,
+                  publishTime: submissionData.publishTime,
+                  scheduledPublishTime: formatScheduledPublishTime(),
+                  externalSource: submissionData.externalSource,
+                  isPublished: isPublished,
+                };
+
+                if (category !== 'Person of Interest') {
+                  // Specific handling for non 'Person of Interest' categories
+                  ['media', 'featured', 'person'].forEach(
+                    (key) => delete submissionData[key]
+                  );
+
+                  submissionData.category = category;
 
                   if (isPreview) {
-                    const data = {
+                    const previewData = {
                       ...submissionData,
-                      featuredImage: featuredImage ? featuredImage : '',
+                      featuredImage: featuredImage || '',
                       featured: imageURL,
                     };
-                    previewNewsAndPagePost(data);
+                    previewNewsAndPagePost(previewData);
+                    return;
                   } else if (postId && category === 'News') {
                     updateNewsPost(
                       postId,
@@ -542,41 +545,20 @@ const CreateEditPost = () => {
                       featuredImage,
                       setIsLoading
                     );
-                  } else
+                  } else {
                     createNewsAndPagePost(
                       submissionData,
                       featuredImage,
                       setIsLoading
                     );
+                  }
                 } else {
-                  // If 'Person-of-Interest', include 'media' and 'featured' in submissionData
-                  // Assuming media and featured are handled outside Formik's initialValues
-                  // and you have the state uploadedFiles and imageURL to include
-
-                  submissionData = {
-                    person: {
-                      ...submissionData.person,
-                      id: selectedPerson && selectedPerson,
-                    },
-
-                    title: submissionData.title,
-                    media: cleanMedia(uploadedFiles),
-                    content: submissionData.content,
-                    category: category,
-                    publishTime: submissionData.publishTime,
-                    scheduledPublishTime:
-                      submissionData.publishTime === 'Now'
-                        ? new Date(now) // Use formatted current time if "Now"
-                        : moment(
-                            new Date(submissionData.scheduledPublishTime)
-                          ).format('YYYY-MM-DD HH:mm:ss'), // Format existing date
-                    externalSource: submissionData.externalSource
-                      ? submissionData.externalSource
-                      : null,
-
-                    visibility: submissionData.visibility,
-                    isPublished: isPublished,
+                  // Handling for 'Person of Interest'
+                  submissionData.person = {
+                    ...submissionData.person,
+                    id: selectedPerson,
                   };
+                  submissionData.media = cleanMedia(uploadedFiles);
 
                   if (isPreview) {
                     const data = {
@@ -609,17 +591,16 @@ const CreateEditPost = () => {
                       ],
                     };
 
-                    /* console.log(data);
-                    dispatch({ type: LIST_SINGLE_POST, payload: data }); */
                     previewSinglePost(data);
-                    console.log(data);
-                  } else
+                  } else {
                     createPersonsPost(
                       submissionData,
                       uploadedFiles,
                       featuredImage,
-                      setIsLoading
+                      setIsLoading,
+                      abortController
                     );
+                  }
                 }
               }}
             >
@@ -891,6 +872,13 @@ const CreateEditPost = () => {
                           {postId && <Alerts />}
                         </div>
                       </div>
+
+                      {progress > 0 && (
+                        <div className='my-2'>
+                          <span className=''>Uploading</span>
+                          <ProgressUpload progress={progress} />
+                        </div>
+                      )}
                       <div className='mt-3'>{loading && <Loader />}</div>
                     </div>
                     <div>

@@ -1,4 +1,11 @@
 .persons {
+  h2 {
+    margin-top: 60px;
+
+    @media only screen and (max-width: 940px) {
+      margin-top: initial;
+    }
+  }
   .img-container {
     max-width: 100%;
 

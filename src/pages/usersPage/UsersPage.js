@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import UsersTable from '../../components/usersTable/UsersTable';
 import { useAuthContext } from '../../context/auth/AuthState';
 import Alerts from '../../components/Alerts';
-import { useAlertContext } from '../../context/alert/AlertState';
 import Loader from '../../components/loader/Loader';
 import { localhost } from '../../config/config';
 import axios from 'axios';
@@ -45,7 +44,6 @@ const UsersPage = () => {
     <div className='users-page text-center'>
       <div className='container mt-5'>
         {success && <Alerts />}
-        {/*  {error && <Alerts />} */}
         <h2 className='my-5'>Users</h2>
       </div>
       {loading ? (

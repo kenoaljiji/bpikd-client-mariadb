@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
-import LoaderPage from '../../components/loader/LoaderPage';
+import Loader from '../../components/loader/Loader';
 
 const PageTable = ({ loading, setLoading }) => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const PageTable = ({ loading, setLoading }) => {
   return (
     <div className='container mt-5 custom-table'>
       {loading ? (
-        <LoaderPage />
+        <Loader />
       ) : (
         <table className='table table-striped text-start'>
           <thead>

@@ -8,15 +8,16 @@ import {
   LIST_POSTS_FAIL,
   LIST_SINGLE_POST,
   LIST_SINGLE_POST_FAIL,
+  PROGRESS_UPLOAD,
   SET_CATEGORY,
   SET_ERROR,
   SET_SUCCESS,
-} from "../types";
+} from '../types';
 
 const globalReducers = (state, action) => {
   // eslint-disable-next-line
   switch (action.type) {
-    case "SET_LOADING":
+    case 'SET_LOADING':
       return {
         ...state,
         loading: action.payload,
@@ -35,6 +36,13 @@ const globalReducers = (state, action) => {
         loading: false,
         posts: action.payload || [],
         singlePost: {},
+      };
+
+    case PROGRESS_UPLOAD:
+      return {
+        ...state,
+        loading: false,
+        progress: action.payload,
       };
     case LIST_POSTS_FAIL:
       return {
@@ -85,14 +93,14 @@ const globalReducers = (state, action) => {
         videosData: action.payload,
       };
 
-    case "SEARCH_QUERY":
+    case 'SEARCH_QUERY':
       return {
         ...state,
         searchTerm: action.payload,
         loading: false,
       };
 
-    case "SEARCH_WORDS":
+    case 'SEARCH_WORDS':
       return {
         ...state,
         loading: false,
