@@ -5,6 +5,7 @@ import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import PageTable from '../pageTable/PageTable';
 import { useNavigate } from 'react-router-dom';
 import { usePreviewContext } from '../../context/previewContext/PreviewState';
+import { LIST_SINGLE_POST } from '../../context/types';
 
 const Posts = () => {
   const {
@@ -17,6 +18,7 @@ const Posts = () => {
     singlePost,
     getPartnersData,
     category,
+    dispatch,
   } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,10 @@ const Posts = () => {
 
   useEffect(() => {
     previewSinglePost({});
+    dispatch({
+      type: LIST_SINGLE_POST,
+      payload: {},
+    });
   }, []);
 
   useEffect(() => {

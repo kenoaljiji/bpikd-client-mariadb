@@ -1,18 +1,18 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from 'react';
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlay,
   faPause,
   faVolumeMute,
   faVolumeUp,
   faCheck,
-} from "@fortawesome/free-solid-svg-icons";
-import leftArrowIcon from "./left-arrow.svg";
-import rightArrowIcon from "./right-arrow.svg";
+} from '@fortawesome/free-solid-svg-icons';
+import leftArrowIcon from './left-arrow.svg';
+import rightArrowIcon from './right-arrow.svg';
 
-import ProgressBar from "../progressBar/ProgressBar";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import ProgressBar from '../progressBar/ProgressBar';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
 
 const VideoPlayer = ({
   showSpeedMenu,
@@ -46,12 +46,6 @@ const VideoPlayer = ({
 
   const [videoVisible, setVideoVisible] = useState(true);
 
-  /*  <video
-    src="http://bpikd-backend-mariadb-production.up.railway.app/uploads/videos-1714808415412.mp4"
-    class="video"
-    volume="0.5"
-  ></video>; */
-
   useEffect(() => {
     setCurrentVideoIndex(index);
   }, [index]);
@@ -63,29 +57,19 @@ const VideoPlayer = ({
       video.currentTime = currentTime;
     }
 
-    video.addEventListener("timeupdate", updateTime);
-    video.addEventListener("loadedmetadata", () => {
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('loadedmetadata', () => {
       setDuration(video.duration);
     });
-    console.log(video);
 
     return () => {
-      video.removeEventListener("timeupdate", updateTime);
+      video.removeEventListener('timeupdate', updateTime);
     };
   }, []);
 
   const updateTime = () => {
     setCurrentTime(videoRef.current.currentTime);
   };
-
-  /* const togglePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-    } else {
-      videoRef.current.pause();
-    }
-  }; */
 
   useEffect(() => {
     if (isPlaying) {
@@ -129,10 +113,6 @@ const VideoPlayer = ({
     videoRef.current.load();
   };
 
-  /* const handleCenterButtonClick = () => {
-    // Logic for center button click
-  }; */
-
   const adjustVolume = (e) => {
     const volumeBar = e.currentTarget;
     const rect = volumeBar.getBoundingClientRect();
@@ -144,18 +124,18 @@ const VideoPlayer = ({
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(
       2,
-      "0"
+      '0'
     )}`;
   };
 
   const formatAdjustedTime = (time) => {
     const adjustedMinutes = Math.floor(time / 60);
     const adjustedSeconds = Math.floor(time % 60);
-    return `${String(adjustedMinutes).padStart(2, "0")}:${String(
+    return `${String(adjustedMinutes).padStart(2, '0')}:${String(
       adjustedSeconds
-    ).padStart(2, "0")}`;
+    ).padStart(2, '0')}`;
   };
 
   const adjustedDuration = duration - currentTime;
@@ -189,32 +169,32 @@ const VideoPlayer = ({
   };
 
   const speedOptions = [
-    { value: 0.5, label: "0.5x Slow" },
-    { value: 1.0, label: "1.0x Normal" },
-    { value: 1.2, label: "1.2x Medium" },
-    { value: 1.5, label: "1.5x Fast" },
-    { value: 1.7, label: "1.7x Very Fast" },
-    { value: 2.0, label: "2.0x Super Fast" },
+    { value: 0.5, label: '0.5x Slow' },
+    { value: 1.0, label: '1.0x Normal' },
+    { value: 1.2, label: '1.2x Medium' },
+    { value: 1.5, label: '1.5x Fast' },
+    { value: 1.7, label: '1.7x Very Fast' },
+    { value: 2.0, label: '2.0x Super Fast' },
   ];
 
   return (
-    <div className={`custom-video-player ${isMinimized ? "minimized" : ""}`}>
-      <div className="video-container position-relative">
+    <div className={`custom-video-player ${isMinimized ? 'minimized' : ''}`}>
+      <div className='video-container position-relative'>
         {!isMinimized && (
           <div
             onClick={handlePreviousVideo}
-            className="arrow-button left-arrow"
+            className='arrow-button left-arrow'
           >
-            <img src={leftArrowIcon} alt="Left Arrow" />
+            <img src={leftArrowIcon} alt='Left Arrow' />
           </div>
         )}
         <div
-          className="position-relative"
+          className='position-relative'
           onMouseEnter={() => setDisplaySocialIcons(false)}
         >
           {isMinimized && (
             <span
-              className="closeModal"
+              className='closeModal'
               onClick={(e) => {
                 e.stopPropagation(e);
                 toggleMinimize();
@@ -228,45 +208,45 @@ const VideoPlayer = ({
           <video
             ref={videoRef}
             src={videos[currentVideoIndex]}
-            className="video"
+            className='video'
             volume={volume / 100} // Set initial volume
           />
         </div>
         {!isMinimized && (
-          <div onClick={handleNextVideo} className="arrow-button right-arrow">
-            <img src={rightArrowIcon} alt="Right Arrow" />
+          <div onClick={handleNextVideo} className='arrow-button right-arrow'>
+            <img src={rightArrowIcon} alt='Right Arrow' />
           </div>
         )}
       </div>
-      <div className="controls">
+      <div className='controls'>
         <div
-          className={`speed-wrapper ${showSpeedMenu ? "active" : ""}`}
+          className={`speed-wrapper ${showSpeedMenu ? 'active' : ''}`}
           onMouseLeave={() => setShowSpeedMenu(false)}
         >
-          <div className="speed-menu">
-            <div className="progress-container">
+          <div className='speed-menu'>
+            <div className='progress-container'>
               <span>{selectedSpeed}x</span>
               <div
-                className="speed-progress-bar ms-2"
+                className='speed-progress-bar ms-2'
                 onClick={handleSpeedBarClick}
               >
                 <div
-                  className="speed-progress"
+                  className='speed-progress'
                   style={{ width: `${selectedSpeed * 50}%` }}
                 ></div>
               </div>
             </div>
-            <div className="line"></div>
-            <ul className="mt-2">
+            <div className='line'></div>
+            <ul className='mt-2'>
               {speedOptions.map((option) => (
                 <li
                   key={option.value}
                   onClick={() => handleSpeedSelection(option.value)}
-                  className="d-flex justify-content-between align-items-center"
+                  className='d-flex justify-content-between align-items-center'
                 >
                   {option.label}
                   {selectedSpeed === option.value && (
-                    <FontAwesomeIcon icon={faCheck} color={"#0087d5"} />
+                    <FontAwesomeIcon icon={faCheck} color={'#0087d5'} />
                   )}
                 </li>
               ))}
@@ -274,61 +254,61 @@ const VideoPlayer = ({
           </div>
         </div>
 
-        <div className="bottom-controls">
-          <div className="main-controls">
-            <div className="volume-control">
+        <div className='bottom-controls'>
+          <div className='main-controls'>
+            <div className='volume-control'>
               <button
                 onClick={toggleMuteUnmute}
-                className={`sound-icon ${isMuted ? "muted" : ""}`}
+                className={`sound-icon ${isMuted ? 'muted' : ''}`}
               >
                 <i>
                   <FontAwesomeIcon icon={isMuted ? faVolumeMute : faVolumeUp} />
                 </i>
               </button>
-              <div className="volume-bar" onClick={adjustVolume}>
+              <div className='volume-bar' onClick={adjustVolume}>
                 <div
-                  className="volume-progress"
+                  className='volume-progress'
                   style={{ width: `${volume}%` }}
                 ></div>
               </div>
             </div>
-            <button onClick={togglePlayPause} className="play-button">
+            <button onClick={togglePlayPause} className='play-button'>
               <i>
                 <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
               </i>
             </button>
-            <div className="misc-controls">
+            <div className='misc-controls'>
               <button onClick={toggleFullScreen}>
-                <i className="fa-solid fa-up-right-and-down-left-from-center"></i>
+                <i className='fa-solid fa-up-right-and-down-left-from-center'></i>
               </button>
 
               <button onClick={toggleMinimize}>
                 {/* <FontAwesomeIcon icon={faWindowRestore} /> */}
-                <i className="fa-regular fa-window-maximize"></i>
+                <i className='fa-regular fa-window-maximize'></i>
               </button>
               <button
                 onClick={toggleSpeedMenu}
-                className="speed-menu-button"
+                className='speed-menu-button'
                 onMouseEnter={() => setShowSpeedMenu(true)}
                 /* onMouseLeave={() => setShowSpeedMenu(false)} */
               >
                 {/*  <i className=''>
                     <FontAwesomeIcon icon={faTachometerAlt} />
                   </i> */}
-                <div className="speed-icon">{selectedSpeed}x</div>
+                <div className='speed-icon'>{selectedSpeed}x</div>
               </button>
             </div>
           </div>
         </div>
-        <div className="progress-bar-container">
-          <div className="current-time">{formatTime(currentTime)}</div>
+        <div className='progress-bar-container'>
+          <div className='current-time'>{formatTime(currentTime)}</div>
           <ProgressBar
             duration={duration}
             currentTime={currentTime}
             onProgressClick={handleProgressBarClick}
           />
 
-          <div className="video-time">
+          <div className='video-time'>
             -{formatAdjustedTime(adjustedDuration)}
           </div>
         </div>

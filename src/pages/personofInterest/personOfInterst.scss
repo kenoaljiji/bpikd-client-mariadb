@@ -14,19 +14,29 @@
     }
   }
   .grid-5 {
-    grid-template-columns: repeat(5, 170px);
+    grid-template-columns: repeat(6, 150px);
 
     .img-container {
-      width: 200px;
+      width: 150px;
+      height: 204px;
+
+      @media only screen and (max-width: 600px) {
+        width: 100%;
+        min-height: 300px;
+      }
+
+      h5 {
+        font-size: 18px;
+      }
 
       img {
-        height: 200px;
+        height: 100%;
         object-fit: cover;
       }
     }
 
     @media only screen and (max-width: 940px) {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
   }
 }

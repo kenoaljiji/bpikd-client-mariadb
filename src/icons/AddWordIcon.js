@@ -16,7 +16,7 @@ const AddWordIcon = ({ color }) => {
         height='116.031'
         fill='#EBEBEB'
         stroke='black'
-        stroke-dasharray='2 2'
+        strokeDasharray='2 2'
       />
       <rect x='0.169434' y='117.021' width='135' height='37' fill='#198754' />
       <path

@@ -17,7 +17,6 @@ import {
   PROGRESS_UPLOAD,
 } from '../types';
 import { useAlertContext } from '../alert/AlertState';
-import { Action } from '@remix-run/router';
 
 const GlobalContext = createContext();
 
@@ -25,14 +24,18 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 // Provider Component
 
+// Helper functions for local storage
+
 export const GlobalState = ({ children }) => {
   // Initial State
+
+  const authorsLocalStorage = localStorage.getItem('authors');
 
   const initialState = {
     loading: false,
     posts: [],
     singlePost: {},
-    authors: [{}],
+    authors: authorsLocalStorage ? JSON.parse(authorsLocalStorage) : [{}],
     success: null,
     error: null,
     searchTerm: '',
@@ -193,8 +196,6 @@ export const GlobalState = ({ children }) => {
     try {
       setIsLoading && setIsLoading(true);
       const res = await axios.get(`${localhost}/post/${slugRoute}/${id}`);
-
-      console.log(res);
 
       dispatch({
         type: LIST_SINGLE_POST,

@@ -24,11 +24,13 @@ const globalReducers = (state, action) => {
       };
 
     case LIST_AUTHORS:
-      return {
+      const newState = {
         ...state,
         loading: false,
         authors: action.payload || [],
       };
+      localStorage.setItem('authors', JSON.stringify(newState.authors));
+      return newState;
 
     case LIST_POSTS:
       return {

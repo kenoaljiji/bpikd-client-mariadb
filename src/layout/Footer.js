@@ -20,7 +20,11 @@ const Footer = () => {
         <div className='container'>
           <div className='grid'>
             {footerCompanies?.map((company, index) => (
-              <Link to={company.url} target='_blank'>
+              <Link
+                to={company.url}
+                target='_blank'
+                key={company.name + 'c' + index}
+              >
                 <div className='g-col-4'>
                   <div className=''>
                     <div className='teaser'>

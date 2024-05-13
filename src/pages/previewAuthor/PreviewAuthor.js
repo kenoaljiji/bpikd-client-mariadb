@@ -9,6 +9,7 @@ import moment from 'moment';
 import Loader from '../../components/loader/Loader';
 import { usePreviewContext } from '../../context/previewContext/PreviewState';
 import './previewAuthor.scss';
+import { LIST_AUTHORS } from '../../context/types';
 
 const displayContentWithLineBreaks = (content) => {
   if (content) {

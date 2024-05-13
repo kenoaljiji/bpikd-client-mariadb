@@ -139,20 +139,36 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
     navigate(path);
   };
 
+  function normalizeText(text) {
+    return text
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
+  }
+
   const filteredPosts =
     debouncedSearchTerm.length >= 3
-      ? posts.filter((post) =>
-          category === 'Person of Interest'
-            ? post.person?.firstName
-                .toLowerCase()
-                .includes(debouncedSearchTerm.toLowerCase()) ||
-              post.person?.lastName
-                .toLowerCase()
-                .includes(debouncedSearchTerm.toLowerCase())
-            : post?.title
-                .toLowerCase()
-                .includes(debouncedSearchTerm.toLowerCase())
-        )
+      ? posts.filter((post) => {
+          const searchTermLower = normalizeText(debouncedSearchTerm);
+          if (category === 'Person of Interest') {
+            // Normalize the search term
+
+            // Combine first name and last name with a space, normalize, and then check
+            const fullName = normalizeText(
+              `${post.firstName} ${post.lastName}`
+            );
+
+            // Normalize and check individual fields
+            return (
+              fullName.includes(searchTermLower) ||
+              normalizeText(post.firstName).includes(searchTermLower) ||
+              normalizeText(post.lastName).includes(searchTermLower)
+            );
+          } else {
+            // Normalize the title for other categories
+            return normalizeText(post.title).includes(searchTermLower);
+          }
+        })
       : posts;
 
   return (

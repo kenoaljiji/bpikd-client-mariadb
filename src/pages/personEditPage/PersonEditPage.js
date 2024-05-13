@@ -14,7 +14,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // for snow theme
 import Loader from '../../components/loader/Loader';
 import moment from 'moment';
-import CreateEditPartners from '../createEditPartners/CreateEditPartners';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { localhost } from '../../config/config';
@@ -23,7 +22,6 @@ import {
   LIST_SINGLE_POST_FAIL,
   PROGRESS_UPLOAD,
 } from '../../context/types';
-import { useAuthContext } from '../../context/auth/AuthState';
 import Alerts from '../../components/Alerts';
 import { useAlertContext } from '../../context/alert/AlertState';
 import ProgressUpload from '../../components/ProgressUpload';
@@ -46,7 +44,7 @@ const PersonEditPage = () => {
     singlePost: previewPost,
   } = usePreviewContext();
 
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState(singlePost?.featured || '');
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
   const [featuredImage, setFeaturedImage] = useState('');
@@ -76,8 +74,6 @@ const PersonEditPage = () => {
       setIsLoading(true);
       const res = await axios.get(`${localhost}/post/persons/${id}`);
 
-      console.log(res);
-
       dispatch({
         type: LIST_SINGLE_POST,
         payload: res.data,
@@ -102,8 +98,6 @@ const PersonEditPage = () => {
 
   const updatePersonById = async (id, data) => {
     const formData = new FormData();
-
-    /* console.log(featuredImage); */
 
     if (featuredImage instanceof Blob) {
       formData.append('featuredImage', featuredImage, featuredImage.name);
@@ -160,52 +154,31 @@ const PersonEditPage = () => {
     externalSource: singleWork?.externalSource || '',
   });
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (singlePost && postId) {
       console.log(singlePost);
-      setImageURL(singlePost.featured);
+      setImageURL(singlePost?.featured);
       console.log(works);
     }
   }, [singlePost, postId]);
-
+ */
   useEffect(() => {
     console.log('Checking singlePost:', singlePost);
 
     if (Object.keys(previewPost).length > 0) {
-      console.log(previewPost);
       setInitialValues((prev) => ({
         ...prev,
-        firstName: previewPost?.firstName || '',
-        lastName: previewPost?.lastName || '',
-        aboutPerson: previewPost?.aboutPerson || '',
+        firstName: previewPost?.person.firstName,
+        lastName: previewPost?.person.lastName,
+        aboutPerson: previewPost?.person.aboutPerson,
       }));
 
-      setInitialValuesWork({
-        title: previewPost?.title || '',
-        content: previewPost?.content || '',
-        person_id: previewPost?.person_id || '',
-        publishTime: previewPost?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
-        isPublished: previewPost?.isPublished || true,
-        scheduledPublishTime:
-          previewPost?.publishTime === 'Now'
-            ? null
-            : new Date(previewPost?.scheduledPublishTime),
-        externalSource: previewPost?.externalSource || '',
-      });
-
-      setImageURL(previewPost?.person?.featured || previewPost.featured);
+      setImageURL(previewPost?.person?.featured);
       setFeaturedImage(
         previewPost?.person ? previewPost?.person.featuredImage : ''
       );
-      /*    setSelectedPerson(previewPost?.person?.id || ''); */
 
-      setUploadedFiles({
-        images: previewPost.media?.images || [],
-        audios: previewPost.media?.audios || [],
-        videos: previewPost.media?.videos || [],
-        documents: previewPost.media?.documents || [],
-      });
-      setSelectedWorkId(previewPost?.person?.id || '');
+      setSelectedWorkId(previewPost?.person?.workId || '');
     } else if (singlePost && postId) {
       // Ensures that singlePost is not null or empty
       setInitialValues({
@@ -214,30 +187,19 @@ const PersonEditPage = () => {
         aboutPerson: singlePost.aboutPerson,
       });
 
-      setImageURL(singlePost.featured);
-
-      setInitialValuesWork({
-        title: singleWork?.title,
-        content: singleWork?.content,
-        person_id: singleWork?.person_id,
-        publishTime: singleWork?.publishTime, // Adjust logic for handling "Now" if necessary
-        isPublished: singleWork?.isPublished,
-        scheduledPublishTime:
-          singleWork?.publishTime === 'Now'
-            ? null
-            : new Date(singleWork?.scheduledPublishTime),
-        externalSource: singleWork?.externalSource,
-      });
+      /*  setImageURL(singlePost?.featured); */
     }
   }, [postId, singlePost, previewPost]); // Include singlePost in the dependency array
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
+    clearImage();
 
     // Optionally, display the image preview
     setFeaturedImage(file);
     const previewUrl = URL.createObjectURL(file);
+
     setImageURL(previewUrl);
 
     // No need to reset the file input here
@@ -369,22 +331,44 @@ const PersonEditPage = () => {
   }, [selectedWorkId]);
 
   useEffect(() => {
-    setInitialValuesWork({
-      title: singleWork?.title || '',
-      content: singleWork?.content || '',
-      person_id: singleWork?.person_id,
-      publishTime: singleWork?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
-      isPublished: singleWork?.isPublished,
-      scheduledPublishTime:
-        singleWork?.scheduledPublishTime &&
-        new Date(singleWork.scheduledPublishTime),
-      externalSource: singleWork?.externalSource,
-    });
-    if (singleWork) {
-      setUploadedFiles(singleWork?.media);
-      console.log(singleWork.media);
+    if (previewPost && Object.keys(previewPost).length > 0) {
+      setInitialValuesWork({
+        title: previewPost?.works[0].title,
+        content: previewPost?.works[0].content || '',
+        person_id: previewPost?.works[0].person_id,
+        publishTime: previewPost?.works[0].publishTime || 'Now', // Adjust logic for handling "Now" if necessary
+        isPublished: previewPost?.works[0].isPublished,
+        scheduledPublishTime:
+          previewPost?.works[0].scheduledPublishTime &&
+          new Date(previewPost.works[0].scheduledPublishTime),
+        externalSource: previewPost?.works[0].externalSource,
+      });
+      setUploadedFiles({
+        images: previewPost?.works[0]?.media.images || [],
+        audios: previewPost?.works[0]?.media.audios || [],
+        videos: previewPost?.works[0]?.media.videos || [],
+        documents: previewPost?.works[0]?.media.documents || [],
+      });
+    } else if (singleWork) {
+      setInitialValuesWork({
+        title: singleWork?.title || '',
+        content: singleWork?.content || '',
+        person_id: singleWork?.person_id,
+        publishTime: singleWork?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
+        isPublished: singleWork?.isPublished,
+        scheduledPublishTime:
+          singleWork?.scheduledPublishTime &&
+          new Date(singleWork.scheduledPublishTime),
+        externalSource: singleWork?.externalSource,
+      });
+      setUploadedFiles({
+        images: singleWork.media?.images || [],
+        audios: singleWork?.media?.audios || [],
+        videos: singleWork?.media?.videos || [],
+        documents: singleWork?.media?.documents || [],
+      });
     }
-  }, [singleWork]);
+  }, [singleWork, previewPost]);
 
   const handleDelete = async (workId) => {
     try {
@@ -483,17 +467,21 @@ const PersonEditPage = () => {
     }
   };
 
+  useEffect(() => {
+    console.log(previewPost);
+  }, [previewPost]);
+
   // Assemble data for preview when both forms have been submitted
   useEffect(() => {
     if (personData && workData) {
       const data = {
-        ...personData, // Contains all person data
+        // Contains all person data
         person: {
-          ...personData.person,
+          ...personData,
           aboutPerson: personData.aboutPerson,
           featured: imageURL,
           featuredImage: featuredImage ? featuredImage : '',
-          id: selectedWorkId,
+          workId: selectedWorkId,
         },
         works: [
           {
@@ -556,9 +544,13 @@ const PersonEditPage = () => {
                   setPersonData(values);
                   return;
                 } else {
-                  updatePersonById(postId, values)
+                  const data = {
+                    ...values,
+                    featured: imageURL,
+                  };
+                  updatePersonById(postId, data)
                     .then(() => {
-                      getPersonById(postId); // Fetch latest person data after update
+                      // Fetch latest person data after update
                       setSubmitting(false); // Set submitting to false after operation
                     })
                     .catch((error) => {
@@ -616,7 +608,7 @@ const PersonEditPage = () => {
                             className='featured-close'
                             onClick={() => clearImage()}
                           >
-                            <i class='fa-solid fa-trash'></i>
+                            <i className='fa-solid fa-trash'></i>
                           </div>
                         )}
 
@@ -688,11 +680,9 @@ const PersonEditPage = () => {
               >
                 <option value=''>Select a Title</option>
                 {works?.map((work) => (
-                  <>
-                    <option key={work?.workId} value={work?.workId}>
-                      {work?.title}
-                    </option>
-                  </>
+                  <option key={work?.workId} value={work?.workId}>
+                    {work?.title}
+                  </option>
                 ))}
               </select>
               {selectedWorkId && (
@@ -861,7 +851,9 @@ const PersonEditPage = () => {
                                 setFieldValue('scheduledPublishTime', date)
                               }
                               showTimeSelect
-                              dateFormat='Pp'
+                              timeFormat='HH:mm'
+                              timeIntervals={15} // Time selection interval in minutes
+                              dateFormat='MMMM d, yyyy HH:mm'
                               className='form-control mb-2 mx-2'
                               placeholderText='Select date'
                               style={{ cursor: 'pointer' }}

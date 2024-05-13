@@ -86,6 +86,7 @@ const LoginPage = () => {
 
                   <div className='text-center mt-5'>
                     <button
+                      style={{ width: '120px' }}
                       type='submit'
                       className='btn btn-primary'
                       disabled={isSubmitting}

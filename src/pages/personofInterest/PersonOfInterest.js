@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authors } from '../../helpers/people';
 import './personOfInterst.scss';
 import { useRouteContext } from '../../context/route/RouteProvider';
 import { slugify } from '../../utils/slugify';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
-import Loader from '../../components/loader/Loader';
-import LoaderPage from '../../components/loader/LoaderPage';
 
 const PersonOfInterest = () => {
   const { state } = useRouteContext();
@@ -34,7 +31,7 @@ const PersonOfInterest = () => {
           {authors?.map((author, index) => {
             return (
               <div
-                key={'aut456' + author._id}
+                key={'aut456' + author._id + index}
                 className='img-container'
                 onClick={() =>
                   navigate(

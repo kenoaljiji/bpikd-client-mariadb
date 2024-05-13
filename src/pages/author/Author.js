@@ -21,7 +21,7 @@ const displayContentWithLineBreaks = (content) => {
 };
 
 const Authors = () => {
-  const { authors } = useGlobalContext();
+  const { authors, listAuthors } = useGlobalContext();
   const [loading, setLoading] = useState();
   const [author, setAuthor] = useState(null);
   const [selectedWork, setSelectedWork] = useState(null);
@@ -34,6 +34,12 @@ const Authors = () => {
   const { id } = useParams();
 
   useEffect(() => {
+    if (authors && authors.length === 0) {
+      listAuthors(setLoading);
+    }
+  }, []);
+
+  useEffect(() => {
     const slugFromUrl = id; // 'id' is the slug from URL params
     // Decode the slug to handle URL encoded characters
     const decodedSlug = decodeURIComponent(slugFromUrl);
@@ -43,8 +49,6 @@ const Authors = () => {
       const authorSlug = slugify(`${author.firstName} ${author.lastName}`);
       return authorSlug === decodedSlug;
     });
-
-    console.log(foundAuthor);
 
     // If the author is found, use their _id to fetch detailed data
     if (foundAuthor) {

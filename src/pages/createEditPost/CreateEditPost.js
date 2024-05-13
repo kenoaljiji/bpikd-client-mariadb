@@ -144,13 +144,10 @@ const CreateEditPost = () => {
 
   const categoryAndReset = (value) => {
     setCategory(value);
-    /* resetData(); */
   };
 
   useEffect(() => {
     if (singlePost && postId) {
-      console.log(singlePost);
-      // Ensures that singlePost is not null or empty
       const data = singlePost; // Directly use singlePost as it is already available
       setInitialValues({
         title: (data && data?.title) || '',
@@ -235,12 +232,6 @@ const CreateEditPost = () => {
     }
   }, [singlePost, postId]);
 
-  /* useEffect(() => {
-    if (category && !isPreview) {
-      setInitialValues({});
-    }
-  }, [category]); */
-
   useEffect(() => {
     togglePreviewMode(false);
   }, []);
@@ -249,12 +240,9 @@ const CreateEditPost = () => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Optionally, display the image preview
     setFeaturedImage(file);
     const previewUrl = URL.createObjectURL(file);
     setImageURL(previewUrl);
-
-    // No need to reset the file input here
   };
 
   useEffect(() => {
@@ -472,11 +460,9 @@ const CreateEditPost = () => {
             >
               <option value=''>Select Existing Author</option>
               {authors?.map((author) => (
-                <>
-                  <option key={author?.id} value={author.id}>
-                    {author.firstName + ' ' + author.lastName}
-                  </option>
-                </>
+                <option key={author?.id} value={author.id}>
+                  {author.firstName + ' ' + author.lastName}
+                </option>
               ))}
             </select>
           </div>
@@ -838,7 +824,9 @@ const CreateEditPost = () => {
                               setFieldValue('scheduledPublishTime', date)
                             }
                             showTimeSelect
-                            dateFormat='Pp'
+                            timeFormat='HH:mm'
+                            timeIntervals={15} // Time selection interval in minutes
+                            dateFormat='MMMM d, yyyy HH:mm'
                             className='form-control mb-2 mx-2'
                             placeholderText='Select date'
                             style={{ cursor: 'pointer' }}

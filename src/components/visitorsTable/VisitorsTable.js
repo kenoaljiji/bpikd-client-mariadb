@@ -6,8 +6,7 @@ import './visitorsTable.scss';
 import { useAlertContext } from '../../context/alert/AlertState';
 import Alerts from '../Alerts';
 import ConfirmationModal from '../confirmationModal/ConfirmationModal';
-/* import moment from 'moment'; */
-import moment from 'moment';
+
 function VisitorsTable() {
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(false);
