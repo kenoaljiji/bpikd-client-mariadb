@@ -27,19 +27,15 @@ function CreateEditPartners() {
   const uploadAddDeletePartnersImages = async () => {
     const formData = new FormData();
 
-    // Append all current image data to formData
-    formData.append('images', JSON.stringify(imageFiles));
-
     imageFiles.forEach((img, index) => {
       if (img && img.file) {
-        // Append file only if it's newly uploaded
         formData.append(`partnersImages-${index}`, img.file, img.file.name);
       }
     });
-    // Handle sending the request
+
     try {
       const response = await axios.post(
-        localhost + '/post/partners',
+        `${localhost}/post/partners`,
         formData,
         {
           headers: {
@@ -48,18 +44,13 @@ function CreateEditPartners() {
         }
       );
 
+      console.log(response);
+
       getPartnersData(setLoading);
+      alert('Files uploaded successfully'); // Simple success feedback
     } catch (error) {
       console.error('Error uploading images:', error);
-      if (error.response) {
-        console.error('Server response:', error.response.data);
-        console.error('Status code:', error.response.status);
-        console.error('Headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('Axios request error:', error.request);
-      } else {
-        console.error('Error', error.message);
-      }
+      alert('Failed to upload images'); // Simple error feedback
     }
   };
 
@@ -87,52 +78,15 @@ function CreateEditPartners() {
     setImageFiles(updatedFiles);
   };
 
-  const updatePartners = async () => {
-    const formData = new FormData();
-
-    imageFiles.forEach((img, index) => {
-      if (img.file) {
-        formData.append(`file-${index}`, img.file, img.file.name);
-      }
-      formData.append(`preview-${index}`, img.preview);
-      if (img.id) {
-        formData.append(`id-${index}`, img.id);
-      }
-    });
-
-    try {
-      const response = await axios.put(
-        'http://localhost:8000/post/partners',
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
-      );
-      console.log('Success:', response.data);
-    } catch (error) {
-      console.error('Error updating partners:', error);
-    }
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedFiles = imageFiles.filter((_, idx) => idx !== index);
-    setImageFiles(updatedFiles);
-    updatePartners();
-  };
-
+  useEffect(() => {
+    console.log(imageFiles);
+  }, [imageFiles]);
   return (
     <div className='container partners mt-5'>
       <div className='partners-create'>
         {!loading &&
           imageFiles.map((img, index) => (
             <div className='image-container' key={`partnersImages-${index}`}>
-              {img && (
-                <div
-                  className='featured-close'
-                  onClick={() => clearImage(index)}
-                ></div>
-              )}
-
               {img ? (
                 <img
                   src={img.preview}

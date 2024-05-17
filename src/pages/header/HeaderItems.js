@@ -34,7 +34,7 @@ const HeaderItems = () => {
   };
 
   const clearImage = () => {
-    setLogoImage(null);
+    setLogoImage('');
     setImageURL(''); // Clear image preview
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Reset file input
@@ -60,10 +60,6 @@ const HeaderItems = () => {
   });
 
   const onSubmit = (values, { setSubmitting, resetForm }) => {
-    // Here, dispatch an action to update the routes and buttons in your context
-    // Assuming you have an action type called "UPDATE_CONFIG"
-
-    // Initialize empty objects for routes and buttons
     let routes = {};
     let buttons = {};
 
@@ -91,9 +87,6 @@ const HeaderItems = () => {
     setSubmitting(false);
 
     setError(true);
-    /*  setTimeout(() => {
-      setError(false);
-    }, 2000); */
   };
 
   return (

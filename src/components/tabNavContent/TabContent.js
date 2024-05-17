@@ -204,7 +204,7 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
       );
     case 'video':
       return (
-        <div className='tab-content video'>
+        <div className='tab-content videos'>
           {/*  {selectedMedia.video?.length > 0 ? (
               selectedMedia.video.map((video, index) => (
                 <img key={index} src={'/assets/images/' + video} />

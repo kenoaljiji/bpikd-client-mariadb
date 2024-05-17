@@ -161,7 +161,10 @@ const Authors = () => {
       ) : (
         <>
           <div className='container d-flex'>
-            <div className='d-flex' style={{ gap: '10px', width: '100%' }}>
+            <div
+              className='d-flex'
+              style={{ gap: '10px', width: '100%', maxWidth: '1068px' }}
+            >
               {author && (
                 <div className='box'>
                   <div className='item-1'>

@@ -54,12 +54,6 @@ const News = () => {
     /*     console.log(posts); */
   }, []);
 
-  useEffect(() => {
-    console.log(posts);
-  }, [posts]);
-
-  const navigate = useNavigate();
-
   const onClickHandler = async (id, title) => {
     // Shorten the title to the first 5 words and replace spaces with hyphens
     const shortenedTitle = title.split(' ').slice(0, 5).join('-').toLowerCase();
@@ -75,7 +69,7 @@ const News = () => {
       {posts?.map((news) => {
         if (news.isPublished) {
           return (
-            <div className='news-content'>
+            <div className='news-content' key={news.id}>
               <div className='news-header'>
                 <h3
                   className='h3'

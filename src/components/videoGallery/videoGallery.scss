@@ -1,14 +1,13 @@
-.video-gallery {
+.video-gallery-generated {
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(5, 1fr);
-
-  div {
-    cursor: pointer;
-    opacity: 0.8;
-  }
-
+  grid-template-columns: repeat(8, 150px);
+  gap: 20px;
+}
+.video-gallery-item {
+  cursor: pointer;
   img {
-    width: 100%;
+    object-fit: cover;
+    width: 150px;
+    height: 200px;
   }
 }

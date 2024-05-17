@@ -21,13 +21,13 @@ const Dashboard = () => {
       {error && <Alerts />}
       <h2 className='pt-3'>Dashboard</h2>
       <div className='grid mt-5'>
-        {user.user.role !== 'admin' ? (
-          <Link to={'/admin/users/create-edit/' + user.user._id}>
-            <ProfileIcon />
-          </Link>
-        ) : (
+        {user.user.role === 'admin' || user.user.role === 'owner' ? (
           <Link to='/admin/users'>
             <UsersIcon />
+          </Link>
+        ) : (
+          <Link to={'/admin/users/create-edit/' + user.user.id}>
+            <ProfileIcon />
           </Link>
         )}
 

@@ -46,26 +46,7 @@ const MediaFileComponent = ({
     }
   };
 
-  // Handle the deletion of selected files
-  /* const deleteSelectedFiles = (fileType) => {
-    const remainingFiles = uploadedFiles[fileType].filter(
-      (file) =>
-        !selectedFiles.find(
-          (selectedFile) =>
-            selectedFile.name === file.name && selectedFile.type === fileType
-        )
-    );
-    setUploadedFiles((prev) => ({ ...prev, [fileType]: remainingFiles }));
-    // Reset selectedFiles state if needed
-    setSelectedFiles(
-      selectedFiles.filter((selectedFile) => selectedFile.type !== fileType)
-    );
-  };
- */
-
   const deleteSelectedFiles = async (fileType) => {
-    console.log(fileType);
-    // Split files into those with IDs (uploaded) and those without (not uploaded)
     const uploadedFilesToDelete = uploadedFiles[fileType].filter(
       (file) =>
         file.mediaId &&
@@ -83,13 +64,11 @@ const MediaFileComponent = ({
         )
     );
 
-    // Remove non-uploaded files locally
     const remainingFiles = uploadedFiles[fileType].filter(
       (file) => !filesToDeleteLocally.includes(file)
     );
     setUploadedFiles((prev) => ({ ...prev, [fileType]: remainingFiles }));
 
-    // Send requests to delete uploaded files from the server
     for (const file of uploadedFilesToDelete) {
       console.log(file.mediaId);
       try {
@@ -106,7 +85,6 @@ const MediaFileComponent = ({
       fetchWorkDetails();
     }
 
-    // Reset selectedFiles state if needed
     setSelectedFiles(
       selectedFiles.filter((selectedFile) => selectedFile.type !== fileType)
     );
@@ -152,7 +130,7 @@ const MediaFileComponent = ({
       case 'videos':
         return <video src={file.url} style={{ maxWidth: '200px' }} controls />;
       case 'documents':
-        return <i className='fas fa-file-alt'></i>; // Example using Font Awesome CDN
+        return <i className='fas fa-file-alt text-dark'></i>; // Example using Font Awesome CDN
       default:
         return null;
     }
@@ -183,8 +161,6 @@ const MediaFileComponent = ({
                     className='accordion-header d-flex justify-content-between'
                     onClick={() => toggleAccordion(index)}
                   >
-                    {/* Accordion title and select button */}
-
                     <div>
                       {fileType.toUpperCase()}
                       <i

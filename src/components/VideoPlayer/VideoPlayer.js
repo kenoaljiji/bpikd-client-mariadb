@@ -37,18 +37,23 @@ const VideoPlayer = ({
   selectedSpeed,
   setSelectedSpeed,
 }) => {
-  const { videosData } = useGlobalContext();
+  const { videosData, getVideosData } = useGlobalContext();
 
   const { index } = videosData;
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(index);
 
   const [displaySocialIcons, setDisplaySocialIcons] = useState(false);
 
-  const [videoVisible, setVideoVisible] = useState(true);
+  const [videoSize, setVideoSize] = useState('landscape');
 
-  useEffect(() => {
-    setCurrentVideoIndex(index);
-  }, [index]);
+  const checkIsWidhtBigger = () => {};
+
+  const onClickHandler = (index) => {
+    const data = {
+      index,
+      videos: videos,
+    };
+    getVideosData(data);
+  };
 
   useEffect(() => {
     setShowSpeedMenu(false);
@@ -66,6 +71,29 @@ const VideoPlayer = ({
       video.removeEventListener('timeupdate', updateTime);
     };
   }, []);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      const updateSize = () => {
+        const orientation =
+          video.clientWidth > video.clientHeight ? 'landscape' : 'portrait';
+
+        // Update state
+        setVideoSize(orientation);
+        console.log(orientation);
+      };
+
+      // Add event listener for when metadata is loaded
+      video.addEventListener('loadedmetadata', updateSize);
+
+      // Clean-up function to remove event listeners
+      return () => {
+        video.removeEventListener('loadedmetadata', updateSize);
+        window.removeEventListener('resize', updateSize);
+      };
+    }
+  }, [index]); // Depend on currentVideoIndex to re-run effect when video changes
 
   const updateTime = () => {
     setCurrentTime(videoRef.current.currentTime);
@@ -100,16 +128,14 @@ const VideoPlayer = ({
   };
 
   const handlePreviousVideo = () => {
-    setCurrentVideoIndex((prevIndex) =>
-      prevIndex === 0 ? videos.length - 1 : prevIndex - 1
-    );
+    const newIndex = index === 0 ? videos.length - 1 : index - 1;
+    onClickHandler(newIndex);
     videoRef.current.load();
   };
 
   const handleNextVideo = () => {
-    setCurrentVideoIndex((prevIndex) =>
-      prevIndex === videos.length - 1 ? 0 : prevIndex + 1
-    );
+    const newIndex = index === videos.length - 1 ? 0 : index + 1;
+    onClickHandler(newIndex);
     videoRef.current.load();
   };
 
@@ -198,6 +224,7 @@ const VideoPlayer = ({
               onClick={(e) => {
                 e.stopPropagation(e);
                 toggleMinimize();
+                setIsPlaying(false);
                 closeModal();
               }}
             >
@@ -207,8 +234,10 @@ const VideoPlayer = ({
 
           <video
             ref={videoRef}
-            src={videos[currentVideoIndex]}
-            className='video'
+            src={videos[index]}
+            className={`video ${
+              videoSize === 'landscape' ? 'landscape' : 'portrait'
+            }`}
             volume={volume / 100} // Set initial volume
           />
         </div>

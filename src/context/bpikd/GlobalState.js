@@ -127,6 +127,8 @@ export const GlobalState = ({ children }) => {
       if (authorsData.length === 0) {
         setAlert('No authors found', 'danger');
       }
+
+      console.log(response);
     } catch (error) {
       console.error('Failed to fetch authors:', error);
       dispatch({ type: LIST_AUTHORS, payload: [] }); // Ensure payload is always an array
@@ -160,31 +162,13 @@ export const GlobalState = ({ children }) => {
         const res = await axios.post(`${localhost}/visitors`, {
           params: deviceInfo,
         });
-
-        console.log(res);
       } catch (error) {
+        setAlert(error.message, 'danger');
         console.error('Error fetching visitor data:', error);
       }
     };
 
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    let hasVisited = false;
-    const fetchVisitors = async () => {
-      try {
-        const res = await axios.get(`${localhost}/total`); // Adjust this URL to your API endpoint
-        console.log(res);
-        dispatch({ type: COUNT_VISITORS, payload: res });
-      } catch (error) {
-        console.error('Error fetching visitor data:', error);
-      }
-    };
-
-    if (!hasVisited) {
-      fetchVisitors();
-    }
   }, []);
 
   const getPostById = async (
@@ -324,8 +308,6 @@ export const GlobalState = ({ children }) => {
           signal: abortController.signal,
         }
       );
-
-      console.log(response);
 
       setAlert('Post created', 'success');
     } catch (error) {

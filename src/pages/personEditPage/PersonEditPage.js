@@ -44,7 +44,7 @@ const PersonEditPage = () => {
     singlePost: previewPost,
   } = usePreviewContext();
 
-  const [imageURL, setImageURL] = useState(singlePost?.featured || '');
+  const [imageURL, setImageURL] = useState(singlePost?.featured);
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
   const [featuredImage, setFeaturedImage] = useState('');
@@ -93,6 +93,7 @@ const PersonEditPage = () => {
   useEffect(() => {
     if (singlePost) {
       setWorks(singlePost?.works);
+      setImageURL(singlePost?.featured);
     }
   }, [singlePost, selectedWorkId]);
 
@@ -114,6 +115,8 @@ const PersonEditPage = () => {
         },
       });
 
+      console.log(res);
+
       setAlert('Person Updated', 'success');
     } catch (error) {
       setAlert(error.message, 'danger');
@@ -125,7 +128,6 @@ const PersonEditPage = () => {
             : error.message,
       });
     }
-
     setIsLoading(false);
   };
 
@@ -154,14 +156,6 @@ const PersonEditPage = () => {
     externalSource: singleWork?.externalSource || '',
   });
 
-  /* useEffect(() => {
-    if (singlePost && postId) {
-      console.log(singlePost);
-      setImageURL(singlePost?.featured);
-      console.log(works);
-    }
-  }, [singlePost, postId]);
- */
   useEffect(() => {
     console.log('Checking singlePost:', singlePost);
 
@@ -224,10 +218,6 @@ const PersonEditPage = () => {
       documents.length > 0
     );
   };
-
-  /* useEffect(() => {
-    console.log(uploadedFiles);
-  }, [uploadedFiles]); */
 
   // Handling multiple file uploads
   const handleFileUpload = (event, fileType) => {
@@ -318,8 +308,6 @@ const PersonEditPage = () => {
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
-
-      console.error('Error fetching work details:', err);
     }
   };
 
@@ -327,7 +315,6 @@ const PersonEditPage = () => {
     if (selectedWorkId !== '') {
       fetchWorkDetails(selectedWorkId);
     }
-    console.log(initialValues, initialValuesWork);
   }, [selectedWorkId]);
 
   useEffect(() => {
@@ -467,9 +454,9 @@ const PersonEditPage = () => {
     }
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log(previewPost);
-  }, [previewPost]);
+  }, [previewPost]); */
 
   // Assemble data for preview when both forms have been submitted
   useEffect(() => {

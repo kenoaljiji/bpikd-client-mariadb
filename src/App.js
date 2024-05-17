@@ -37,7 +37,7 @@ function App() {
   const { state } = useRouteContext();
   const { headersData } = state;
   const { routes, buttons } = headersData;
-  const { isAuthenticated } = useAuthContext();
+  /*  const { isAuthenticated } = useAuthContext(); */
 
   return (
     <PreviewState>
@@ -68,9 +68,7 @@ function App() {
           <Route path='/shop' element={<Shop />} />
         </Route>
         <Route path='/admin' element={<AuthLayout />}>
-          {/* The index route is typically public (login page), so it's not wrapped */}
           <Route index element={<LoginPage />} />
-
           <Route element={<ProtectedRoute />}>
             <Route path='dashboard' element={<Dashboard />} />
             <Route path='posts' element={<Posts />} />

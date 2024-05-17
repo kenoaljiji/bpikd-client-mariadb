@@ -35,11 +35,9 @@ export const RouteProvider = ({ children }) => {
 
   useEffect(() => {
     loadHeaderConfig();
-    console.log(state.headersData);
   }, []);
 
   const changeHeaderAndRoutes = async (values) => {
-    console.log(values);
     const formData = new FormData();
     formData.append('routes', JSON.stringify(values.routes));
     formData.append('buttons', JSON.stringify(values.buttons));
@@ -67,7 +65,6 @@ export const RouteProvider = ({ children }) => {
       }); */
       loadHeaderConfig();
       setAlert('Header updated successfully', 'success');
-      console.log('Server response:', res.data);
     } catch (error) {
       console.error('Error updating header:', error);
       setAlert('Error updating header', 'danger');
@@ -79,21 +76,10 @@ export const RouteProvider = ({ children }) => {
     try {
       const res = await axios.get(`${localhost}/header/getHeader`);
 
-      /* console.log(res.data);
-
-      // Parse JSON strings to objects
-      const headerConfig = {
-        routes: JSON.parse(res.data.routes),
-        buttons: JSON.parse(res.data.buttons),
-        logoImgPath: res.data.logoImgPath,
-      }; */
-
       dispatch({
         type: GET_HEADER_CONFIG,
         payload: res.data,
       });
-
-      console.log('Processed Header Data:', res.data);
     } catch (error) {
       dispatch({
         type: 'SET_ERROR',

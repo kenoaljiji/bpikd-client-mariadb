@@ -1,16 +1,16 @@
-import React, { useRef, useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useRef, useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlay,
   faPause,
   faVolumeMute,
   faVolumeUp,
   faCheck,
-} from "@fortawesome/free-solid-svg-icons";
-import "./customvideoplayer.scss";
-import VideoPlayer from "../VideoPlayer/VideoPlayer";
-import Draggable from "react-draggable";
-import VideoOptions from "../videooptions/VideoOptions";
+} from '@fortawesome/free-solid-svg-icons';
+import './customvideoplayer.scss';
+import VideoPlayer from '../VideoPlayer/VideoPlayer';
+import Draggable from 'react-draggable';
+import VideoOptions from '../videooptions/VideoOptions';
 
 const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
   const [isMinimized, setIsMinimized] = useState(false);
@@ -41,15 +41,15 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
 
   return isMinimized ? (
     <div
-      className="overlay-background video-minimized"
+      className='overlay-background video-minimized'
       onClick={() => setShowSpeedMenu(false)}
     >
       <Draggable
-        handle=".draggable-handle" // Ensure that the handle targets the draggable element's class
+        handle='.draggable-handle' // Ensure that the handle targets the draggable element's class
         defaultPosition={modalPosition}
         onDrag={handleDrag}
       >
-        <div className="draggable-handle">
+        <div className='draggable-handle'>
           <VideoPlayer
             videos={videos}
             showSpeedMenu={showSpeedMenu}
@@ -77,14 +77,15 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
       </Draggable>
     </div>
   ) : (
-    <div className={`video-modal ${isVideoGalleryOpen ? "active" : ""}`}>
+    <div className={`video-modal ${isVideoGalleryOpen ? 'active' : ''}`}>
       <>
         <div
-          className="overlay-background"
+          className='overlay-background'
           onClick={() => setShowSpeedMenu(false)}
         ></div>
         <span
-          className="closeModal"
+          className='closeModal'
+          style={{ zIndex: '999999999999' }}
           onClick={() => {
             closeModal();
           }}

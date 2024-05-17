@@ -11,7 +11,7 @@ const BackTopButton = () => {
   return (
     <div className='text-center button-backTop'>
       <img
-        src='assets/images/back-top.png'
+        src='/assets/images/back-top.png'
         alt='back to top'
         onClick={scrollToTop}
       />

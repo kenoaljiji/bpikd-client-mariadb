@@ -71,6 +71,15 @@
   transition: all 0.3s;
 }
 
+.portrait {
+  max-width: 100%;
+  max-height: 750px; /* adjust height automatically */
+}
+
+.landscape {
+  width: 100%;
+}
+
 .left-arrow {
   position: absolute;
   top: 45%;

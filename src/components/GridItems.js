@@ -10,7 +10,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import { useSortedItemsContext } from '../context/sortedItems/SortedItemsProvider';
 import { useGlobalContext } from '../context/bpikd/GlobalState';
-import Loader from './loader/Loader';
 
 const GridItems = () => {
   const navigate = useNavigate();
