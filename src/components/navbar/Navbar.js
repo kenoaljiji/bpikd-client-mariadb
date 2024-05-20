@@ -1,12 +1,14 @@
 // Navbar.js
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Navbar.module.scss'; // Import your SCSS module
 import transformPath from '../../utils/transformPath';
 import { useRouteContext } from '../../context/route/RouteProvider';
+import { ThemeContext } from '../../context/theme/ThemeContext';
 
 const Navbar = () => {
   const { state } = useRouteContext();
+  const { theme } = useContext(ThemeContext);
 
   const { headersData } = state;
   const { routes, buttons } = headersData;
@@ -18,7 +20,12 @@ const Navbar = () => {
     };
 
     return (
-      <Link to={to} onClick={handleClick} className={styles['navbar-link']}>
+      <Link
+        to={to}
+        onClick={handleClick}
+        className={styles['navbar-link']}
+        style={{ color: theme.headerTextColor }}
+      >
         {children}
       </Link>
     );

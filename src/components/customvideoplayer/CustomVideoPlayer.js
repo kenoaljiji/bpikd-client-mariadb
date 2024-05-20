@@ -1,12 +1,4 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlay,
-  faPause,
-  faVolumeMute,
-  faVolumeUp,
-  faCheck,
-} from '@fortawesome/free-solid-svg-icons';
 import './customvideoplayer.scss';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import Draggable from 'react-draggable';
@@ -17,13 +9,11 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showSpeedMenu, setShowSpeedMenu] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(50); // Initial volume
-
+  const [volume, setVolume] = useState(50);
   const [selectedSpeed, setSelectedSpeed] = useState(1.0);
   const videoRef = useRef(null);
 
@@ -115,7 +105,7 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
           setSelectedSpeed={setSelectedSpeed}
         />
       </>
-      <VideoOptions />
+      <VideoOptions videos={videos} />
     </div>
   );
 };

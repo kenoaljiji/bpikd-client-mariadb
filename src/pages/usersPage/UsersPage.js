@@ -8,14 +8,13 @@ import axios from 'axios';
 import { SET_USERS } from '../../context/types';
 
 const UsersPage = () => {
-  const { success, error, user, dispatch } = useAuthContext();
+  const { success, user, dispatch } = useAuthContext();
 
   const [loading, setLoading] = useState(true);
 
   const loadUsers = async () => {
     setLoading(true);
     try {
-      // Assuming you store the admin token in state.user.token
       const token = user.token;
       const config = {
         headers: {

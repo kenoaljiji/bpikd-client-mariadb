@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import './style/footer.scss';
 import BackTopButton from '../components/BackTopButton';
 import { Link, useLocation } from 'react-router-dom';
 import { useFooterContext } from '../context/footer/FooterProvider';
+import { ThemeContext } from '../context/theme/ThemeContext';
 
 const Footer = () => {
   const { footerCompanies, getFooterData } = useFooterContext();
+
+  const { theme, setTheme } = useContext(ThemeContext);
 
   const location = useLocation();
 
@@ -15,7 +18,10 @@ const Footer = () => {
 
   return (
     <>
-      <footer className={`footer ${location.pathname !== '/search' && 'mt-6'}`}>
+      <footer
+        className={`footer ${location.pathname !== '/search' && 'mt-6'}`}
+        style={{ background: theme.footerColor, color: theme.footerTextColor }}
+      >
         <BackTopButton />
         <div className='container'>
           <div className='grid'>
@@ -30,7 +36,10 @@ const Footer = () => {
                     <div className='teaser'>
                       <img src={`${company.src}`} alt='' />
                     </div>
-                    <p>{company.description}</p>
+                    <p style={{ color: theme.footerTextColor }}>
+                      {' '}
+                      {company.description}
+                    </p>
                   </div>
                 </div>
               </Link>

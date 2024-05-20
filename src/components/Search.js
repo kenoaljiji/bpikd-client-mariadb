@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './styles/Search.scss';
 import { useNavigate } from 'react-router-dom';
+import { ThemeContext } from '../context/theme/ThemeContext';
 
 const Search = () => {
   const [value, setValue] = useState('');

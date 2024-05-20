@@ -56,6 +56,8 @@ export const GlobalState = ({ children }) => {
 
   const { setAlert } = useAlertContext();
 
+  const changeThemeColor = () => {};
+
   const listPosts = async (setLoading) => {
     setLoading(true); // Control loading state globally or locally
     try {
@@ -223,25 +225,30 @@ export const GlobalState = ({ children }) => {
 
     formData.append('data', JSON.stringify(data));
 
+    const { title } = data;
     try {
       setIsLoading(true);
 
-      const response = await axios.post(`${localhost}/post/persons`, formData, {
-        headers: {
-          Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
-          'Content-Type': 'multipart/form-data',
-        },
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
-        },
-        signal: abortController.signal, // Use AbortController signal
-      });
+      const response = await axios.post(
+        `${localhost}/post/persons/${title}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+          },
+          signal: abortController.signal, // Use AbortController signal
+        }
+      );
 
       setAlert('Post created successfully', 'success');
-      console.log(response);
+
       navigate('/admin/posts');
     } catch (error) {
       if (axios.isCancel(error)) {

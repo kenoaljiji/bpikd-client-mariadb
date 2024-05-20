@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -44,8 +44,6 @@ const VideoPlayer = ({
   const [displaySocialIcons, setDisplaySocialIcons] = useState(false);
 
   const [videoSize, setVideoSize] = useState('landscape');
-
-  const checkIsWidhtBigger = () => {};
 
   const onClickHandler = (index) => {
     const data = {
@@ -106,8 +104,6 @@ const VideoPlayer = ({
       videoRef.current.pause();
     }
   }, [isPlaying]);
-
-  // Inside VideoPlayer component
 
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);
@@ -172,13 +168,11 @@ const VideoPlayer = ({
   };
 
   const handleSpeedBarClick = (e) => {
-    // Calculate the clicked position relative to the speed progress bar
     const progressBar = e.currentTarget;
     const rect = progressBar.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const progressBarWidth = progressBar.offsetWidth;
 
-    // Calculate the speed based on the clicked position
     const newSpeed = (clickX / progressBarWidth) * 2;
     handleSpeedSelection(newSpeed.toFixed(1));
   };
@@ -190,7 +184,6 @@ const VideoPlayer = ({
   const handleSpeedSelection = (speed) => {
     setSelectedSpeed(speed);
     setShowSpeedMenu(false);
-    // Apply the selected speed to the video
     videoRef.current.playbackRate = speed;
   };
 
@@ -238,7 +231,7 @@ const VideoPlayer = ({
             className={`video ${
               videoSize === 'landscape' ? 'landscape' : 'portrait'
             }`}
-            volume={volume / 100} // Set initial volume
+            volume={volume / 100}
           />
         </div>
         {!isMinimized && (
@@ -312,18 +305,13 @@ const VideoPlayer = ({
               </button>
 
               <button onClick={toggleMinimize}>
-                {/* <FontAwesomeIcon icon={faWindowRestore} /> */}
                 <i className='fa-regular fa-window-maximize'></i>
               </button>
               <button
                 onClick={toggleSpeedMenu}
                 className='speed-menu-button'
                 onMouseEnter={() => setShowSpeedMenu(true)}
-                /* onMouseLeave={() => setShowSpeedMenu(false)} */
               >
-                {/*  <i className=''>
-                    <FontAwesomeIcon icon={faTachometerAlt} />
-                  </i> */}
                 <div className='speed-icon'>{selectedSpeed}x</div>
               </button>
             </div>
@@ -336,7 +324,6 @@ const VideoPlayer = ({
             currentTime={currentTime}
             onProgressClick={handleProgressBarClick}
           />
-
           <div className='video-time'>
             -{formatAdjustedTime(adjustedDuration)}
           </div>

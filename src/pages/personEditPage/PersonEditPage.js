@@ -378,7 +378,6 @@ const PersonEditPage = () => {
   };
 
   const uploadFiles = async () => {
-    console.log(uploadedFiles);
     const formData = new FormData();
 
     Object.keys(uploadedFiles).forEach((type) => {
@@ -483,7 +482,6 @@ const PersonEditPage = () => {
           },
         ],
       };
-      console.log(personData);
       previewSinglePost(data);
     }
   }, [personData, workData]);
@@ -839,7 +837,7 @@ const PersonEditPage = () => {
                               }
                               showTimeSelect
                               timeFormat='HH:mm'
-                              timeIntervals={15} // Time selection interval in minutes
+                              timeIntervals={15}
                               dateFormat='MMMM d, yyyy HH:mm'
                               className='form-control mb-2 mx-2'
                               placeholderText='Select date'
@@ -880,7 +878,16 @@ const PersonEditPage = () => {
                                 <ProgressUpload progress={progress} />
                               </div>
                             )}
-                            {progress > 0 && loading && <Loader />}
+                            {loading && (
+                              <>
+                                <div className=''>
+                                  <Loader />
+                                </div>
+                                <span className='mt-3 text-center'>
+                                  Please wait ....
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>

@@ -867,7 +867,18 @@ const CreateEditPost = () => {
                           <ProgressUpload progress={progress} />
                         </div>
                       )}
-                      <div className='mt-3'>{loading && <Loader />}</div>
+                      <div className='mt-3'>
+                        {loading && (
+                          <>
+                            <div className=''>
+                              <Loader />
+                            </div>
+                            <span className='mt-3 text-center'>
+                              Please wait ....
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
                     <div>
                       {category === 'Person of Interest' && (

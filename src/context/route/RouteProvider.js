@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from 'react';
 import { routeReducer } from './routeReducer';
 import { useAlertContext } from '../alert/AlertState';
 import axios from 'axios';
@@ -27,15 +33,43 @@ export const RouteProvider = ({ children }) => {
       },
       logoImgPath: '',
     },
+    textTrack: {
+      isPlaying: false,
+      active: false,
+      text: 'SOME RANDOM TEXT',
+    },
     loading: false,
   };
   const { user } = useAuthContext();
   const [state, dispatch] = useReducer(routeReducer, initialState);
   const { setAlert, alerts } = useAlertContext();
 
+  const getTextSettings = useCallback(async () => {
+    try {
+      const res = await axios.get(`${localhost}/settings`);
+
+      dispatch({
+        type: 'GET_TEXT_SETTINGS_DATA',
+        payload: res.data,
+      });
+
+      console.log(res);
+    } catch (error) {
+      setAlert(error.message, 'danger');
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    getTextSettings();
+  }, []);
+
   useEffect(() => {
     loadHeaderConfig();
   }, []);
+
+  useEffect(() => {
+    console.log(state.textTrack);
+  }, [state.textTrack]);
 
   const changeHeaderAndRoutes = async (values) => {
     const formData = new FormData();
@@ -94,7 +128,13 @@ export const RouteProvider = ({ children }) => {
 
   return (
     <RouteContext.Provider
-      value={{ state, dispatch, changeHeaderAndRoutes, loadHeaderConfig }}
+      value={{
+        state,
+        dispatch,
+        changeHeaderAndRoutes,
+        loadHeaderConfig,
+        getTextSettings,
+      }}
     >
       {children}
     </RouteContext.Provider>

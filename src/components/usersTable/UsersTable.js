@@ -13,6 +13,8 @@ const UsersTable = ({ loadUsers }) => {
 
   const userId = user.user.id;
 
+  const loggedInUserRole = user.user.role;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [modalContent, setModalContent] = useState({});
@@ -69,8 +71,7 @@ const UsersTable = ({ loadUsers }) => {
     setModalContent({
       message: `Are you sure you want to delete ${user.firstname} ${user.lastname}`,
       onConfirm: () => {
-        deleteUser(user.id);
-        loadUsers();
+        deleteUser(user.id, loadUsers);
       },
     });
   };
@@ -97,9 +98,20 @@ const UsersTable = ({ loadUsers }) => {
     return () => clearTimeout(timerId);
   }, [searchTerm]);
 
+  const displayUsersBasedOnRole = (users) => {
+    if (loggedInUserRole === 'owner') {
+      return users; // Owners see everyone
+    } else if (['admin'].includes(loggedInUserRole)) {
+      return users.filter((user) => ['admin', 'editor'].includes(user.role)); // Admins and Editors see only Admins and Editors
+    } else {
+      return []; // For safety, if role isn't recognized, show no one (or handle as appropriate)
+    }
+  };
+
+  // Filtering users based on search term and role
   const filteredUsers =
     debouncedSearchTerm.length >= 3
-      ? users.filter(
+      ? displayUsersBasedOnRole(users).filter(
           (user) =>
             user.firstname
               .toLowerCase()
@@ -111,8 +123,7 @@ const UsersTable = ({ loadUsers }) => {
               .toLowerCase()
               .includes(debouncedSearchTerm.toLowerCase())
         )
-      : users;
-
+      : displayUsersBasedOnRole(users);
   // Function to handle selecting/deselecting a user
 
   const navigate = useNavigate();
@@ -164,27 +175,28 @@ const UsersTable = ({ loadUsers }) => {
                       type='checkbox'
                       onChange={() => handleSelectUser(user.id)}
                       checked={selectedUserIds.includes(user.id)}
-                      disabled={user.id === userId || user.role === 'owner'}
+                      disabled={user.id === userId}
                     />
                     <span>{user.role}</span>
-                    {/* Container for icons */}
-                    {user.role !== 'owner' && (
-                      <div className='action-icons'>
+
+                    <div className='action-icons'>
+                      <i
+                        className='fa fa-edit'
+                        onClick={() =>
+                          navigate(`/admin/users/create-edit/${user.id}`)
+                        }
+                      ></i>
+
+                      {/* Delete Icon: Only show if the current user is not the owner and not the same as the logged-in user */}
+                      {user.id !== userId && (
                         <i
-                          className='fa fa-edit'
-                          onClick={() =>
-                            navigate(`/admin/users/create-edit/${user.id}`)
-                          }
+                          className='fa fa-trash'
+                          onClick={() => handleDeleteClick(user)}
                         ></i>
-                        {user.id !== userId && (
-                          <i
-                            className='fa fa-trash'
-                            onClick={() => handleDeleteClick(user)}
-                          ></i>
-                        )}
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </td>
+
                   <td>{user.firstname}</td>
                   <td>{user.lastname}</td>
                   <td>{user.email}</td>

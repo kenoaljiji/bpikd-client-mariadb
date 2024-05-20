@@ -1,0 +1,12 @@
+@keyframes marquee {
+  0% {
+    transform: translateX(80%); /* Start off the right edge of the screen */
+  }
+  100% {
+    transform: translateX(-100%); /* Move left across the screen */
+  }
+}
+
+/* body {
+  background: #14252d;
+} */

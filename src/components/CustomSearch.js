@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ThemeContext } from '../context/theme/ThemeContext';
 
 const CustomSearch = ({ type }) => {
   const [value, setValue] = useState('');
+  const { theme } = useContext(ThemeContext);
 
   const navigate = useNavigate();
 
   const onClickHandeler = () => {
     navigate(`/search?words=${value}`);
   };
+
+  useEffect(() => {
+    console.log(theme);
+  }, [theme]);
+
   return (
     <form
       className={`d-flex items-center ${type}`}
@@ -34,6 +41,9 @@ const CustomSearch = ({ type }) => {
           outline: 'none',
           marginTop: '3px',
           marginRight: '2px',
+          backgroundColor:
+            theme.headerColor !== '#fff' ? 'transparent' : 'initial',
+          color: theme.headerColor !== '#fff' ? '#fff' : 'initial',
         }}
       />
       {/*    <svg
@@ -49,16 +59,29 @@ const CustomSearch = ({ type }) => {
           fill='#093A41'
         />
       </svg> */}
-      <img
-        src='/assets/images/magnifier-green.png'
-        alt=''
-        onClick={() => onClickHandeler()}
-        style={{
-          width: '16px',
-          position: 'relative',
-          top: '-2px',
-        }}
-      />
+      {theme.headerColor !== '#fff' ? (
+        <img
+          src='/assets/images/magnifier-white.png'
+          alt=''
+          onClick={() => onClickHandeler()}
+          style={{
+            width: '16px',
+            position: 'relative',
+            top: '-2px',
+          }}
+        />
+      ) : (
+        <img
+          src='/assets/images/magnifier-green.png'
+          alt=''
+          onClick={() => onClickHandeler()}
+          style={{
+            width: '16px',
+            position: 'relative',
+            top: '-2px',
+          }}
+        />
+      )}
     </form>
   );
 };

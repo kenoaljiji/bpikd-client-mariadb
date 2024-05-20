@@ -11,6 +11,7 @@ import { useAuthContext } from '../../context/auth/AuthState';
 import { Link } from 'react-router-dom';
 import ProfileIcon from '../../icons/ProfileIcon';
 import Alerts from '../../components/Alerts';
+import ThemeColorComponent from '../../components/themeColorComponnet/ThemeColorComponent';
 
 const Dashboard = () => {
   const { user, error, success } = useAuthContext();
@@ -19,7 +20,8 @@ const Dashboard = () => {
     <div className='container my-5 text-center dashboard'>
       {success && <Alerts />}
       {error && <Alerts />}
-      <h2 className='pt-3'>Dashboard</h2>
+      <h2 className='py-3'>Dashboard</h2>
+      <ThemeColorComponent />
       <div className='grid mt-5'>
         {user.user.role === 'admin' || user.user.role === 'owner' ? (
           <Link to='/admin/users'>
