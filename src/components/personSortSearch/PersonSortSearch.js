@@ -5,6 +5,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import './personSortSearch.scss';
 import { useAuthContext } from '../../context/auth/AuthState';
 import { useSortedItemsContext } from '../../context/sortedItems/SortedItemsProvider';
+import Loader from '../../components/loader/Loader';
+import Alerts from '../Alerts';
 
 // A simple reordering function
 const reorder = (list, startIndex, endIndex) => {
@@ -16,6 +18,8 @@ const reorder = (list, startIndex, endIndex) => {
 
 const PersonSortSearch = () => {
   const { user } = useAuthContext();
+
+  const [loading, setLoading] = useState();
 
   const initialPlaceholders = Array.from({ length: 4 }, (_, index) => ({
     id: `placeholder-${index}`,
@@ -177,7 +181,7 @@ const PersonSortSearch = () => {
       /*  id: sortedItems?.id, */
     };
 
-    updateSortedItems(data);
+    updateSortedItems(data, setLoading);
   };
 
   /*  useEffect(() => {
@@ -313,9 +317,10 @@ const PersonSortSearch = () => {
                 src={selectedFirstRow.featured}
                 alt='selected'
                 style={{
-                  width: 150,
-                  height: 'auto',
+                  width: '150px',
+                  height: '180px',
                   marginRight: '8px',
+                  objectFit: 'cover',
                 }}
               />
               <div className='row-names'>
@@ -331,7 +336,7 @@ const PersonSortSearch = () => {
             <div
               style={{
                 width: '150px',
-                height: '150px',
+                height: '180px',
                 display: 'flex',
                 alignItems: 'center',
                 border: '1px solid #eee',
@@ -370,7 +375,7 @@ const PersonSortSearch = () => {
                                 <div
                                   style={{
                                     width: '150px',
-                                    height: '150px',
+                                    height: '180px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     border: '1px solid #eee',
@@ -393,9 +398,10 @@ const PersonSortSearch = () => {
                                     src={item.featured}
                                     alt='selected'
                                     style={{
-                                      width: 150,
-                                      height: 'auto',
+                                      width: '150px',
+                                      height: '180px',
                                       marginRight: '8px',
+                                      objectFit: 'cover',
                                     }}
                                   />
                                   <div className='row-names'>
@@ -430,6 +436,18 @@ const PersonSortSearch = () => {
             Update
           </button>
         </div>
+        {loading && (
+          <div className='text-center'>
+            <div className='mt-4 my-3'>
+              <Loader />
+            </div>
+            <span class='mt-5 blink-text'>
+              Please Wait....
+              <span class='dots'></span>
+            </span>
+          </div>
+        )}
+        {!loading && <Alerts />}
       </div>
     </div>
   );

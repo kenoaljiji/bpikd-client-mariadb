@@ -12,7 +12,6 @@ import {
   LIST_SINGLE_POST,
   LIST_SINGLE_POST_FAIL,
   SET_CATEGORY,
-  COUNT_VISITORS,
   GET_VIDEOS_DATA,
   PROGRESS_UPLOAD,
 } from '../types';
@@ -266,6 +265,8 @@ export const GlobalState = ({ children }) => {
     setLoading(true); // Control loading state globally or locally
     try {
       const res = await axios.get(`${localhost}/post/partners`);
+
+      console.log(res.data);
 
       dispatch({
         type: GET_PARTNERS_DATA,

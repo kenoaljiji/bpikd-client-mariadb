@@ -6,6 +6,14 @@
   }
 
   .grid-5 {
+    grid-template-columns: repeat(6, 130px) !important;
+    gap: 15px;
+    img {
+      width: 130px;
+      height: 100px;
+      text-align: center;
+    }
+
     @media only screen and (max-width: 940px) {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
     }

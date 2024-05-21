@@ -145,9 +145,20 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
                     ></i>
                   )}
                   {/* Render the file name */}
-                  <a href={doc.url} className=''>
-                    {doc.name}
-                  </a>
+                  {doc?.url.endsWith('.pdf') ? (
+                    <a
+                      href={doc.url}
+                      className=''
+                      target='_blank'
+                      rel='noreferrer'
+                    >
+                      {doc.name}
+                    </a>
+                  ) : (
+                    <a href={doc.url} download={doc.name} className=''>
+                      {doc.name}
+                    </a>
+                  )}
                 </li>
               ))
             ) : (

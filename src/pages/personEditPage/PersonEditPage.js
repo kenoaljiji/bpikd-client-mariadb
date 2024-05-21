@@ -646,7 +646,19 @@ const PersonEditPage = () => {
                           >
                             UPDATE PERSON
                           </button>
-                          <div className='mt-3'>{loading && <Loader />}</div>
+                          <div className='mt-3'>
+                            {loading && (
+                              <div className='text-center'>
+                                <div className='mt-4'>
+                                  <Loader />
+                                </div>
+                                <span class='mt-5 blink-text'>
+                                  Please Wait....
+                                  <span class='dots'></span>
+                                </span>
+                              </div>
+                            )}
+                          </div>
                           <Alerts />
                         </div>
                       </div>
@@ -879,14 +891,15 @@ const PersonEditPage = () => {
                               </div>
                             )}
                             {loading && (
-                              <>
-                                <div className=''>
+                              <div className='text-center'>
+                                <div className='mt-4'>
                                   <Loader />
                                 </div>
-                                <span className='mt-3 text-center'>
-                                  Please wait ....
+                                <span class='mt-5 blink-text'>
+                                  Please wait....
+                                  <span class='dots'></span>
                                 </span>
-                              </>
+                              </div>
                             )}
                           </div>
                         </div>

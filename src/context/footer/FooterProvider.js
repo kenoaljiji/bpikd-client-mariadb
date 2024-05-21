@@ -4,14 +4,14 @@ import React, {
   useEffect,
   useReducer,
   useState,
-} from "react";
-import { routeReducer } from "./footerReducer";
-import { useAlertContext } from "../alert/AlertState";
-import { useAuthContext } from "../auth/AuthState";
-import axios from "axios";
-import { localhost } from "../../config/config";
-import { LIST_POSTS_FAIL } from "../types";
-import { footerCompaniesData } from "../../helpers/people";
+} from 'react';
+import { routeReducer } from './footerReducer';
+import { useAlertContext } from '../alert/AlertState';
+import { useAuthContext } from '../auth/AuthState';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import { LIST_POSTS_FAIL } from '../types';
+import { footerCompaniesData } from '../../helpers/people';
 
 const FooterContext = createContext();
 
@@ -43,12 +43,12 @@ export const FooterProvaider = ({ children }) => {
     getFooterData();
   }, []);
 
-  const changeFooter = async (footerCompanies) => {
-    console.log("Submitting the following company data:", footerCompanies);
+  const changeFooter = async (footerCompanies, setLoading) => {
+    console.log('Submitting the following company data:', footerCompanies);
     const formData = new FormData();
 
     // Append the stringified version of companies data
-    formData.append("companies", JSON.stringify(footerCompanies));
+    formData.append('companies', JSON.stringify(footerCompanies));
 
     // Append files only if they are present and are a Blob (or File, which inherits Blob)
     footerCompanies.forEach((company, index) => {
@@ -69,23 +69,25 @@ export const FooterProvaider = ({ children }) => {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(`${localhost}/footer`, formData, {
         headers: {
           Authorization: user.token, // Assuming 'user.token' is your auth token
         },
       });
-      console.log("Server response:", response.data);
-      setAlert("Footer updated successfully", "success");
+      console.log('Server response:', response.data);
+      setAlert('Footer updated successfully', 'success');
       getFooterData(); // Refresh footer data from the server
     } catch (error) {
       /* console.log(error.response.data.message); */
       setAlert(
         error.response.data.message
           ? error.response.data.message
-          : "Error updating footer",
-        "danger"
+          : 'Error updating footer',
+        'danger'
       );
     }
+    setLoading(false);
   };
 
   const getFooterData = async () => {
@@ -96,7 +98,7 @@ export const FooterProvaider = ({ children }) => {
       console.log(res);
 
       dispatch({
-        type: "GET_FOOTER_DATA",
+        type: 'GET_FOOTER_DATA',
         payload: res.data.footerCompanies,
       });
     } catch (error) {

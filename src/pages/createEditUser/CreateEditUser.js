@@ -188,6 +188,17 @@ const CreateEditUser = () => {
                   >
                     {isUpdate ? 'UPDATE' : 'CREATE'}
                   </button>
+                  {isSubmitting && (
+                    <div className='text-center'>
+                      <div className='mt-4'>
+                        <Loader />
+                      </div>
+                      <span class='mt-5 blink-text'>
+                        Updating....
+                        <span class='dots'></span>
+                      </span>
+                    </div>
+                  )}
                 </div>
               </Form>
             )}

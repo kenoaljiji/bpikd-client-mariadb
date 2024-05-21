@@ -62,7 +62,7 @@ const HeaderItems = () => {
 
   useEffect(() => {
     if (logoImgPath) setImageURL(logoImgPath);
-  }, []);
+  }, [logoImgPath]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -125,7 +125,7 @@ const HeaderItems = () => {
       logoImgPath: logoImage,
     };
 
-    changeHeaderAndRoutes(data);
+    changeHeaderAndRoutes(data, setLoading);
 
     setSubmitting(false);
 
@@ -213,6 +213,17 @@ const HeaderItems = () => {
                         <i className='fas fa-plus'></i> <span>CHANGE LOGO</span>
                       </div>
                     </label>
+                    {loading && (
+                      <div className='text-center'>
+                        <div className='mt-4'>
+                          <Loader />
+                        </div>
+                        <span class='mt-5 blink-text'>
+                          Please Wait
+                          <span class='dots'></span>
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className='d-flex justify-content-between border-bottom px-0 pb-1 mt-3'>

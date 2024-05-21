@@ -63,7 +63,7 @@ function VisitorsTable() {
   }
 
   return (
-    <div className='container mt-5 visitors'>
+    <div className='container my-5 visitors'>
       <div className='my-2'>
         <Alerts />
       </div>
@@ -73,7 +73,7 @@ function VisitorsTable() {
       <table className='table table-striped'>
         <thead>
           <tr>
-            <th>ID</th>
+            {/*   <th>ID</th> */}
             <th>IP Address</th>
             <th>Browser</th>
             <th>Os</th>
@@ -93,7 +93,7 @@ function VisitorsTable() {
           ) : (
             visitors?.map((visitor) => (
               <tr key={visitor.id}>
-                <td>{visitor.id}</td>
+                {/*  <td>{visitor.id}</td> */}
                 <td>{visitor.ip_address}</td>
                 <td>{visitor.browser_name}</td>
                 <td>{visitor.os}</td>
@@ -131,6 +131,16 @@ function VisitorsTable() {
           )}
         </tbody>
       </table>
+      <div className='mt-4'>
+        <div classNmae=''>
+          {loading && (
+            <div>
+              <Loader />
+            </div>
+          )}
+        </div>
+        <Alerts />
+      </div>
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}

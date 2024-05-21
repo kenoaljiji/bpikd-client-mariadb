@@ -869,14 +869,15 @@ const CreateEditPost = () => {
                       )}
                       <div className='mt-3'>
                         {loading && (
-                          <>
-                            <div className=''>
+                          <div className='text-center'>
+                            <div className='mt-4'>
                               <Loader />
                             </div>
-                            <span className='mt-3 text-center'>
-                              Please wait ....
+                            <span class='mt-5 blink-text'>
+                              Please Wait
+                              <span class='dots'></span>
                             </span>
-                          </>
+                          </div>
                         )}
                       </div>
                     </div>

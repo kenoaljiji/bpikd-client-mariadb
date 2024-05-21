@@ -332,6 +332,8 @@ const SearchResult = () => {
     } else if (result.source_table === 'news') {
       // Use the special function for news
       await getNewsByIdAndTitle(result.id, result.title);
+    } else if (result.source_table === 'soon') {
+      navigate(`/coming`);
     } else {
       navigate(`/${slugify(result.category)}`);
     }
@@ -702,8 +704,13 @@ const SearchResult = () => {
                         </div>
                       </div>
                       <div className='col-md-4 text-center'>
-                        {/* <p className=''>{result?.category && result.category}</p> */}
-                        <p style={{ fontWeight: 'bold' }}>{result.createdBy}</p>
+                        {result.source_table === 'works' && (
+                          <p style={{ fontWeight: 'bold' }}>{result.id}</p>
+                        )}
+                        {result.source_table === 'persons' && (
+                          <p style={{ fontWeight: 'bold' }}>{result.title}</p>
+                        )}
+
                         <img
                           src={'assets/images/default.png'}
                           alt='Result'

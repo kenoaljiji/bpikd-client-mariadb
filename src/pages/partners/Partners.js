@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import { useRouteContext } from '../../context/route/RouteProvider';
-import { footerCompanies } from '../../helpers/people';
 import './partners.scss';
 
 const Partners = () => {

@@ -20,9 +20,11 @@ const HeaderTextComponent = () => {
     color: '#fff',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
+    textWrap: textTrack.isPlaying ? 'none' : 'wrap',
     display: 'block',
     animation: textTrack.isPlaying ? 'marquee 25s linear infinite' : 'none',
   };
+
   if (textTrack.active && location.pathname === '/')
     return (
       <div

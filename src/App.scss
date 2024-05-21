@@ -168,3 +168,38 @@ form.custom-search-2 {
     }
   }
 }
+
+// animations
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    content: '..';
+  }
+  40%,
+  60% {
+    content: '..';
+  }
+  80%,
+  100% {
+    content: '...';
+  }
+}
+
+.blink-text {
+  animation: blink 1s step-start 0s infinite;
+  font-weight: bold;
+  position: relative;
+  top: 10px;
+}
+
+.blink-text .dots::after {
+  animation: dots 2s step-start 0s infinite;
+  content: '';
+}

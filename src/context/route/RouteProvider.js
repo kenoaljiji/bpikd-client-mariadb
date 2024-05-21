@@ -71,11 +71,14 @@ export const RouteProvider = ({ children }) => {
     console.log(state.textTrack);
   }, [state.textTrack]);
 
-  const changeHeaderAndRoutes = async (values) => {
+  const changeHeaderAndRoutes = async (values, setLoading) => {
     const formData = new FormData();
     formData.append('routes', JSON.stringify(values.routes));
     formData.append('buttons', JSON.stringify(values.buttons));
-    if (values.logoImgPath) {
+
+    if (values.logoImgPath instanceof File) {
+      console.log(values.logoImgPath);
+      // It's a File object
       formData.append('logoImg', values.logoImgPath, values.logoImgPath.name);
     }
 
@@ -84,6 +87,7 @@ export const RouteProvider = ({ children }) => {
     } */
 
     try {
+      setLoading(true);
       const res = await axios.post(
         `${localhost}/header/updateHeader`,
         formData,
@@ -93,16 +97,14 @@ export const RouteProvider = ({ children }) => {
           },
         }
       );
-      /*  dispatch({
-        type: "UPDATE_ROUTE_PATHS",
-        payload: res.data,
-      }); */
+
       loadHeaderConfig();
       setAlert('Header updated successfully', 'success');
     } catch (error) {
       console.error('Error updating header:', error);
       setAlert('Error updating header', 'danger');
     }
+    setLoading(false);
   };
 
   const loadHeaderConfig = async () => {

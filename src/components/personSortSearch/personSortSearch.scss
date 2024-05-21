@@ -22,7 +22,8 @@
 
     img {
       width: 150px !important;
-      height: auto !important;
+      height: 150px !important;
+      object-fit: cover;
     }
   }
 
