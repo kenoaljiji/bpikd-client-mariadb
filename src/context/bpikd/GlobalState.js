@@ -55,8 +55,6 @@ export const GlobalState = ({ children }) => {
 
   const { setAlert } = useAlertContext();
 
-  const changeThemeColor = () => {};
-
   const listPosts = async (setLoading) => {
     setLoading(true); // Control loading state globally or locally
     try {
@@ -207,14 +205,18 @@ export const GlobalState = ({ children }) => {
     uploadedFiles,
     featuredImage,
     setIsLoading,
-    abortController // Pass this controller from the component
+    abortController, // Pass this controller from the component
+    clearLastUploadedFile
   ) => {
     const formData = new FormData();
+
+    let lastFileTypeUsed = '';
 
     // Append uploaded files and featured image to formData
     Object.entries(uploadedFiles).forEach(([key, files]) => {
       files.forEach(({ file }) => {
         formData.append(key, file, file.name);
+        lastFileTypeUsed = key;
       });
     });
 
@@ -251,10 +253,11 @@ export const GlobalState = ({ children }) => {
       navigate('/admin/posts');
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log('Upload canceled');
+        setAlert('Upload Canceled', 'danger');
+        clearLastUploadedFile(lastFileTypeUsed);
       } else {
-        console.log(error);
         setAlert(error.message, 'danger');
+        clearLastUploadedFile(lastFileTypeUsed);
       }
     } finally {
       setIsLoading(false);
@@ -368,7 +371,6 @@ export const GlobalState = ({ children }) => {
       };
 
       const res = await axios.delete(`${localhost}/admin/posts/${id}`, config);
-      console.log(res);
 
       dispatch({
         type: 'DELETE_POST',

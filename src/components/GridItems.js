@@ -88,7 +88,7 @@ const GridItems = () => {
   return (
     <div className='authors'>
       <div className='container-md pb-4'>
-        <div className={'flex-center mb-3'}>
+        <div className={'flex-center mb-3 firstRowItem'}>
           <div
             className='img-container'
             onClick={() =>
@@ -109,7 +109,6 @@ const GridItems = () => {
         <div className='grid mb-4'>
           {secondRowItems?.map((author, index) => {
             const { firstName, lastName } = author;
-
             const fullName = slugify(author.firstName + '-' + author.lastName);
             return (
               <div

@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom';
 import ProfileIcon from '../../icons/ProfileIcon';
 import Alerts from '../../components/Alerts';
 import ThemeColorComponent from '../../components/themeColorComponnet/ThemeColorComponent';
+import MaintenanceComponent from '../../components/maintenanceComponent.js/MaintenanceComponent';
 
 const Dashboard = () => {
   const { user, error, success } = useAuthContext();
@@ -52,6 +53,7 @@ const Dashboard = () => {
           <IPtrackIcon />
         </Link>
       </div>
+      <MaintenanceComponent />
     </div>
   );
 };

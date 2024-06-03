@@ -1,0 +1,28 @@
+.maintenance {
+  height: 100vh;
+
+  svg {
+    width: 200px;
+    height: 200px;
+  }
+
+  h2 {
+    font-size: 45px;
+    color: #495f69;
+  }
+
+  p {
+    font-size: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    text-align: center;
+  }
+}

@@ -72,6 +72,7 @@ const ThemeColorComponent = () => {
           />
           <span className='slider'></span>
         </label>
+
         <span className='ms-2' style={{ fontWeight: 'bold' }}>
           Dark
         </span>

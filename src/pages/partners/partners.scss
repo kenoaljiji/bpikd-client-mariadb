@@ -1,4 +1,7 @@
 .partners {
+  &-links img:hover {
+    filter: saturate(60%);
+  }
   h2 {
     padding-top: 60px;
     margin-bottom: 0;

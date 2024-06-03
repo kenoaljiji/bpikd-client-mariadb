@@ -1,29 +1,43 @@
 .author {
   margin-top: 65px;
+
+  @media only screen and (max-width: 993px) {
+    font-size: 90%;
+  }
+
   .box {
     border-bottom: 1px solid #eee;
-    padding-bottom: 65px;
+    padding-bottom: 49px;
     flex-direction: row;
     display: flex;
     width: 100%;
     gap: 20px;
 
     img {
-      height: 335px;
+      width: 150px;
+      height: 204px;
       object-fit: cover;
-      max-width: 300px;
+
+      @media only screen and (max-width: 700px) {
+        width: 100% !important;
+        height: 300px;
+      }
     }
 
     .item-1 {
       max-width: 300px;
       flex-shrink: 0;
+
+      @media only screen and (max-width: 700px) {
+        max-width: 100%;
+      }
     }
 
     .item-2 {
       display: flex;
       height: 100%;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
       width: 100%;
       p {
         margin-bottom: 0;
@@ -33,14 +47,17 @@
         display: flex;
         align-items: flex-end;
         justify-content: end;
-        padding-top: 70px;
-        bottom: -8px;
+        padding-top: 5px;
+        bottom: 0;
         right: 2px;
 
-        i {
-          position: relative;
-          top: 5px;
-          color: #093a41;
+        svg {
+          margin-bottom: 2px;
+          margin-right: 6px;
+        }
+
+        @media only screen and (max-width: 993px) {
+          /* padding-top: 50px; */
         }
 
         span:first-child {
@@ -48,11 +65,9 @@
           align-items: flex-end;
         }
 
-        span:not(:first-child) {
-          display: flex;
-          font-weight: 600;
-          margin-left: 4px;
-        }
+        display: flex;
+        font-weight: 600;
+        margin-left: 4px;
       }
     }
 
@@ -73,7 +88,7 @@
   }
 
   .works {
-    margin-top: 45px;
+    margin-top: 4px;
     /*     border-bottom: 1px solid #dedede;
     padding-bottom: 25px; */
   }
@@ -82,7 +97,7 @@
     text-decoration: none;
     color: #0087d5;
     cursor: pointer;
-    display: block;
+    display: flex;
     padding: 10px 0;
   }
 
@@ -101,7 +116,7 @@
   }
   /* Style for the arrow icon */
   .arrow {
-    margin-left: auto;
+    margin-left: 5px;
   }
 
   /* Style for the up arrow icon */
@@ -153,6 +168,11 @@
     display: flex;
     flex-wrap: wrap;
     border-bottom: none;
+
+    @media only screen and (max-width: 700px) {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .nav-tabs button {
@@ -166,6 +186,10 @@
     font-weight: 600;
     width: 150px;
     color: #093a41;
+
+    @media only screen and (max-width: 700px) {
+      width: 115px;
+    }
   }
 
   .nav-tabs button:hover {

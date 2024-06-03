@@ -51,7 +51,7 @@ const SearchResult = () => {
 
   const { getPostById } = useGlobalContext();
 
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState(null);
   const [shouldScroll, setShouldScroll] = useState(false);
   const [loading, setLoading] = useState();
 
@@ -217,13 +217,10 @@ const SearchResult = () => {
         }
 
         filteredValues.sort = values.sort;
+        setSearchDescription(values.words);
       });
 
       const queryString = new URLSearchParams(filteredValues).toString();
-
-      console.log(queryString);
-
-      console.log(filteredValues);
 
       navigate(`/search?${queryString}`);
 
@@ -243,7 +240,9 @@ const SearchResult = () => {
     },
   });
 
-  const [searchDescription, setSearchDescription] = useState('');
+  const [searchDescription, setSearchDescription] = useState(
+    queryParams.get('words')
+  );
 
   const resultsElementRef = useRef(null);
 
@@ -257,6 +256,10 @@ const SearchResult = () => {
       }
     }
   }, [location]); */
+
+  /* useEffect(() => {
+    setSearchDescription(queryParams.get('words'));
+  }, [queryParams]); */
 
   useEffect(() => {
     if (results?.data?.length > 0 && resultsElementRef.current) {
@@ -570,7 +573,7 @@ const SearchResult = () => {
           ))}
       </div>
  */}
-      {results?.data?.length > 0 && (
+      {results && (
         <div
           className='search-result-display'
           id='results'
@@ -721,7 +724,7 @@ const SearchResult = () => {
                           style={{ fontSize: '12px' }}
                         >
                           <div>
-                            <span className='d-block'>created:</span>
+                            <span className='d-block'>Created:</span>
                             <span>
                               {moment(result.created_at).format('YYYY-MM-DD')}
                             </span>
@@ -739,7 +742,7 @@ const SearchResult = () => {
                     </div>
                   ))
                 )}
-                {!loading && results !== 0 && (
+                {!loading && results.data.length !== 0 && (
                   <div className='mt-4'>
                     <Pagination
                       totalPages={results?.pages}

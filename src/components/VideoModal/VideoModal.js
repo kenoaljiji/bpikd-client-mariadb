@@ -1,8 +1,13 @@
-import React, { useEffect } from "react";
-import CustomVideoPlayer from "../customvideoplayer/CustomVideoPlayer";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import React, { useEffect } from 'react';
+import CustomVideoPlayer from '../customvideoplayer/CustomVideoPlayer';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
 
-const VideoModal = ({ closeModal, isVideoGalleryOpen }) => {
+const VideoModal = ({
+  closeModal,
+  isVideoGalleryOpen,
+  isPlaying,
+  setIsPlaying,
+}) => {
   const { videosData } = useGlobalContext();
 
   const videos = videosData.videos;
@@ -16,6 +21,8 @@ const VideoModal = ({ closeModal, isVideoGalleryOpen }) => {
       videos={videos}
       closeModal={closeModal}
       isVideoGalleryOpen={isVideoGalleryOpen}
+      isPlaying={isPlaying}
+      setIsPlaying={setIsPlaying}
     />
   );
 };

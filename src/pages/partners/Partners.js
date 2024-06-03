@@ -26,11 +26,18 @@ const Partners = () => {
 
         <div className='grid grid-5 items-center mt-4'>
           {partners?.map((img, index) => (
-            <img
-              src={img.imagePath}
-              alt={'partners-' + img.id}
-              key={img.id ? img.id : index + 'pd2'}
-            />
+            <a
+              href={img.url}
+              target='_blank'
+              rel='noreferrer'
+              className='partners-links'
+            >
+              <img
+                src={img.imagePath}
+                alt={'partners-' + img.id}
+                key={img.id ? img.id : index + 'pd2'}
+              />
+            </a>
           ))}
         </div>
       </div>

@@ -1,12 +1,12 @@
-.lg-react-element {
+.image-gallery-lightbox {
   display: grid;
   gap: 10px;
 
-  grid-template-columns: repeat(5, 1fr);
-  a {
-    padding: 0 !important;
-    img {
-      width: 100%;
-    }
+  grid-template-columns: repeat(8, 130px);
+
+  img {
+    width: 130px !important;
+    height: 110px !important;
+    object-fit: cover;
   }
 }

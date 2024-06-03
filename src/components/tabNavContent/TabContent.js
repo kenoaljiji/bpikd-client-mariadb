@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import VideoGallery from '../videoGallery/VideoGallery';
 import './tab-content.scss';
 import ImageGallery from '../image/ImageGallery';
-import LightGallery from 'lightgallery/react';
 
 import 'lightgallery/css/lightgallery.css';
 import 'lightgallery/css/lg-zoom.css';
@@ -13,6 +12,9 @@ import 'lightgallery/scss/lightgallery.scss';
 import 'lightgallery/scss/lg-zoom.scss';
 
 import DOMPurify from 'dompurify';
+import moment from 'moment';
+import StopAudioButton from '../../icons/StopAudioButton';
+import PlayAudioButton from '../../icons/PlayAudioButton';
 
 function ContentComponent({ content }) {
   const sanitizedContent = DOMPurify.sanitize(content);
@@ -34,11 +36,18 @@ function AudioPlayer({ audio, playAudio, stopAudio, isPlaying }) {
   };
 
   return (
-    <div className='audio-container'>
+    <div
+      className='audio-container'
+      style={{ alignItems: audio.name.length < 28 ? 'center' : 'flex-start' }}
+    >
       {isPlaying ? (
-        <i className='fa-regular fa-circle-stop' onClick={togglePlay}></i>
+        <div onClick={togglePlay}>
+          <StopAudioButton color={'#DF2B2B'} />
+        </div>
       ) : (
-        <i className='fa-regular fa-circle-play' onClick={togglePlay}></i>
+        <div onClick={togglePlay}>
+          <PlayAudioButton color={'#DF2B2B'} />
+        </div>
       )}
       {isPlaying && <audio src={audio.url} autoPlay onEnded={stopAudio} />}
       <span>{audio.name}</span>
@@ -46,8 +55,16 @@ function AudioPlayer({ audio, playAudio, stopAudio, isPlaying }) {
   );
 }
 
-const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
+const TabContent = ({
+  tab,
+  selectedWork,
+  openModal,
+  isPlaying,
+  setIsPlaying,
+}) => {
   const [currentPlaying, setCurrentPlaying] = useState(null);
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const playAudio = (fileName) => {
     setCurrentPlaying(fileName);
@@ -62,16 +79,51 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
 
   useEffect(() => {}, [selectedWork, tab]);
 
+  // Function to handle file download
+  const handleDownload = (event, url, filename) => {
+    event.preventDefault(); // Prevent the default anchor tag behaviour
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = filename || 'download';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(a);
+      })
+      .catch(() => {
+        alert('Failed to download file.');
+      });
+  };
+
   const onInit = () => {};
   const colorStyle = {
     red: '#E5332A',
     blue: '#0087D5',
   };
 
-  const gridDocumentStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '20px',
+  const svgEye = () => (
+    <svg
+      width='22px'
+      height='22px'
+      viewBox='0 0 24 24'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path
+        fill-rule='evenodd'
+        clip-rule='evenodd'
+        d='M1.5 12c0-2.25 3.75-7.5 10.5-7.5S22.5 9.75 22.5 12s-3.75 7.5-10.5 7.5S1.5 14.25 1.5 12zM12 16.75a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zM14.7 12a2.7 2.7 0 1 1-5.4 0 2.7 2.7 0 0 1 5.4 0z'
+        fill='#000000'
+      />
+    </svg>
+  );
+
+  const handleScreenChange = (fullscreenState) => {
+    setIsFullscreen(fullscreenState);
   };
 
   switch (tab) {
@@ -79,25 +131,27 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
       return (
         <div className='tab-content releases'>
           {selectedWork.content?.length > 0 ? (
-            <div>
+            <div style={{ width: '100%' }}>
               <ContentComponent content={selectedWork?.content} />
-              <div className='counter-date' style={{ marginTop: '70px' }}>
-                <span>
-                  <i className='fa-solid fa-eye'></i>
+              <div className='counter-date' style={{ marginTop: '0px' }}>
+                <span style={{ marginRight: '5px' }}>
+                  {selectedWork?.work_view_count}
                 </span>
-                <span>1.4K</span>
-                <span>8:30 May.12.2023</span>
+                {svgEye()}
+                <span>{`${moment(selectedWork?.scheduledPublishTime).format(
+                  'HH:mm DD.MM.YYYY'
+                )}`}</span>
               </div>
             </div>
           ) : (
-            <p>There is no content</p>
+            <p>no content</p>
           )}
         </div>
       );
     case 'documents':
       return (
         <div className='tab-content documents'>
-          <ul style={gridDocumentStyle}>
+          <ul className='grid-document-style'>
             {documents?.length > 0 ? (
               documents?.map((doc, index) => (
                 <li key={index} className=''>
@@ -155,14 +209,14 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
                       {doc.name}
                     </a>
                   ) : (
-                    <a href={doc.url} download={doc.name} className=''>
+                    <a href={doc.url} download={doc.name}>
                       {doc.name}
                     </a>
                   )}
                 </li>
               ))
             ) : (
-              <p>There is no content</p>
+              <p>no content</p>
             )}
           </ul>
         </div>
@@ -171,32 +225,13 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
     case 'images':
       return (
         <div className='tab-content images'>
-          {/*  <ul className="image-gallery" style={gridDocumentStyle}>
-            {selectedMedia.images?.length > 0 ? (
-              selectedMedia.images.map((image, index) => (
-                <li key={index}>
-                  <img src={`/assets/images/${image}`} alt={`img ${index}`} />
-                </li>
-              ))
-            ) : (
-              <p>There is no content</p>
-            )}
-          </ul> */}
-          <LightGallery onInit={onInit} speed={500} backgroundColorr='#fff'>
-            {images.length > 0 ? (
-              images?.map((item, index) => (
-                <ImageGallery image={item.url} picNum={index} />
-              ))
-            ) : (
-              <p>There is no content</p>
-            )}
-          </LightGallery>
+          <ImageGallery images={images} />
         </div>
       );
     case 'audio':
       return (
         <div className='tab-content audio'>
-          <ul style={gridDocumentStyle}>
+          <ul className='grid-document-style'>
             {audios?.length > 0 ? (
               audios?.map((audio, index) => (
                 <AudioPlayer
@@ -208,7 +243,7 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
                 />
               ))
             ) : (
-              <p>There is no content</p>
+              <p>no content</p>
             )}
           </ul>
         </div>
@@ -216,14 +251,16 @@ const TabContent = ({ tab, selectedWork, openModal, closeModal }) => {
     case 'video':
       return (
         <div className='tab-content videos'>
-          {/*  {selectedMedia.video?.length > 0 ? (
-              selectedMedia.video.map((video, index) => (
-                <img key={index} src={'/assets/images/' + video} />
-              ))
-            ) : (
-              <p>There is no content</p>
-            )} */}
-          <VideoGallery selectedMedia={selectedMedia} openModal={openModal} />
+          {selectedMedia.videos.length > 0 ? (
+            <VideoGallery
+              selectedMedia={selectedMedia}
+              openModal={openModal}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+            />
+          ) : (
+            <p>no content</p>
+          )}
         </div>
       );
     default:

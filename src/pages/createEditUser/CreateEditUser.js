@@ -194,7 +194,7 @@ const CreateEditUser = () => {
                         <Loader />
                       </div>
                       <span class='mt-5 blink-text'>
-                        Updating....
+                        {id ? 'Updating...' : 'Creating...'}
                         <span class='dots'></span>
                       </span>
                     </div>

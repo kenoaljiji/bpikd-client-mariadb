@@ -4,12 +4,17 @@ import VideoPlayer from '../VideoPlayer/VideoPlayer';
 import Draggable from 'react-draggable';
 import VideoOptions from '../videooptions/VideoOptions';
 
-const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
+const CustomVideoPlayer = ({
+  videos,
+  closeModal,
+  isVideoGalleryOpen,
+  isPlaying,
+  setIsPlaying,
+}) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showSpeedMenu, setShowSpeedMenu] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [duration, setDuration] = useState(0);
@@ -77,6 +82,7 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
           className='closeModal'
           style={{ zIndex: '999999999999' }}
           onClick={() => {
+            setIsPlaying(false);
             closeModal();
           }}
         >

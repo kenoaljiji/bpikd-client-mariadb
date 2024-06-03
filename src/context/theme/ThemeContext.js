@@ -5,6 +5,8 @@ import { localhost } from '../../config/config';
 export const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
+  const [maintenance, setMaintenance] = useState(false);
+
   const [theme, setTheme] = useState({
     headerColor: '#fff',
     footerColor: '#ebebeb',
@@ -22,10 +24,24 @@ export const ThemeProvider = ({ children }) => {
       }
     };
     fetchTheme();
+
+    const fetchMaintenance = async () => {
+      try {
+        const response = await axios.get(`${localhost}/theme/maintenance`);
+        console.log('Maintenance mode:', response.data.maintenance);
+        setMaintenance(response.data.maintenance);
+        // Handle setting maintenance mode in state or context here
+      } catch (error) {
+        console.error('Failed to fetch maintenance mode:', error);
+      }
+    };
+    fetchMaintenance();
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, maintenance, setTheme, setMaintenance }}
+    >
       {children}
     </ThemeContext.Provider>
   );

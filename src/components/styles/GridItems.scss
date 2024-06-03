@@ -5,7 +5,12 @@
     margin-bottom: 10px;
 
     @media only screen and (max-width: 700px) {
-      display: block;
+    }
+
+    .firstRowItem {
+      img {
+        width: 177px;
+      }
     }
   }
   .grid {
@@ -20,9 +25,23 @@
 
     margin-top: 25px;
 
+    @media only screen and (max-width: 700px) {
+      display: grid;
+      grid-template-columns: 177px;
+
+      .img-container {
+        h5 {
+          width: 177px;
+        }
+      }
+    }
+
     @media only screen and (max-width: 1200px) {
       .items {
         width: 33%;
+        img {
+          height: 227px;
+        }
       }
       .div1 > .img-container,
       .div3 > .img-container {
@@ -32,7 +51,7 @@
 
     @media only screen and (max-width: 700px) {
       .items {
-        width: 100%;
+        width: 33%;
       }
       .div1 > .img-container,
       .div2 > .img-container,
@@ -53,19 +72,24 @@
   }
 
   .custom-slider {
-    max-width: 1080px;
+    max-width: 965px;
     margin: 0 auto;
 
     @media only screen and (max-width: 1200px) {
-      max-width: 860px;
+      max-width: 770px;
     }
     @media only screen and (max-width: 993px) {
-      max-width: 650px;
+      max-width: 580px;
     }
   }
   .slide-item {
     margin: 0 auto;
     margin: 0 5px; /* Adjust margins as needed (top, right, bottom, left) */
+
+    @media only screen and (max-width: 700px) {
+      display: flex !important;
+      justify-content: center !important;
+    }
   }
 
   .slick-slide .slick-cloned {
@@ -73,9 +97,16 @@
   }
 
   .slick-next:before {
-    content: "🡪";
-    color: #000;
-    font-size: 30px;
+    content: ''; /* Required for the pseudo-element to display */
+    position: relative;
+    top: -13px;
+    display: block; /* Makes it possible to apply width and height */
+    width: 20px; /* Set the width of the image */
+    height: 40px; /* Set the height of the image */
+    background-image: url('../../../public/assets/images/arrowRight.png');
+    background-size: cover; /* Ensures the image covers the pseudo-element */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    color: #000; /* This won't affect the image but is left here if needed for other styling */
 
     @media only screen and (max-width: 700px) {
       color: #fff;
@@ -97,12 +128,19 @@
   }
 
   .slick-prev:before {
-    content: "🡨";
-    color: #000;
-    font-size: 30px;
+    content: '';
+    position: relative;
+    top: -13px; /* Required for the pseudo-element to display */
+    display: block; /* Makes it possible to apply width and height */
+    width: 20px; /* Set the width of the image */
+    height: 40px; /* Set the height of the image */
+    background-image: url('../../../public/assets/images/arrowLeft.png');
+    background-size: cover; /* Ensures the image covers the pseudo-element */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    color: #000; /* This won't affect the image but is left here if needed for other styling */
 
     @media only screen and (max-width: 700px) {
-      color: #fff;
+      color: #fff; /* This won't affect the image but is left here if needed for other styling */
     }
   }
 
@@ -111,7 +149,7 @@
 
     .swiper-slide {
       /* width:190px!important; */
-      width: 200px !important;
+      width: 177px !important;
     }
     .img-container {
       width: 100%;
@@ -125,7 +163,7 @@
     cursor: pointer;
 
     @media only screen and (max-width: 700px) {
-      max-width: 100%;
+      max-width: 177px;
     }
 
     &:hover {

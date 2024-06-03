@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRouteContext } from '../../context/route/RouteProvider';
 import './headerTextComponent.scss';
+import Ticker from 'infobae-react-ticker';
 
 const HeaderTextComponent = () => {
   const { state, getTextSettings } = useRouteContext();
@@ -13,19 +14,7 @@ const HeaderTextComponent = () => {
     getTextSettings();
   }, []);
 
-  const textStyle = {
-    background: '#9a0404',
-    width: '100%',
-    textAlign: 'center',
-    color: '#fff',
-    whiteSpace: 'nowrap',
-    overflow: 'hidden',
-    textWrap: textTrack.isPlaying ? 'none' : 'wrap',
-    display: 'block',
-    animation: textTrack.isPlaying ? 'marquee 25s linear infinite' : 'none',
-  };
-
-  if (textTrack.active && location.pathname === '/')
+  if (textTrack.active && location.pathname === '/') {
     return (
       <div
         style={{
@@ -35,11 +24,25 @@ const HeaderTextComponent = () => {
           textAlign: 'center',
           color: '#fff',
           padding: '6px',
+          overflow: 'hidden',
         }}
       >
-        <span style={textStyle}>{textTrack.text}</span>
+        {textTrack.isPlaying ? (
+          <Ticker speed={5} move={textTrack.isPlaying}>
+            {() => (
+              <div style={{ whiteSpace: 'nowrap', marginRight: '50px' }}>
+                {textTrack.text}{' '}
+              </div>
+            )}
+          </Ticker>
+        ) : (
+          <div style={{ textAlign: 'center' }}>{textTrack.text} </div>
+        )}
       </div>
     );
+  }
+
+  return null; // Return null or a fallback UI for when conditions are not met
 };
 
 export default HeaderTextComponent;

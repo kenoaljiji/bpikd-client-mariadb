@@ -199,12 +199,43 @@ const PersonEditPage = () => {
     // No need to reset the file input here
   };
 
+  const fileTypes = ['images', 'audios', 'videos', 'documents'];
+  const fileInputs = useRef({});
+
   const [uploadedFiles, setUploadedFiles] = useState({
     images: [],
     audios: [],
     videos: [],
     documents: [],
   });
+
+  useEffect(() => {
+    fileTypes.forEach((type) => {
+      fileInputs.current[type] = React.createRef();
+    });
+  }, []);
+
+  const clearLastUploadedFile = (fileType) => {
+    setUploadedFiles((prev) => {
+      // Get the current array of files for the specified fileType
+      const currentFiles = prev[fileType];
+
+      if (currentFiles.length > 0) {
+        // Create a new array without the last element
+        const updatedFiles = currentFiles.slice(0, -1);
+
+        // Reset the input if necessary. This part depends on whether you need to
+        // clear the input field (e.g., if an error occurred during the upload of the last file).
+        const inputElement = fileInputs.current[fileType].current;
+        if (inputElement && updatedFiles.length === 0) {
+          inputElement.value = ''; // Only reset the input field if there are no more files after removal
+        }
+
+        return { ...prev, [fileType]: updatedFiles };
+      }
+      return prev; // If no files were there, return state unchanged
+    });
+  };
 
   const checkFilesNotEmpty = (uploadedFiles) => {
     // Destructure each file type array from the state
@@ -380,6 +411,8 @@ const PersonEditPage = () => {
   const uploadFiles = async () => {
     const formData = new FormData();
 
+    let lastFileTypeUsed = '';
+
     Object.keys(uploadedFiles).forEach((type) => {
       // Map the type to the expected form field name
       const fieldName =
@@ -394,7 +427,8 @@ const PersonEditPage = () => {
       uploadedFiles[type].forEach((file, index) => {
         if (file.isNew) {
           // Make sure your file objects have this property when they're new
-          formData.append(fieldName, file.file, file.name); // Append the file object, not the URL
+          formData.append(fieldName, file.file, file.name);
+          lastFileTypeUsed = type;
           formData.append(`${fieldName}[${index}][index]`, index); // Ensure the index is sent
           formData.append(`${fieldName}[${index}][type]`, type); // Sending the type might be redundant but can be useful
         }
@@ -424,6 +458,7 @@ const PersonEditPage = () => {
       setAlert('Update successful:', 'success');
     } catch (error) {
       setAlert('Error updating', 'danger');
+      clearLastUploadedFile(lastFileTypeUsed);
     }
     setIsLoading(false);
     resetProgressUpload();
@@ -646,7 +681,7 @@ const PersonEditPage = () => {
                           >
                             UPDATE PERSON
                           </button>
-                          <div className='mt-3'>
+                          <div className='my-3'>
                             {loading && (
                               <div className='text-center'>
                                 <div className='mt-4'>
@@ -788,6 +823,7 @@ const PersonEditPage = () => {
                                     onChange={(e) =>
                                       handleFileUpload(e, fileType)
                                     }
+                                    ref={fileInputs.current[fileType]}
                                     accept={
                                       fileType === 'images'
                                         ? 'image/*'

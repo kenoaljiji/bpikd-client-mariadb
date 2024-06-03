@@ -1,0 +1,20 @@
+.home-layout {
+  min-height: 1396.43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media only screen and (max-width: 700px) {
+    display: block;
+  }
+
+  .search {
+    margin-bottom: 20%;
+    margin-top: -30px;
+
+    @media only screen and (max-width: 700px) {
+      margin-bottom: 40px;
+      margin-top: 36px;
+    }
+  }
+}

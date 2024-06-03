@@ -5,30 +5,46 @@ import axios from 'axios';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import { useAlertContext } from '../../context/alert/AlertState';
 import Loader from '../../components/loader/Loader';
-import Alerts from '../../components/Alerts';
 
 function CreateEditPartners() {
   const { partners, getPartnersData, category } = useGlobalContext();
   const { setAlert } = useAlertContext();
 
-  const [imageFiles, setImageFiles] = useState(partners);
+  const [imageFiles, setImageFiles] = useState(
+    partners.map((partner) => ({ ...partner, url: '' }))
+  ); // Initialize with URL property
 
   const [loading, setLoading] = useState(false);
 
   const handleAddImage = () => {
     setImageFiles((imageFiles) => [
       ...imageFiles,
-      null, // Initialize with an empty object
+      { file: null, url: '', preview: '' }, // Initialize with structured object
     ]);
-  }; // Add a null entry to represent a new empty field
+  };
 
   useEffect(() => {
     getPartnersData(setLoading);
   }, [category]);
 
   useEffect(() => {
-    setImageFiles(partners);
-  }, []);
+    setImageFiles(
+      partners.map((partner) => ({
+        ...partner,
+        url: partner?.url ? partner.url : '',
+      }))
+    ); // Initialize with URL property on data fetch
+  }, [partners]);
+
+  const handleImageUrlChange = (e, index) => {
+    const newImageFiles = imageFiles.slice();
+    newImageFiles[index] = { ...newImageFiles[index], url: e.target.value };
+    setImageFiles(newImageFiles);
+  };
+
+  useEffect(() => {
+    console.log(imageFiles);
+  }, [imageFiles]);
 
   const uploadAddDeletePartnersImages = async () => {
     const formData = new FormData();
@@ -132,7 +148,7 @@ function CreateEditPartners() {
         {imageFiles.length > 0 &&
           imageFiles.map((img, index) => (
             <div className='image-container' key={`partnersImages-${index}`}>
-              {img ? (
+              {img.preview !== '' ? (
                 <img
                   src={img.preview ? img.preview : img.imagePath}
                   alt={`Preview ${index}`}
@@ -152,6 +168,14 @@ function CreateEditPartners() {
                   <span>ADD IMAGE</span>
                 </div>
               )}
+              <input
+                type='text'
+                value={img.url}
+                onChange={(e) => handleImageUrlChange(e, index)}
+                placeholder='Enter image URL'
+                className='form-control my-2'
+              />
+
               <input
                 type='file'
                 id={`featured-image-upload-${index}`}

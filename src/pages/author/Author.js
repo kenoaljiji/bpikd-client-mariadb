@@ -31,6 +31,8 @@ const Authors = () => {
   const [isVideoGalleryOpen, setIsVideoGalleryOpen] = React.useState(false); // State for modal visibility
   const [expandedWorkId, setExpandedWorkId] = useState(null);
 
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -52,7 +54,6 @@ const Authors = () => {
 
     // If the author is found, use their _id to fetch detailed data
     if (foundAuthor) {
-      console.log(foundAuthor);
       const authorId = foundAuthor.id;
 
       fetchAuthorDataById(authorId);
@@ -67,7 +68,7 @@ const Authors = () => {
       );
       const data = response.data;
 
-      setAuthor(data); // Assuming you have a setAuthor function to update the author state
+      setAuthor(data);
       // Handle setting works and other states as needed
     } catch (error) {
       console.error('Failed to fetch author data:', error);
@@ -79,9 +80,9 @@ const Authors = () => {
 
   useEffect(() => {
     if (author && author.works) {
-      setSelectedWork(author.works[0]);
-      console.log(author);
-      setOpenWorkItems(new Array(author.works.length).fill(false)); // Init with the length of works
+      /* setSelectedWork(author.works[0]); */
+
+      setOpenWorkItems(new Array(author.works.length).fill(false));
       setOpenWorkIndex(-1);
     } else {
       // Reset states if author or works are not available
@@ -96,7 +97,6 @@ const Authors = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    console.log();
   }, [id]);
 
   useEffect(() => {
@@ -122,11 +122,26 @@ const Authors = () => {
 
   const toggleTextDisplay = (work) => {
     const id = work.workId;
-    console.log(expandedWorkId, id);
+
     if (expandedWorkId === id) {
       setExpandedWorkId(null); // Collapse if it's already expanded
     } else {
       setExpandedWorkId(id); // Expand this item
+      fetchWorkDetails(work.workId);
+    }
+  };
+
+  const fetchWorkDetails = async (workId) => {
+    if (!workId) {
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${localhost}/post/persons/works/${workId}`);
+      /* setSelectedWork(response.data); */
+      setSelectedWork(res.data);
+    } catch (err) {
+      console.error('Error fetching work details:', err);
     }
   };
 
@@ -136,7 +151,7 @@ const Authors = () => {
       const work = author?.works?.map((work, index) => {
         if (slugify(work.title) === title) {
           setExpandedWorkId(work.workId);
-          setSelectedWork(work);
+          /* setSelectedWork(work); */
           setOpenWorkIndex(openWorkIndex === index ? -1 : index);
         }
       });
@@ -153,6 +168,27 @@ const Authors = () => {
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
   };
+
+  /*   useEffect(() => {
+    console.log(author);
+  }, [author]); */
+
+  const svgEye = () => (
+    <svg
+      width='22px'
+      height='22px'
+      viewBox='0 0 24 24'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path
+        fill-rule='evenodd'
+        clip-rule='evenodd'
+        d='M1.5 12c0-2.25 3.75-7.5 10.5-7.5S22.5 9.75 22.5 12s-3.75 7.5-10.5 7.5S1.5 14.25 1.5 12zM12 16.75a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zM14.7 12a2.7 2.7 0 1 1-5.4 0 2.7 2.7 0 0 1 5.4 0z'
+        fill='#000000'
+      />
+    </svg>
+  );
 
   return (
     <section className='author'>
@@ -171,13 +207,16 @@ const Authors = () => {
                     <img src={author?.featured} alt='persons' />
                   </div>
                   <div className='item-2'>
-                    <p>{displayContentWithLineBreaks(author?.aboutPerson)}</p>
+                    <p>{displayContentWithLineBreaks(author?.aboutPerson)}</p>{' '}
                     <div className='counter-date'>
-                      <span>
-                        <i className='fa-solid fa-eye'></i>
+                      <span style={{ marginRight: '5px' }}>
+                        {author?.personViewCount}
                       </span>
-                      <span>1.4K</span>
-                      <span>8:30h May.12.2023</span>
+                      {svgEye()}
+                      {/* <span>8:30h 24.12.2016</span> */}
+                      <span>{`${moment(author?.createdAt).format(
+                        'HH:mm DD.MM.YYYY'
+                      )}`}</span>
                     </div>
                   </div>
                 </div>
@@ -196,52 +235,32 @@ const Authors = () => {
                           className='link'
                           onClick={(e) => {
                             handleWorkClick(index);
-                            e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
+                            e.stopPropagation();
                             toggleTextDisplay(work);
                           }}
-                          style={{ cursor: 'pointer' }}
+                          style={{ cursor: 'pointer', display: 'flex' }}
                         >
                           <span
                             className={index === openWorkIndex ? 'active' : ''}
+                            style={{
+                              minWidth: '263px',
+                            }}
                             /* onClick={(e) => {
                               e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
                               toggleTextDisplay(work.id);
                             }} */
                           >
                             {expandedWorkId !== work.workId &&
-                            work.title.length > 10
-                              ? `${work.title.slice(0, 10)}...`
+                            work.title.length > 29
+                              ? `${work.title.slice(0, 29)}...`
                               : work.title}
                           </span>
-                          <span
-                            style={{ color: '#333333', marginRight: '10px' }}
-                          >
-                            {` - ${moment(work.scheduledPublishTime).format(
-                              'DD MMMM YYYY'
-                            )}`}
-                          </span>
-                          {work.title.length > 10 && (
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
-                                /*   toggleTextDisplay(work.id); */
-                              }}
-                              style={{
-                                cursor: 'pointer',
-                                color: '#0087d5',
-                                marginLeft: '5px',
-                              }}
-                            >
-                              {/*   {expandedWorkId === work.id ? "Hide" : "Show more"} */}
-                            </span>
-                          )}
+
                           <span
                             className={`arrow ${
                               index === openWorkIndex ? 'down' : 'up'
                             }`}
-                          >
-                            {/*  &#9660; */}
-                          </span>
+                          ></span>
                         </a>
                         {selectedWork && (
                           <div
@@ -309,6 +328,8 @@ const Authors = () => {
                                   selectedWork={selectedWork}
                                   openModal={handleOpenModal}
                                   closeModal={handleCloseModal}
+                                  isPlaying={isVideoPlaying}
+                                  setIsPlaying={setIsVideoPlaying}
                                 />
                               </div>
                             </div>
@@ -325,6 +346,8 @@ const Authors = () => {
           <VideoModal
             closeModal={handleCloseModal}
             isVideoGalleryOpen={isVideoGalleryOpen}
+            isPlaying={isVideoPlaying}
+            setIsPlaying={setIsVideoPlaying}
           />
         </>
       )}

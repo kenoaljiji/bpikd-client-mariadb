@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import AddImageIcon from '../../icons/AddImageIcon';
@@ -85,12 +85,32 @@ const CreateEditPost = () => {
   });
   const [selectedPerson, setSelectedPerson] = useState(null);
 
+  const fileTypes = ['images', 'audios', 'videos', 'documents'];
+  const fileInputs = useRef({});
+
   const [uploadedFiles, setUploadedFiles] = useState({
     images: [],
     audios: [],
     videos: [],
     documents: [],
   });
+
+  useEffect(() => {
+    fileTypes.forEach((type) => {
+      fileInputs.current[type] = React.createRef();
+    });
+  }, []);
+
+  const clearFileInput = (fileType) => {
+    const inputElement = fileInputs.current[fileType].current;
+    if (inputElement) {
+      inputElement.value = ''; // Reset the input field
+    }
+    setUploadedFiles((prev) => ({
+      ...prev,
+      [fileType]: [], // Clear the state for this fileType
+    }));
+  };
 
   const isEditing = postId !== undefined; // Determine if you are in edit mode
 
@@ -254,12 +274,11 @@ const CreateEditPost = () => {
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
-    // Store both the blob URL for preview and the file object for upload
     const newFiles = files.map((file) => ({
-      url: URL.createObjectURL(file), // Used for displaying preview
-      file: file, // The actual file object for upload
+      url: URL.createObjectURL(file),
+      file: file,
       name: file.name,
-      fileType: file.type, // Changed from fileType to type for consistency
+      type: file.type,
     }));
 
     const targetKey =
@@ -277,6 +296,28 @@ const CreateEditPost = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ''; // Reset file input
     }
+  };
+
+  const clearLastUploadedFile = (fileType) => {
+    setUploadedFiles((prev) => {
+      // Get the current array of files for the specified fileType
+      const currentFiles = prev[fileType];
+
+      if (currentFiles.length > 0) {
+        // Create a new array without the last element
+        const updatedFiles = currentFiles.slice(0, -1);
+
+        // Reset the input if necessary. This part depends on whether you need to
+        // clear the input field (e.g., if an error occurred during the upload of the last file).
+        const inputElement = fileInputs.current[fileType].current;
+        if (inputElement && updatedFiles.length === 0) {
+          inputElement.value = ''; // Only reset the input field if there are no more files after removal
+        }
+
+        return { ...prev, [fileType]: updatedFiles };
+      }
+      return prev; // If no files were there, return state unchanged
+    });
   };
 
   const personValidationSchema = Yup.object().shape({
@@ -524,7 +565,8 @@ const CreateEditPost = () => {
                     };
                     previewNewsAndPagePost(previewData);
                     return;
-                  } else if (postId && category === 'News') {
+                  }
+                  if (postId && category === 'News') {
                     updateNewsPost(
                       postId,
                       submissionData,
@@ -535,7 +577,8 @@ const CreateEditPost = () => {
                     createNewsAndPagePost(
                       submissionData,
                       featuredImage,
-                      setIsLoading
+                      setIsLoading,
+                      abortController
                     );
                   }
                 } else {
@@ -584,7 +627,8 @@ const CreateEditPost = () => {
                       uploadedFiles,
                       featuredImage,
                       setIsLoading,
-                      abortController
+                      abortController,
+                      clearLastUploadedFile
                     );
                   }
                 }
@@ -613,6 +657,7 @@ const CreateEditPost = () => {
                                   <Field
                                     className='form-control'
                                     name='person.firstName'
+                                    required
                                   />
                                 </div>
                                 <div className='d-flex ms-3 align-items-center'>
@@ -622,6 +667,7 @@ const CreateEditPost = () => {
                                   <Field
                                     className='form-control'
                                     name='person.lastName'
+                                    required
                                   />
                                 </div>
                               </div>
@@ -632,6 +678,7 @@ const CreateEditPost = () => {
                                 style={{ padding: '20px' }}
                                 name='person.aboutPerson'
                                 placeholder='About person'
+                                required
                               />
                             </>
                           )}
@@ -642,6 +689,7 @@ const CreateEditPost = () => {
                           style={{ padding: '20px', height: '280px' }}
                           name='title'
                           placeholder='Title'
+                          required
                         />
                       </div>
                       {category === 'Person of Interest' && (
@@ -682,6 +730,7 @@ const CreateEditPost = () => {
                                     onChange={(e) =>
                                       handleFileUpload(e, fileType)
                                     }
+                                    ref={fileInputs.current[fileType]}
                                     accept={
                                       fileType === 'images'
                                         ? 'image/*'
@@ -722,6 +771,7 @@ const CreateEditPost = () => {
                             setFieldValue('content', content)
                           }
                           modules={modules}
+                          required
                         />
                       )}
                     </div>
@@ -891,6 +941,7 @@ const CreateEditPost = () => {
                             setFieldValue('content', content)
                           }
                           modules={modules}
+                          required={true}
                         />
                       )}
                     </div>

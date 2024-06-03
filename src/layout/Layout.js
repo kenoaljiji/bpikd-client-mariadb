@@ -2,12 +2,15 @@ import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
 import CustomSearch from '../components/CustomSearch';
 import MobileMenu from '../components/mobileMenu/MobileMenu';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Footer from './Footer';
+import './style/layout.scss';
+import { ThemeContext } from '../context/theme/ThemeContext';
 
 function Layout({ children }) {
   const { pathname } = useLocation();
 
+  const { maintenance } = useContext(ThemeContext);
   const [isActive, setIsActive] = useState(false);
 
   const handleClick = () => {
@@ -35,7 +38,7 @@ function Layout({ children }) {
           </div>
         </>
       )}
-      <main style={{ minHeight: pathname === '/' ? '1366.43px' : '' }}>
+      <main className={pathname === '/' ? 'home-layout' : ''}>
         <Outlet />
       </main>
       {shouldRenderHeaderFooter() && <Footer />}{' '}
