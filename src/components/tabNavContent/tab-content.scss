@@ -4,6 +4,11 @@
   margin: 25px 0;
   min-height: 110px;
 
+  .spinner-mobile .spinner-border {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
   .grid-document-style {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -21,7 +26,9 @@
     padding-top: 5px;
 
     svg {
-      margin-bottom: 2px;
+      margin-bottom: 3px;
+      width: 21px;
+      height: 21px;
     }
 
     /*  i {

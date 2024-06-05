@@ -5,6 +5,10 @@
 
   h2 {
     margin-top: 60px;
+
+    @media only screen and (max-width: 993px) {
+      margin-top: 10px;
+    }
   }
 
   span {

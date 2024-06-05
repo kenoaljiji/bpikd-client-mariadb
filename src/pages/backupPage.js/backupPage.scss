@@ -1,0 +1,38 @@
+.backup-page {
+  padding: 10px;
+
+  .backup {
+    display: flex;
+    justify-content: center;
+  }
+
+  .backup-item {
+    width: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    padding: 5px 10px;
+    border: 1px solid #093a4142;
+    color: #093a41;
+    background: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    span {
+      font-weight: 600;
+    }
+    i {
+      color: #093a41;
+      margin-right: 10px;
+    }
+  }
+
+  .backup-item:hover {
+    background: #093a41;
+    color: #fff;
+
+    i {
+      color: #fff;
+    }
+  }
+}

@@ -537,12 +537,6 @@ const PersonEditPage = () => {
             >
               <option value='Person of Interest'>Person of Interest</option>
               <option value='News'>News</option>
-              {/* <option value="Partners">Partners</option>
-              <option value="About">About</option>
-              <option value="Button1">Button1Page</option>
-              <option value="Button2">Button2Page</option>
-              <option value="Soon">Soon Page</option>
-              <option value="Shop">Shop</option> */}
             </select>
           </div>
         </div>
@@ -632,7 +626,6 @@ const PersonEditPage = () => {
                           </div>
                         )}
 
-                        {/* Image upload and display */}
                         {imageURL ? (
                           <img
                             src={imageURL}

@@ -3,8 +3,6 @@ import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import { ContentComponent } from '../../components/ContentComponent';
 import './about.scss';
 import moment from 'moment';
-import Loader from '../../components/loader/Loader';
-import LoaderPage from '../../components/loader/LoaderPage';
 
 const About = () => {
   const { posts, listPosts, singlePost, listPages } = useGlobalContext();

@@ -34,6 +34,7 @@ import PreviewNewsAndPage from './pages/previewNewsAndPage/PreviewNewsAndPage';
 import { ThemeContext } from './context/theme/ThemeContext';
 import { useContext } from 'react';
 import MaintenancePage from './pages/maintenancePage/MaintenancePage';
+import BackupPage from './pages/backupPage.js/BackupPage';
 
 function App() {
   const { state } = useRouteContext();
@@ -41,12 +42,9 @@ function App() {
   const { headersData } = state;
   const { routes, buttons } = headersData;
   const location = useLocation();
-  /*  const { isAuthenticated } = useAuthContext(); */
 
-  // Check if the current path starts with /admin
   const isAdminRoute = location.pathname.startsWith('/admin');
 
-  // Render maintenance page for non-admin routes if in maintenance mode
   if (maintenance === 0 && !isAdminRoute) {
     return <MaintenancePage />;
   } else
@@ -92,6 +90,7 @@ function App() {
               <Route path='footer-items' element={<FooterItems />} />
               <Route path='ip-visitors' element={<IpVisitorPage />} />
               <Route path='post/preview' element={<PreviewAuthor />} />
+              {/*   <Route path='backup' element={<BackupPage />} /> */}
               <Route
                 path='news-page/preview'
                 element={<PreviewNewsAndPage />}

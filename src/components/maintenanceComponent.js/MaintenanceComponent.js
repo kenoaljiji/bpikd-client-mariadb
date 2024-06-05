@@ -14,8 +14,7 @@ const MaintenanceComponent = () => {
       await axios.put(`${localhost}/theme/maintenance`, {
         maintenance: newMaintenanceStatus,
       });
-      setMaintenance(newMaintenanceStatus);
-      console.log(maintenance);
+
       setAlert('Maintenance mode updated successfully!', 'success');
     } catch (error) {
       console.error('Failed to update maintenance mode:', error);
@@ -34,7 +33,10 @@ const MaintenanceComponent = () => {
           <input
             type='checkbox'
             checked={!maintenance}
-            onChange={toggleMaintenanceMode}
+            onChange={() => {
+              toggleMaintenanceMode();
+              setMaintenance(!maintenance);
+            }}
           />
           <span className='slider round'></span>
         </label>

@@ -15,6 +15,7 @@ import DOMPurify from 'dompurify';
 import moment from 'moment';
 import StopAudioButton from '../../icons/StopAudioButton';
 import PlayAudioButton from '../../icons/PlayAudioButton';
+import Loader from '../loader/Loader';
 
 function ContentComponent({ content }) {
   const sanitizedContent = DOMPurify.sanitize(content);
@@ -61,6 +62,7 @@ const TabContent = ({
   openModal,
   isPlaying,
   setIsPlaying,
+  smallLoading,
 }) => {
   const [currentPlaying, setCurrentPlaying] = useState(null);
 
@@ -107,8 +109,8 @@ const TabContent = ({
 
   const svgEye = () => (
     <svg
-      width='22px'
-      height='22px'
+      width='21px'
+      height='21px'
       viewBox='0 0 24 24'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -135,7 +137,13 @@ const TabContent = ({
               <ContentComponent content={selectedWork?.content} />
               <div className='counter-date' style={{ marginTop: '0px' }}>
                 <span style={{ marginRight: '5px' }}>
-                  {selectedWork?.work_view_count}
+                  {smallLoading ? (
+                    <div className='spinner-mobile'>
+                      <Loader />
+                    </div>
+                  ) : (
+                    selectedWork?.work_view_count
+                  )}
                 </span>
                 {svgEye()}
                 <span>{`${moment(selectedWork?.scheduledPublishTime).format(

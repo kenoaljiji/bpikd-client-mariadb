@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuthContext } from '../auth/AuthState';
 import globalReducer from './globalReducer';
 import { localhost } from '../../config/config';
-import { NavigationType, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   GET_PARTNERS_DATA,
   LIST_AUTHORS,

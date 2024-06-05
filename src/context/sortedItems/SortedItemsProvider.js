@@ -2,7 +2,6 @@ import axios from 'axios';
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { localhost } from '../../config/config';
 import { useAlertContext } from '../alert/AlertState';
-import { SET_LOADING } from '../types';
 
 const SortedItemsContext = createContext();
 
@@ -13,9 +12,15 @@ export const SortedItemsProvider = ({ children }) => {
     id: `placeholder-${index}`,
     placeholder: true,
     text: `Select person ${index + 1}`,
+    img: '/assets/no-picture.png',
   }));
+
   const [sortedItems, setSortedItems] = useState({
-    firstRowItems: {},
+    firstRowItems: {
+      id: `placeholder-`,
+      placeholder: true,
+      img: '/assets/no-picture.png',
+    },
     secondRowItems: initialPlaceholders,
   });
   const [error, setError] = useState(false);
@@ -28,8 +33,10 @@ export const SortedItemsProvider = ({ children }) => {
   }; */
 
   const updateSortedItems = async (data, setLoading) => {
+    console.log(data);
     try {
       setLoading(true);
+      console.log(data);
       const response = await axios.put(`${localhost}/sort/data`, data);
 
       setSortedItems(response.data);
@@ -58,12 +65,10 @@ export const SortedItemsProvider = ({ children }) => {
 
       const res = await axios.get(`${localhost}/sort`, config);
 
-      console.log(res.data);
       if (res.data && res.data.secondRowItems) {
         // Check how many items were received
         const receivedItemsCount = res.data.secondRowItems.length;
 
-        console.log(res.data);
         // If fewer than 4 items are received, fill in the rest with placeholders
         if (receivedItemsCount < 4) {
           res.data.secondRowItems = [
@@ -85,10 +90,6 @@ export const SortedItemsProvider = ({ children }) => {
 
   useEffect(() => {
     getSortedItems();
-  }, []);
-
-  useEffect(() => {
-    console.log(sortedItems);
   }, []);
 
   return (

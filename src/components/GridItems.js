@@ -83,7 +83,7 @@ const GridItems = () => {
     );
   }
 
-  const sliderRef = React.createRef(null); // Create a ref for the slider
+  const sliderRef = React.createRef(null);
 
   return (
     <div className='authors'>
@@ -99,10 +99,36 @@ const GridItems = () => {
               )
             }
           >
-            <img src={firstRowItems?.featured} alt='' />
-            <h5>
-              {firstRowItems?.firstName} <br /> {firstRowItems?.lastName}
-            </h5>
+            <div>
+              <img
+                style={{
+                  border: firstRowItems.firstRowItems
+                    ? 'none'
+                    : '1px solid #eee',
+                }}
+                src={
+                  firstRowItems && firstRowItems.featured
+                    ? firstRowItems?.featured
+                    : '/assets/no-picture.png'
+                }
+                alt=''
+              />
+            </div>
+            {firstRowItems ? (
+              <h5>
+                {firstRowItems?.firstName} <br /> {firstRowItems?.lastName}
+              </h5>
+            ) : (
+              <h5
+                style={{
+                  padding: '13px 0',
+                  backgroundColor: 'transparent',
+                  opacity: 1,
+                }}
+              >
+                Coming
+              </h5>
+            )}
           </div>
         </div>
 
@@ -117,10 +143,28 @@ const GridItems = () => {
                 key={author.id + 'e5er45'}
               >
                 <div className='img-container'>
-                  <img src={author?.featured} alt='' />
-                  <h5>
-                    {firstName} <br /> {lastName}
-                  </h5>
+                  <img
+                    src={
+                      author.placeholder
+                        ? '/assets/no-picture.png'
+                        : author?.featured
+                    }
+                    alt=''
+                    style={{
+                      border: author.placeholder ? '1px solid #eee' : 'none',
+                    }}
+                  />
+                  {author.placeholder ? (
+                    <h5
+                      style={{ padding: '13px 0', background: 'transparent' }}
+                    >
+                      coming
+                    </h5>
+                  ) : (
+                    <h5>
+                      {firstName} <br /> {lastName}
+                    </h5>
+                  )}
                 </div>
               </div>
             );

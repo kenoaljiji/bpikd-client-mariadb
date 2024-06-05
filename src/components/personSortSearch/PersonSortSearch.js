@@ -25,6 +25,7 @@ const PersonSortSearch = () => {
     id: `placeholder-${index}`,
     placeholder: true,
     text: `Select person ${index + 1}`,
+    img: '/assets/no-picture.png',
   }));
 
   const { sortedItems, getSortedItems, updateSortedItems } =
@@ -107,7 +108,6 @@ const PersonSortSearch = () => {
   };
 
   const handleSelectSecondRow = (person) => {
-    console.log(person);
     // First, check if the person is already in the selectedSecondRow
     const isPersonAlreadySelected = selectedSecondRow?.some(
       (item) => item.id === person.id
@@ -121,8 +121,6 @@ const PersonSortSearch = () => {
 
     // Clone the current state to ensure immutability
     let updatedRow = [...selectedSecondRow];
-
-    console.log(updatedRow);
 
     // Find the index of the first placeholder
     const firstPlaceholderIndex = updatedRow.findIndex(
@@ -147,6 +145,7 @@ const PersonSortSearch = () => {
           id: `placeholder-${index}`,
           placeholder: true,
           text: `Select person ${index + 1}`,
+          img: '/assets/no-picture.png',
         };
       }
       return item;
@@ -168,8 +167,6 @@ const PersonSortSearch = () => {
       result.destination.index
     );
 
-    console.log(items);
-
     setSelectedSecondRow(items);
   };
 
@@ -184,14 +181,9 @@ const PersonSortSearch = () => {
     updateSortedItems(data, setLoading);
   };
 
-  /*  useEffect(() => {
-    if (sortedItems) {
-      setSelectedFirstRow(sortedItems.firstRowItems);
-      setSelectedSecondRow(sortedItems.secondRowItems);
-    } else {
-      setSelectedSecondRow(initialPlaceholders);
-    }
-  }, []); */
+  useEffect(() => {
+    console.log(selectedFirstRow);
+  }, [selectedFirstRow]);
 
   return (
     <div className='person-sort-search mb-5'>
@@ -309,10 +301,14 @@ const PersonSortSearch = () => {
       <div className='sort-result'>
         {' '}
         {/* Display Selected Person for First Row */}
-        {selectedFirstRow && selectedFirstRow ? (
+        {selectedFirstRow && Object.keys(selectedFirstRow).length !== 0 ? (
           <div className='first-row'>
             <h5>Row One</h5>
-            <div className='row-items'>
+            <div
+              className='row-items'
+              onClick={() => setSelectedFirstRow(null)}
+            >
+              <span className='delete-item'>X</span>
               <img
                 src={selectedFirstRow.featured}
                 alt='selected'
@@ -333,17 +329,26 @@ const PersonSortSearch = () => {
         ) : (
           <div className='first-row'>
             <h5>Row One</h5>
-            <div
-              style={{
-                width: '150px',
-                height: '180px',
-                display: 'flex',
-                alignItems: 'center',
-                border: '1px solid #eee',
-                justifyContent: 'center',
-              }}
-            >
-              Select Person
+            <div>
+              <div
+                className='first-row-person'
+                style={{
+                  width: '150px',
+                  height: '180px',
+                  border: '1px solid #eee',
+                }}
+              >
+                <span className='blank-text'>Select Person</span>
+                <img
+                  src='/assets/no-picture.png'
+                  alt='no-pict'
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}
@@ -376,13 +381,20 @@ const PersonSortSearch = () => {
                                   style={{
                                     width: '150px',
                                     height: '180px',
-                                    display: 'flex',
-                                    alignItems: 'center',
+
                                     border: '1px solid #eee',
-                                    justifyContent: 'center',
                                   }}
                                 >
-                                  {item.text}
+                                  <div>
+                                    <img
+                                      src={item.img}
+                                      alt=''
+                                      className='blank-image'
+                                    />
+                                    <span className='blank-text'>
+                                      {item.text}
+                                    </span>
+                                  </div>
                                 </div>
                               ) : (
                                 <>

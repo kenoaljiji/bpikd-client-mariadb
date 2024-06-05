@@ -28,9 +28,9 @@ const Authors = () => {
   const [selectedTab, setSelectedTab] = useState('releases');
   const [openWorkItems, setOpenWorkItems] = useState([]);
   const [openWorkIndex, setOpenWorkIndex] = useState(-1);
-  const [isVideoGalleryOpen, setIsVideoGalleryOpen] = React.useState(false); // State for modal visibility
+  const [isVideoGalleryOpen, setIsVideoGalleryOpen] = React.useState(false);
   const [expandedWorkId, setExpandedWorkId] = useState(null);
-
+  const [smallLoading, setSmallLoading] = useState(false);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const { id } = useParams();
@@ -135,14 +135,15 @@ const Authors = () => {
     if (!workId) {
       return;
     }
-
     try {
+      setSmallLoading(true);
       const res = await axios.get(`${localhost}/post/persons/works/${workId}`);
-      /* setSelectedWork(response.data); */
       setSelectedWork(res.data);
+      /*    setSelectedWork(res.data); */
     } catch (err) {
       console.error('Error fetching work details:', err);
     }
+    setSmallLoading(false);
   };
 
   useEffect(() => {
@@ -160,9 +161,10 @@ const Authors = () => {
 
   const handleWorkClick = (index) => {
     setSelectedWork(author?.works[index]);
-    setSelectedTab('releases'); // Reset tab to 'releases' when selecting a new work
+    setSelectedTab('releases');
 
-    setOpenWorkIndex(openWorkIndex === index ? -1 : index); // Toggle the open/close state
+    setOpenWorkIndex(openWorkIndex === index ? -1 : index);
+    /* scrollToElement(index); */
   };
 
   const handleTabClick = (tab) => {
@@ -175,8 +177,8 @@ const Authors = () => {
 
   const svgEye = () => (
     <svg
-      width='22px'
-      height='22px'
+      width='21px'
+      height='21px'
       viewBox='0 0 24 24'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
@@ -189,6 +191,13 @@ const Authors = () => {
       />
     </svg>
   );
+
+  const scrollToElement = (index) => {
+    const element = document.getElementById('tabBody');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <section className='author'>
@@ -213,7 +222,6 @@ const Authors = () => {
                         {author?.personViewCount}
                       </span>
                       {svgEye()}
-                      {/* <span>8:30h 24.12.2016</span> */}
                       <span>{`${moment(author?.createdAt).format(
                         'HH:mm DD.MM.YYYY'
                       )}`}</span>
@@ -251,8 +259,8 @@ const Authors = () => {
                             }} */
                           >
                             {expandedWorkId !== work.workId &&
-                            work.title.length > 29
-                              ? `${work.title.slice(0, 29)}...`
+                            work.title.length > 27
+                              ? `${work.title.slice(0, 27)}...`
                               : work.title}
                           </span>
 
@@ -322,7 +330,7 @@ const Authors = () => {
                                   </button>
                                 </div>
                               </div>
-                              <div className='tab-body'>
+                              <div className='tab-body' id='tabBody'>
                                 <TabContent
                                   tab={selectedTab}
                                   selectedWork={selectedWork}
@@ -330,6 +338,7 @@ const Authors = () => {
                                   closeModal={handleCloseModal}
                                   isPlaying={isVideoPlaying}
                                   setIsPlaying={setIsVideoPlaying}
+                                  smallLoading={smallLoading}
                                 />
                               </div>
                             </div>

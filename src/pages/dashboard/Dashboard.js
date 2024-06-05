@@ -7,12 +7,13 @@ import SortPersonIcon from '../../icons/SortPersonIcon';
 import IPtrackIcon from '../../icons/IPtrackIcon';
 import './dashboard.scss';
 import { useAuthContext } from '../../context/auth/AuthState';
-
 import { Link } from 'react-router-dom';
 import ProfileIcon from '../../icons/ProfileIcon';
 import Alerts from '../../components/Alerts';
 import ThemeColorComponent from '../../components/themeColorComponnet/ThemeColorComponent';
 import MaintenanceComponent from '../../components/maintenanceComponent.js/MaintenanceComponent';
+import DownloadBackup from '../../components/downloadBackup/DownloadBackup';
+import BackupIcon from '../../icons/BackupIcon';
 
 const Dashboard = () => {
   const { user, error, success } = useAuthContext();
@@ -52,6 +53,9 @@ const Dashboard = () => {
         <Link to='/admin/ip-visitors'>
           <IPtrackIcon />
         </Link>
+        {/*   <Link to='/admin/backup'>
+          <BackupIcon />
+        </Link> */}
       </div>
       <MaintenanceComponent />
     </div>
