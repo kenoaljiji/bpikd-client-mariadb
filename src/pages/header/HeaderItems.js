@@ -76,14 +76,6 @@ const HeaderItems = () => {
     // No need to reset the file input here
   };
 
-  const clearImage = () => {
-    setLogoImage('');
-    setImageURL(''); // Clear image preview
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''; // Reset file input
-    }
-  };
-
   // Building initial form values based on current routes and buttons state
   const initialValues = {
     ...routes,
@@ -203,7 +195,7 @@ const HeaderItems = () => {
                       style={{ display: 'none' }}
                       ref={fileInputRef}
                       onChange={handleImageUpload}
-                      accept='image/*' // Accept images only
+                      accept='image/*'
                     />
                     <label
                       htmlFor='featured-image-upload'

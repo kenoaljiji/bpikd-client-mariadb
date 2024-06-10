@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { newsData } from '../../helpers/people';
+
 import { useRouteContext } from '../../context/route/RouteProvider';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import './news.scss';
 import DOMPurify from 'dompurify';
-import { useNavigate } from 'react-router-dom';
 
 export function ContentComponent({ content }) {
   const [shortenedContent, setShortenedContent] = useState('');
@@ -42,8 +41,6 @@ export function ContentComponent({ content }) {
 const News = () => {
   const { state } = useRouteContext();
 
-  const { routes } = state;
-
   const { posts, listPosts, getPostById } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
@@ -51,7 +48,7 @@ const News = () => {
   useEffect(() => {
     listPosts(setLoading);
 
-    /*     console.log(posts); */
+    //eslint-disable-next-line
   }, []);
 
   const onClickHandler = async (id, title) => {
@@ -64,8 +61,6 @@ const News = () => {
 
   return (
     <section className='news container'>
-      {/*     <h2>{routes.news}</h2> */}
-
       {posts?.map((news) => {
         if (news.isPublished) {
           return (

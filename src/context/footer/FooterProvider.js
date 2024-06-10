@@ -1,17 +1,10 @@
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useReducer,
-  useState,
-} from 'react';
+import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { routeReducer } from './footerReducer';
 import { useAlertContext } from '../alert/AlertState';
 import { useAuthContext } from '../auth/AuthState';
 import axios from 'axios';
 import { localhost } from '../../config/config';
 import { LIST_POSTS_FAIL } from '../types';
-import { footerCompaniesData } from '../../helpers/people';
 
 const FooterContext = createContext();
 
@@ -28,19 +21,11 @@ export const FooterProvaider = ({ children }) => {
 
   const { user } = useAuthContext();
 
-  const { setAlert, alerts } = useAlertContext();
-
-  /* const changeFooter = (values) => {
-    dispatch({
-      type: 'UPDATE_FOOTER_COMPANIES',
-      payload: values,
-    });
-
-    setAlert('Footer Updated', 'success');
-  }; */
+  const { setAlert } = useAlertContext();
 
   useEffect(() => {
     getFooterData();
+    //eslint-disable-next-line
   }, []);
 
   const changeFooter = async (footerCompanies, setLoading) => {
@@ -79,7 +64,6 @@ export const FooterProvaider = ({ children }) => {
       setAlert('Footer updated successfully', 'success');
       getFooterData(); // Refresh footer data from the server
     } catch (error) {
-      /* console.log(error.response.data.message); */
       setAlert(
         error.response.data.message
           ? error.response.data.message
@@ -92,10 +76,7 @@ export const FooterProvaider = ({ children }) => {
 
   const getFooterData = async () => {
     try {
-      /*  dispatch({ type: 'SET_LOADING', payload: true }); */
       const res = await axios.get(`${localhost}/footer`);
-
-      console.log(res);
 
       dispatch({
         type: 'GET_FOOTER_DATA',

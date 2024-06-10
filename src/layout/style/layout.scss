@@ -1,5 +1,5 @@
 .home-layout {
-  min-height: 1396.43px;
+  min-height: 1514.7px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,11 +10,13 @@
 
   .search {
     margin-bottom: 20%;
-    margin-top: -30px;
+    /* margin-top: 20%; */
+    padding-top: 0;
 
     @media only screen and (max-width: 700px) {
       margin-bottom: 40px;
       margin-top: 36px;
+      padding-top: 110px;
     }
   }
 }

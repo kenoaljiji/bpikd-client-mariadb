@@ -8,6 +8,7 @@ import ConfirmationModal from '../confirmationModal/ConfirmationModal';
 import moment from 'moment';
 import transformPath from '../../utils/transformPath';
 import Loader from '../loader/Loader';
+import { complexString } from '../../utils/complexString';
 
 const PostsTable = ({ posts, category, listPosts, loading }) => {
   const { user } = useAuthContext();

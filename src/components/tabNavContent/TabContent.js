@@ -66,8 +66,6 @@ const TabContent = ({
 }) => {
   const [currentPlaying, setCurrentPlaying] = useState(null);
 
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
   const playAudio = (fileName) => {
     setCurrentPlaying(fileName);
   };
@@ -101,7 +99,6 @@ const TabContent = ({
       });
   };
 
-  const onInit = () => {};
   const colorStyle = {
     red: '#E5332A',
     blue: '#0087D5',
@@ -116,17 +113,20 @@ const TabContent = ({
       xmlns='http://www.w3.org/2000/svg'
     >
       <path
-        fill-rule='evenodd'
-        clip-rule='evenodd'
+        fillRule='evenodd'
+        clipRule='evenodd'
         d='M1.5 12c0-2.25 3.75-7.5 10.5-7.5S22.5 9.75 22.5 12s-3.75 7.5-10.5 7.5S1.5 14.25 1.5 12zM12 16.75a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zM14.7 12a2.7 2.7 0 1 1-5.4 0 2.7 2.7 0 0 1 5.4 0z'
         fill='#000000'
       />
     </svg>
   );
 
-  const handleScreenChange = (fullscreenState) => {
-    setIsFullscreen(fullscreenState);
+  const checkIfAllEmpty = (items) => {
+    return items.every((item) => item.length === 0);
   };
+
+  const allItems = [documents, audios, videos, images];
+  const style = { margin: checkIfAllEmpty(allItems) ? '27px 0' : '34px 0' };
 
   switch (tab) {
     case 'releases':
@@ -158,7 +158,7 @@ const TabContent = ({
       );
     case 'documents':
       return (
-        <div className='tab-content documents'>
+        <div className='tab-content documents' style={style}>
           <ul className='grid-document-style'>
             {documents?.length > 0 ? (
               documents?.map((doc, index) => (
@@ -232,13 +232,13 @@ const TabContent = ({
 
     case 'images':
       return (
-        <div className='tab-content images'>
+        <div className='tab-content images' style={style}>
           <ImageGallery images={images} />
         </div>
       );
     case 'audio':
       return (
-        <div className='tab-content audio'>
+        <div className='tab-content audio' style={style}>
           <ul className='grid-document-style'>
             {audios?.length > 0 ? (
               audios?.map((audio, index) => (
@@ -258,7 +258,7 @@ const TabContent = ({
       );
     case 'video':
       return (
-        <div className='tab-content videos'>
+        <div className='tab-content videos' style={style}>
           {selectedMedia.videos.length > 0 ? (
             <VideoGallery
               selectedMedia={selectedMedia}

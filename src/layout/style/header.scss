@@ -1,12 +1,33 @@
+.header-container {
+  position: fixed;
+  width: 100%;
+  z-index: 9999999999999999;
+}
+
+.margin-reduce {
+  margin-top: 0px;
+
+  @media only screen and (max-width: 764px) {
+    margin-top: -36px;
+  }
+}
+
+@media only screen and (max-width: 764px) {
+}
+
 header {
   padding: 8px;
-  padding-top: 11px;
+  padding-top: 9px;
   padding-bottom: 15px;
   min-height: 74.36px;
 
   .logo {
     margin-right: 38px;
-    max-width: 160px;
+    max-width: 150px;
+
+    @media only screen and (max-width: 764px) {
+      max-width: 120px;
+    }
   }
   .custom-search {
     img {

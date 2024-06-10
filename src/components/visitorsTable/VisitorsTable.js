@@ -132,7 +132,7 @@ function VisitorsTable() {
         </tbody>
       </table>
       <div className='mt-4'>
-        <div classNmae=''>
+        <div className=''>
           {loading && (
             <div>
               <Loader />

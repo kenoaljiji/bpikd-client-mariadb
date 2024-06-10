@@ -16,6 +16,7 @@ import {
   PROGRESS_UPLOAD,
 } from '../types';
 import { useAlertContext } from '../alert/AlertState';
+import { complexString } from '../../utils/complexString';
 
 const GlobalContext = createContext();
 
@@ -250,7 +251,7 @@ export const GlobalState = ({ children }) => {
 
       setAlert('Post created successfully', 'success');
 
-      navigate('/admin/posts');
+      navigate(`/admin/posts`);
     } catch (error) {
       if (axios.isCancel(error)) {
         setAlert('Upload Canceled', 'danger');
@@ -268,8 +269,6 @@ export const GlobalState = ({ children }) => {
     setLoading(true); // Control loading state globally or locally
     try {
       const res = await axios.get(`${localhost}/post/partners`);
-
-      console.log(res.data);
 
       dispatch({
         type: GET_PARTNERS_DATA,
@@ -327,7 +326,7 @@ export const GlobalState = ({ children }) => {
     }
 
     setIsLoading(false);
-    navigate('/admin/posts');
+    navigate(`/admin/posts`);
   };
 
   const editPost = async (id, data) => {

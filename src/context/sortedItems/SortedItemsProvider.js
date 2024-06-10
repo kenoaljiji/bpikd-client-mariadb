@@ -12,7 +12,7 @@ export const SortedItemsProvider = ({ children }) => {
     id: `placeholder-${index}`,
     placeholder: true,
     text: `Select person ${index + 1}`,
-    img: '/assets/no-picture.png',
+    featured: '/assets/no-picture.png',
   }));
 
   const [sortedItems, setSortedItems] = useState({
@@ -20,6 +20,7 @@ export const SortedItemsProvider = ({ children }) => {
       id: `placeholder-`,
       placeholder: true,
       img: '/assets/no-picture.png',
+      featured: '/assets/no-picture.png',
     },
     secondRowItems: initialPlaceholders,
   });
@@ -27,10 +28,6 @@ export const SortedItemsProvider = ({ children }) => {
   const [success, setSuccess] = useState(false);
 
   const { setAlert } = useAlertContext();
-
-  /*   const updateSortedItems = (firstRow, secondRow) => {
-    setSortedItems({ firstRow, secondRow });
-  }; */
 
   const updateSortedItems = async (data, setLoading) => {
     console.log(data);
@@ -66,10 +63,22 @@ export const SortedItemsProvider = ({ children }) => {
       const res = await axios.get(`${localhost}/sort`, config);
 
       if (res.data && res.data.secondRowItems) {
-        // Check how many items were received
-        const receivedItemsCount = res.data.secondRowItems.length;
+        // Map through secondRowItems and replace any with null id with more detailed placeholders
+        res.data.secondRowItems = res.data.secondRowItems.map((item, index) => {
+          if (item.id === null) {
+            return {
+              ...item,
+              id: `placeholder-${index}`,
+              placeholder: true,
+              text: `Select person ${index + 1}`,
+              featured: '/assets/no-picture.png',
+            };
+          }
+          return item;
+        });
 
-        // If fewer than 4 items are received, fill in the rest with placeholders
+        // Ensure there are always 4 items, fill in the rest with placeholders if fewer
+        const receivedItemsCount = res.data.secondRowItems.length;
         if (receivedItemsCount < 4) {
           res.data.secondRowItems = [
             ...res.data.secondRowItems,
@@ -90,6 +99,7 @@ export const SortedItemsProvider = ({ children }) => {
 
   useEffect(() => {
     getSortedItems();
+    //eslint-disable-next-line
   }, []);
 
   return (

@@ -21,6 +21,7 @@ export function ContentComponent({ content }) {
 const SoonPage = () => {
   useEffect(() => {
     listPages(setLoading, 'soon');
+    //eslint-disable-next-line
   }, []);
 
   const { singlePost, listPages } = useGlobalContext();

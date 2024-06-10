@@ -10,11 +10,14 @@ import 'slick-carousel/slick/slick-theme.css';
 import Slider from 'react-slick';
 import { useSortedItemsContext } from '../context/sortedItems/SortedItemsProvider';
 import { useGlobalContext } from '../context/bpikd/GlobalState';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const GridItems = () => {
   const navigate = useNavigate();
 
   const { sortedItems } = useSortedItemsContext();
+
+  const [blankImage, setBlankImage] = useState();
 
   const { listAuthors, authors } = useGlobalContext();
 
@@ -22,6 +25,13 @@ const GridItems = () => {
 
   useEffect(() => {
     listAuthors(setLoading);
+    //eslint-disable-next-line
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setBlankImage('/assets/no-picture.png');
+    }, 200);
   }, []);
 
   useEffect(() => {}, [authors]);
@@ -85,87 +95,108 @@ const GridItems = () => {
 
   const sliderRef = React.createRef(null);
 
+  /*  const handleAuthorClick = (author) => {
+    const fullName = slugify(author.firstName + '-' + author.lastName);
+
+    if (!author.placeholder) {
+      window.open(`/person/${fullName}`, '_blank', 'noopener,noreferrer');
+    }
+  }; */
+
   return (
     <div className='authors'>
       <div className='container-md pb-4'>
         <div className={'flex-center mb-3 firstRowItem'}>
-          <div
-            className='img-container'
-            onClick={() =>
-              navigate(
-                `/person/${slugify(
-                  firstRowItems?.firstName + '-' + firstRowItems?.lastName
-                )}`
-              )
-            }
-          >
-            <div>
-              <img
-                style={{
-                  border: firstRowItems.firstRowItems
-                    ? 'none'
-                    : '1px solid #eee',
-                }}
-                src={
-                  firstRowItems && firstRowItems.featured
-                    ? firstRowItems?.featured
-                    : '/assets/no-picture.png'
-                }
-                alt=''
-              />
-            </div>
-            {firstRowItems ? (
-              <h5>
-                {firstRowItems?.firstName} <br /> {firstRowItems?.lastName}
-              </h5>
-            ) : (
-              <h5
-                style={{
-                  padding: '13px 0',
-                  backgroundColor: 'transparent',
-                  opacity: 1,
-                }}
-              >
-                Coming
-              </h5>
-            )}
+          <div className='img-container'>
+            <a
+              href={`/person/${slugify(
+                firstRowItems.firstName + '-' + firstRowItems.lastName
+              )}`}
+              target='_blank'
+              rel='noreferrer'
+            >
+              <div>
+                {!firstRowItems.placeholder ? (
+                  <img
+                    src={
+                      firstRowItems?.featured
+                        ? firstRowItems?.featured
+                        : '/assets/no-picture.png'
+                    }
+                    alt=''
+                  />
+                ) : (
+                  <LazyLoadImage
+                    src='/assets/no-picture.png'
+                    alt='No author available'
+                    effect='blur'
+                    style={{ border: '1px solid #eee', cursor: 'default' }}
+                  />
+                )}
+              </div>
+              {!firstRowItems.featured ? (
+                <h5
+                  style={{
+                    padding: '13px 0',
+                    backgroundColor: 'transparent',
+                    opacity: 1,
+                    cursor: 'default',
+                  }}
+                >
+                  Coming
+                </h5>
+              ) : (
+                <h5>
+                  {firstRowItems?.firstName} <br /> {firstRowItems?.lastName}
+                </h5>
+              )}
+            </a>
           </div>
         </div>
 
         <div className='grid mb-4'>
           {secondRowItems?.map((author, index) => {
             const { firstName, lastName } = author;
-            const fullName = slugify(author.firstName + '-' + author.lastName);
+            const fullName = slugify(firstName + '-' + lastName);
             return (
               <div
                 className={`items div${index + 1}`}
-                onClick={() => navigate(`/person/${fullName}`)}
                 key={author.id + 'e5er45'}
               >
-                <div className='img-container'>
-                  <img
-                    src={
-                      author.placeholder
-                        ? '/assets/no-picture.png'
-                        : author?.featured
-                    }
-                    alt=''
-                    style={{
-                      border: author.placeholder ? '1px solid #eee' : 'none',
-                    }}
-                  />
-                  {author.placeholder ? (
-                    <h5
-                      style={{ padding: '13px 0', background: 'transparent' }}
-                    >
-                      coming
-                    </h5>
-                  ) : (
-                    <h5>
-                      {firstName} <br /> {lastName}
-                    </h5>
-                  )}
-                </div>
+                <a
+                  href={`/person/${fullName}`}
+                  target='_blank'
+                  rel='noreferrer'
+                >
+                  <div className='img-container'>
+                    {!author?.placeholder && author.featured ? (
+                      <img src={author?.featured} alt='' />
+                    ) : (
+                      <LazyLoadImage
+                        src='/assets/no-picture.png' // This is the image to be lazy loaded
+                        alt='No author available' // Alternative text for the image
+                        effect='blur' // Apply a blur effect while the image is loading
+                        style={{ border: '1px solid #eee', cursor: 'default' }}
+                      />
+                    )}
+
+                    {author.placeholder ? (
+                      <h5
+                        style={{
+                          padding: '13px 0',
+                          background: 'transparent',
+                          cursor: 'default',
+                        }}
+                      >
+                        coming
+                      </h5>
+                    ) : (
+                      <h5>
+                        {firstName} <br /> {lastName}
+                      </h5>
+                    )}
+                  </div>
+                </a>
               </div>
             );
           })}
@@ -179,19 +210,47 @@ const GridItems = () => {
                 author.firstName + '-' + author.lastName
               );
               return (
-                <div
-                  key={author.id + 'ffe45g'}
-                  className='slide-item'
-                  onClick={() => navigate(`/person/${slugify(fullName)}`)}
-                >
-                  <div className='img-container'>
-                    <img src={author?.featured} alt='' />
-                    <h5>
-                      {firstName}
-                      <br />
-                      {lastName}
-                    </h5>
-                  </div>
+                <div key={author.id + 'ffe45g'} className='slide-item'>
+                  <a
+                    href={`/person/${fullName}`}
+                    target='_blank'
+                    rel='noreferrer'
+                  >
+                    <div className='img-container'>
+                      {!author?.placeholder && author.featured ? (
+                        <img src={author?.featured} alt='' />
+                      ) : (
+                        <LazyLoadImage
+                          src='/assets/no-picture.png' // This is the image to be lazy loaded
+                          alt='No author available' // Alternative text for the image
+                          effect='blur' // Apply a blur effect while the image is loading
+                          style={{ border: '1px solid #eee' }}
+                        />
+                      )}
+
+                      {author.placeholder ? (
+                        <h5
+                          style={{
+                            padding: '13px 0',
+                            background: 'transparent',
+                            cursor: 'default',
+                          }}
+                        >
+                          coming
+                        </h5>
+                      ) : (
+                        <h5
+                          style={{
+                            backgroundColor: !author?.featured && 'transparent',
+                            marginBottom: !author?.featured && '8px',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {firstName} <br /> {lastName}
+                        </h5>
+                      )}
+                    </div>
+                  </a>
                 </div>
               );
             })}

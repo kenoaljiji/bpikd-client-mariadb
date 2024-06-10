@@ -16,6 +16,7 @@ import {
 import { localhost } from '../../config/config';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useAlertContext } from '../alert/AlertState';
+import { complexString } from '../../utils/complexString';
 
 const AuthContext = createContext();
 
@@ -100,7 +101,7 @@ const AuthState = (props) => {
         payload: err.response.data.error,
       });
     } finally {
-      navigate('/admin/dashboard');
+      navigate(`/admin/dashboard`);
     }
   };
 

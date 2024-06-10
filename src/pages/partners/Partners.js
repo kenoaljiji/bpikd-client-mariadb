@@ -13,11 +13,8 @@ const Partners = () => {
 
   useEffect(() => {
     getPartnersData(setLoading);
+    //eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    console.log(partners);
-  }, [partners]);
 
   return (
     <section className='partners'>
@@ -27,6 +24,7 @@ const Partners = () => {
         <div className='grid grid-5 items-center mt-4'>
           {partners?.map((img, index) => (
             <a
+              key={'partners' + index}
               href={img.url}
               target='_blank'
               rel='noreferrer'

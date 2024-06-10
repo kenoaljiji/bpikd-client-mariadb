@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,7 +11,6 @@ import DOMPurify from 'dompurify';
 import { slugify } from '../../utils/slugify';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import Loader from '../../components/loader/Loader';
-import * as Yup from 'yup';
 
 export function ContentComponent({ content }) {
   const [shortenedContent, setShortenedContent] = useState('');
@@ -52,10 +51,12 @@ const SearchResult = () => {
   const { getPostById } = useGlobalContext();
 
   const [results, setResults] = useState(null);
-  const [shouldScroll, setShouldScroll] = useState(false);
+
   const [loading, setLoading] = useState();
 
   const initialCategories = queryParams.getAll('categories');
+
+  const [initialRender, setInitialRender] = useState(true);
 
   const [selectedCategories, setSelectedCategories] =
     useState(initialCategories);
@@ -101,22 +102,6 @@ const SearchResult = () => {
       : '',
     sort: queryParams.get('sort') || 'relevance', // Default sort order
   };
-
-  // Effect to submit the form on mount if query parameters exist
-  /* useEffect(() => {
-    if (!results.page) {
-      formik.setFieldValue('categories', '');
-    }
-  }, [results]); */
-
-  /*   useEffect(() => {
-    if (
-      initialCategories.includes('Person of Interest', 'News', 'Coming') &&
-      results.data.length !== 0
-    ) {
-      console.log('Postoji');
-    }
-  }, [results]); */
 
   const handleSearch = async (data) => {
     try {
@@ -269,20 +254,15 @@ const SearchResult = () => {
     }
   }, [results]);
 
-  // Effect to handle navigation and potentially trigger scroll
-  /*  useEffect(() => {
-    if (location.state?.fromBackNavigation) {
-      const resultsElement = document.getElementById('results');
-      if (resultsElement) {
-        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  }, [location.state]); */
-
   useEffect(() => {
-    formik.submitForm();
+    // Check if 'sort' query parameter is present
+    if (queryParams.has('sort')) {
+      // Submit the form only if 'sort' is present in the query
+      formik.submitForm();
+    }
+
     setSelectedCategories(queryParams.getAll('categories'));
-  }, [location.search]);
+  }, [location.search]); // Depend on location.search to re-run this effect when the search query changes
 
   function createSearchDescription(params) {
     let description = '';

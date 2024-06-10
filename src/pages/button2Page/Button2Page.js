@@ -4,12 +4,13 @@ import { ContentComponent } from '../../components/ContentComponent';
 import './button2.scss';
 
 const Button2Page = () => {
-  const { posts, listPosts, singlePost, listPages } = useGlobalContext();
+  const { singlePost, listPages } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     listPages(setLoading, 'button2');
+    //eslint-disable-next-line
   }, []);
   return (
     <section className='container button2-page'>

@@ -6,20 +6,16 @@ import ConfirmationModal from '../confirmationModal/ConfirmationModal';
 import { localhost } from '../../config/config';
 import axios from 'axios';
 import { SET_ERROR, SET_SUCCESS } from '../../context/types';
+import { complexString } from '../../utils/complexString';
 
 const UsersTable = ({ loadUsers }) => {
-  const { users, user, deleteUser, clearErrors, dispatch, loading } =
-    useAuthContext();
-
+  const { users, user, deleteUser, clearErrors, dispatch } = useAuthContext();
   const userId = user.user.id;
-
   const loggedInUserRole = user.user.role;
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [modalContent, setModalContent] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
-  // Inside your UsersTable component
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
   const deleteSelectedUsers = async () => {
@@ -75,10 +71,6 @@ const UsersTable = ({ loadUsers }) => {
       },
     });
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   // Call this when the bulk delete button is clicked
   const handleBulkDeleteClick = () => {
@@ -137,7 +129,7 @@ const UsersTable = ({ loadUsers }) => {
             className='btn btn-success'
             onClick={() => navigate('create-edit')}
           >
-            <i class='fa-solid fa-plus'></i> Add User
+            <i className='fa-solid fa-plus'></i> Add User
           </button>
           <div className='search-bar'>
             <input
@@ -149,7 +141,7 @@ const UsersTable = ({ loadUsers }) => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <span className='text-white p-2' style={{ background: '#093A41' }}>
-              <i class='fa-solid fa-magnifying-glass'></i>
+              <i className='fa-solid fa-magnifying-glass'></i>
             </span>
           </div>
         </div>

@@ -31,7 +31,7 @@ function Layout({ children }) {
         <>
           <Header handleClick={handleClick} isActive={isActive} />
           <MobileMenu isActive={isActive} setIsActive={setIsActive} />
-          <div className='mt-2'>
+          <div /* className='mt-2' */>
             {pathname !== '/' ? (
               <CustomSearch type={'custom-search-2'} />
             ) : null}

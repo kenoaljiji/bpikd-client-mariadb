@@ -6,12 +6,13 @@ import moment from 'moment';
 import './shop.scss';
 
 const Shop = () => {
-  const { posts, listPosts, singlePost, listPages } = useGlobalContext();
+  const { singlePost, listPages } = useGlobalContext();
 
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     listPages(setLoading, 'shop');
+    //eslint-disable-next-line
   }, []);
 
   return (

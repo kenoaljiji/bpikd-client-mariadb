@@ -1,11 +1,8 @@
-import React, { useReducer, useEffect, useContext, createContext } from 'react';
-import axios from 'axios';
-import { useAuthContext } from '../auth/AuthState';
-import { localhost } from '../../config/config';
+import React, { useReducer, useContext, createContext } from 'react';
+
 import previewReducers from './previewContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { SET_CATEGORY } from '../types';
-import { useAlertContext } from '../alert/AlertState';
 
 const PreviewContext = createContext();
 

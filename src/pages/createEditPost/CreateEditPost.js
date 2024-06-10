@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import AddImageIcon from '../../icons/AddImageIcon';
@@ -22,7 +22,6 @@ import Alerts from '../../components/Alerts';
 import { useAlertContext } from '../../context/alert/AlertState';
 import { usePreviewContext } from '../../context/previewContext/PreviewState';
 import ProgressUpload from '../../components/ProgressUpload';
-import { PROGRESS_UPLOAD } from '../../context/types';
 
 const CreateEditPost = () => {
   const {
@@ -51,7 +50,6 @@ const CreateEditPost = () => {
     previewSinglePost,
     singlePost: previewPost,
     previewNewsAndPagePost,
-    dispatch,
   } = usePreviewContext();
 
   const { setAlert } = useAlertContext();
@@ -70,7 +68,7 @@ const CreateEditPost = () => {
       singlePost?.publishTime === 'Now' ? Boolean(true) : Boolean(false),
     scheduledPublishTime:
       singlePost?.publishTime === 'Now'
-        ? new Date(singlePost.created_at)
+        ? new Date(singlePost?.created_at)
         : new Date(singlePost?.scheduledPublishTime),
     externalSource: singlePost.externalSource || '',
     content: singlePost.content || '',
@@ -99,9 +97,10 @@ const CreateEditPost = () => {
     fileTypes.forEach((type) => {
       fileInputs.current[type] = React.createRef();
     });
+    //eslint-disable-next-line
   }, []);
 
-  const clearFileInput = (fileType) => {
+  /*  const clearFileInput = (fileType) => {
     const inputElement = fileInputs.current[fileType].current;
     if (inputElement) {
       inputElement.value = ''; // Reset the input field
@@ -111,19 +110,9 @@ const CreateEditPost = () => {
       [fileType]: [], // Clear the state for this fileType
     }));
   };
-
-  const isEditing = postId !== undefined; // Determine if you are in edit mode
-
-  useEffect(() => {
-    if (singlePost && postId) {
-      console.log(new Date(singlePost.scheduledPublishTime));
-      /* setImageURL(singlePost?.featured); */
-    }
-  }, [singlePost, postId]);
+ */
 
   useEffect(() => {
-    console.log('Checking singlePost:', singlePost);
-
     if (postId && category === 'News') {
       getPostById(postId, 'news', setIsLoading);
     } else {
@@ -131,7 +120,7 @@ const CreateEditPost = () => {
     }
   }, [postId, paramCategory]); // Include singlePost in the dependency array
 
-  const resetData = () => {
+  /*   const resetData = () => {
     setInitialValues({
       title: '',
       visibility: 'Public',
@@ -160,7 +149,7 @@ const CreateEditPost = () => {
     setFeaturedImage(null);
     setImageURL('');
     setSelectedPerson('');
-  };
+  }; */
 
   const categoryAndReset = (value) => {
     setCategory(value);
@@ -250,10 +239,12 @@ const CreateEditPost = () => {
       setImageURL('');
       setUploadedFiles([]);
     }
+    //eslint-disable-next-line
   }, [singlePost, postId]);
 
   useEffect(() => {
     togglePreviewMode(false);
+    //eslint-disable-next-line
   }, []);
 
   const handleImageUpload = (event) => {
@@ -264,10 +255,6 @@ const CreateEditPost = () => {
     const previewUrl = URL.createObjectURL(file);
     setImageURL(previewUrl);
   };
-
-  useEffect(() => {
-    console.log(uploadedFiles);
-  }, [uploadedFiles]);
 
   // Handling multiple file uploads
   const handleFileUpload = (event, fileType) => {
@@ -384,10 +371,6 @@ const CreateEditPost = () => {
       ['clean'], // remove formatting button
     ],
   };
-
-  useEffect(() => {
-    console.log(selectedPerson);
-  }, [selectedPerson]);
 
   const updateNewsPost = async (id, data, featuredImage, setIsLoading) => {
     try {
@@ -751,11 +734,6 @@ const CreateEditPost = () => {
                                       <Icon color={iconColor} />
                                     </div>
                                   </label>
-                                  {/*  {uploadedFiles[fileType].map((file, index) => (
-                                  <p key={index} className='small'>
-                                    {file.name}
-                                  </p>
-                                ))} */}
                                 </div>
                               </div>
                             );
@@ -786,7 +764,7 @@ const CreateEditPost = () => {
                               className='featured-close'
                               onClick={() => clearImage()}
                             >
-                              <i class='fa-solid fa-trash'></i>
+                              <i className='fa-solid fa-trash'></i>
                             </div>
                           )}
 

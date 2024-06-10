@@ -12,10 +12,6 @@ const CustomSearch = ({ type }) => {
     navigate(`/search?words=${value}`);
   };
 
-  useEffect(() => {
-    console.log(theme);
-  }, [theme]);
-
   return (
     <form
       className={`d-flex items-center ${type}`}

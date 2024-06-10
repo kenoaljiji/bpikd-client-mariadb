@@ -25,7 +25,7 @@ const PersonSortSearch = () => {
     id: `placeholder-${index}`,
     placeholder: true,
     text: `Select person ${index + 1}`,
-    img: '/assets/no-picture.png',
+    featured: '/assets/no-picture.png',
   }));
 
   const { sortedItems, getSortedItems, updateSortedItems } =
@@ -145,7 +145,7 @@ const PersonSortSearch = () => {
           id: `placeholder-${index}`,
           placeholder: true,
           text: `Select person ${index + 1}`,
-          img: '/assets/no-picture.png',
+          featured: '/assets/no-picture.png',
         };
       }
       return item;
@@ -213,7 +213,7 @@ const PersonSortSearch = () => {
                 >
                   <div className='result-box'>
                     <img
-                      src={person.featured}
+                      src={person?.featured}
                       alt='featured'
                       style={{ width: 50, height: 50 }}
                     />
@@ -310,7 +310,7 @@ const PersonSortSearch = () => {
             >
               <span className='delete-item'>X</span>
               <img
-                src={selectedFirstRow.featured}
+                src={selectedFirstRow?.featured}
                 alt='selected'
                 style={{
                   width: '150px',
@@ -387,7 +387,7 @@ const PersonSortSearch = () => {
                                 >
                                   <div>
                                     <img
-                                      src={item.img}
+                                      src={item.featured}
                                       alt=''
                                       className='blank-image'
                                     />

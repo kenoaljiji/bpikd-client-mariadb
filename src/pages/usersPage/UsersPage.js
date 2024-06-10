@@ -37,6 +37,7 @@ const UsersPage = () => {
 
   useEffect(() => {
     loadUsers();
+    //eslint-disable-next-line
   }, []);
 
   return (

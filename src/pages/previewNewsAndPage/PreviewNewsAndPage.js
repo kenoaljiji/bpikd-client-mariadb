@@ -13,6 +13,7 @@ const PreviewNewsAndPage = () => {
 
   useEffect(() => {
     togglePreviewMode(false);
+    //eslint-disable-next-line
   }, []);
 
   return (

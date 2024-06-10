@@ -52,24 +52,21 @@ export const RouteProvider = ({ children }) => {
         type: 'GET_TEXT_SETTINGS_DATA',
         payload: res.data,
       });
-
-      console.log(res);
     } catch (error) {
       setAlert(error.message, 'danger');
     }
+    //eslint-disable-next-line
   }, [dispatch]);
 
   useEffect(() => {
     getTextSettings();
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
     loadHeaderConfig();
+    //eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    console.log(state.textTrack);
-  }, [state.textTrack]);
 
   const changeHeaderAndRoutes = async (values, setLoading) => {
     const formData = new FormData();
@@ -78,13 +75,9 @@ export const RouteProvider = ({ children }) => {
 
     if (values.logoImgPath instanceof File) {
       console.log(values.logoImgPath);
-      // It's a File object
+
       formData.append('logoImg', values.logoImgPath, values.logoImgPath.name);
     }
-
-    /*  for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    } */
 
     try {
       setLoading(true);
@@ -97,6 +90,7 @@ export const RouteProvider = ({ children }) => {
           },
         }
       );
+      console.log(res);
 
       loadHeaderConfig();
       setAlert('Header updated successfully', 'success');

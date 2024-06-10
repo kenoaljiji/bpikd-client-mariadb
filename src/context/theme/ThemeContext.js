@@ -28,9 +28,7 @@ export const ThemeProvider = ({ children }) => {
     const fetchMaintenance = async () => {
       try {
         const response = await axios.get(`${localhost}/theme/maintenance`);
-        console.log('Maintenance mode:', response.data.maintenance);
         setMaintenance(response.data.maintenance);
-        // Handle setting maintenance mode in state or context here
       } catch (error) {
         console.error('Failed to fetch maintenance mode:', error);
       }

@@ -6,15 +6,11 @@ import { useFooterContext } from '../context/footer/FooterProvider';
 import { ThemeContext } from '../context/theme/ThemeContext';
 
 const Footer = () => {
-  const { footerCompanies, getFooterData } = useFooterContext();
+  const { footerCompanies } = useFooterContext();
 
-  const { theme, setTheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   const location = useLocation();
-
-  useEffect(() => {
-    console.log(location);
-  }, [location]);
 
   return (
     <>

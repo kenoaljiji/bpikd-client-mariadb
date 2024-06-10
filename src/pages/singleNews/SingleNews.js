@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 
 const SingleNews = () => {
   const { singlePost, getPostById } = useGlobalContext();
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
 
   const { slug } = useParams();
 
@@ -16,6 +16,7 @@ const SingleNews = () => {
     if (!isNaN(slug)) {
       getPostById(slug, 'news', setLoading);
     }
+    //eslint-disable-next-line
   }, [singlePost]);
 
   return (

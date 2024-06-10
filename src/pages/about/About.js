@@ -5,9 +5,10 @@ import './about.scss';
 import moment from 'moment';
 
 const About = () => {
-  const { posts, listPosts, singlePost, listPages } = useGlobalContext();
+  const { singlePost, listPages } = useGlobalContext();
   useEffect(() => {
     listPages(setLoading, 'about');
+    //eslint-disable-next-line
   }, []);
 
   const [loading, setLoading] = useState(false);

@@ -32,9 +32,12 @@ import { PreviewState } from './context/previewContext/PreviewState';
 import PreviewAuthor from './pages/previewAuthor/PreviewAuthor';
 import PreviewNewsAndPage from './pages/previewNewsAndPage/PreviewNewsAndPage';
 import { ThemeContext } from './context/theme/ThemeContext';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import MaintenancePage from './pages/maintenancePage/MaintenancePage';
-import BackupPage from './pages/backupPage.js/BackupPage';
+import NotFound from './pages/notFound/NotFound';
+import BackupPage from './pages/backupPage/BackupPage';
+import { complexString } from './utils/complexString';
+import AuthHeader from './layout/AuthHeader';
 
 function App() {
   const { state } = useRouteContext();
@@ -53,6 +56,8 @@ function App() {
         <Routes>
           <Route path='/' element={<Layout />}>
             <Route path='/' element={<Home />} />
+            <Route path={'*'} element={<NotFound />} />
+
             <Route
               path={transformPath(routes.person)}
               element={<PersonOfInterest />}
@@ -64,7 +69,6 @@ function App() {
               element={<SingleNews />}
             />
             <Route path={transformPath(routes.soon)} element={<SoonPage />} />
-
             <Route
               path={transformPath(routes.partners)}
               element={<Partners />}
@@ -79,8 +83,9 @@ function App() {
             <Route path='/person/:id/:title' element={<Author />} />
             <Route path='/shop' element={<Shop />} />
           </Route>
-          <Route path='/admin' element={<AuthLayout />}>
-            <Route index element={<LoginPage />} />
+
+          <Route path={`/${complexString}/admin`} element={<LoginPage />} />
+          <Route path={'/admin'} element={<AuthLayout />}>
             <Route element={<ProtectedRoute />}>
               <Route path='dashboard' element={<Dashboard />} />
               <Route path='posts' element={<Posts />} />
@@ -90,7 +95,7 @@ function App() {
               <Route path='footer-items' element={<FooterItems />} />
               <Route path='ip-visitors' element={<IpVisitorPage />} />
               <Route path='post/preview' element={<PreviewAuthor />} />
-              {/*   <Route path='backup' element={<BackupPage />} /> */}
+              {/* <Route path='backup' element={<BackupPage />} /> */}
               <Route
                 path='news-page/preview'
                 element={<PreviewNewsAndPage />}

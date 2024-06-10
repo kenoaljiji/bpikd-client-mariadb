@@ -9,7 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import './videooptions.scss';
 import SocialShareComponent from '../socialShare/SocialShareComponent';
-import { localhost } from '../../config/config';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 
 const VideoOptions = () => {
@@ -22,10 +21,6 @@ const VideoOptions = () => {
   const toggleSocialShare = () => {
     setShowSocialShare(!showSocialShare);
   };
-
-  useEffect(() => {
-    console.log(videosData);
-  }, [videos]);
 
   const handleDownload = async () => {
     const videoUrl = videos[index];
@@ -76,6 +71,7 @@ const VideoOptions = () => {
       // Cleanup event listener
       videoElement.removeEventListener('transitionend', handleRotationReset);
     };
+    //eslint-disable-next-line
   }, [rotation]);
 
   // Function to handle resetting the video to its original state after rotation to 270 degrees

@@ -64,32 +64,31 @@ const BackupPage = () => {
     }
     setLoading(false);
   };
-  const handleReactDownload = () => {
+  const handleReactDownload = async () => {
     setLoading(true);
+    const downloadUrl = localhost + '/download/react-build';
 
-    const downloadUrl = '/download-react-build';
-
-    axios({
-      method: 'get',
-      url: downloadUrl,
-      responseType: 'blob', // important for handling the binary data response
-    })
-      .then((response) => {
-        setLoading(false);
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'react_build.zip'); // This sets the filename for the downloaded file
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setAlert('Backup Created Successufully', 'success');
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.error('Download failed:', error);
-        setAlert('Failed to download backup', 'danger');
+    try {
+      const response = await axios({
+        method: 'get',
+        url: downloadUrl,
+        responseType: 'blob', // important for handling the binary data response
       });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'react_build.zip'); // This sets the filename for the downloaded file
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setAlert('Backup Created Successfully', 'success');
+    } catch (error) {
+      console.error('Download failed:', error);
+      setAlert('Failed to download backup', 'danger');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

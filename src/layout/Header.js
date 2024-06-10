@@ -34,7 +34,9 @@ const Header = ({ handleClick, isActive }) => {
   };
 
   return (
-    <>
+    <div
+      className={`header-container ${pathname === '/' ? 'margin-reduce' : ''}`}
+    >
       <header
         className='header'
         style={{
@@ -90,10 +92,10 @@ const Header = ({ handleClick, isActive }) => {
                     type='button'
                     className='button1'
                     onClick={() =>
-                      (window.location.href = '/' + buttons?.button1)
+                      (window.location.href =
+                        '/' + buttons?.button1.toLowerCase())
                     }
                   >
-                    {/* Donat e*/}
                     {buttons?.button1}
                   </button>
                   <button
@@ -112,7 +114,7 @@ const Header = ({ handleClick, isActive }) => {
         )}
       </header>
       <HeaderTextComponent />
-    </>
+    </div>
   );
 };
 

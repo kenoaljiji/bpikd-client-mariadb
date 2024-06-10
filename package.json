@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "proxy": "https://bpikd-backend.up.railway.app",
+  "proxy": "http://bpikd.vizitke.ba",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -30,7 +30,9 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
     "react-fast-marquee": "^1.6.4",
+    "react-helmet": "^6.1.0",
     "react-icons": "^5.0.1",
+    "react-lazy-load-image-component": "^1.6.0",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.22.1",
     "react-scripts": "5.0.1",

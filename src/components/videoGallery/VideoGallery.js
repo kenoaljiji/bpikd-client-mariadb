@@ -8,7 +8,6 @@ import PlayAudioButton from '../../icons/PlayAudioButton';
 
 function VideoGallery({ selectedMedia, openModal, isPlaying, setIsPlaying }) {
   const { getVideosData } = useGlobalContext();
-  const [thumbnails, setThumbnails] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const onClickHandler = (index) => {
@@ -21,10 +20,6 @@ function VideoGallery({ selectedMedia, openModal, isPlaying, setIsPlaying }) {
     openModal();
   };
 
-  useEffect(() => {
-    console.log(selectedMedia.videos);
-  }, [selectedMedia]);
-
   const togglePlay = () => {
     setIsPlaying(!isPlaying);
   };
@@ -34,8 +29,9 @@ function VideoGallery({ selectedMedia, openModal, isPlaying, setIsPlaying }) {
       {loading ? (
         <Loader />
       ) : (
-        selectedMedia.videos.map((video, index) => (
+        selectedMedia?.videos.map((video, index) => (
           <div
+            key={'videos' + index}
             className='video-container'
             style={{
               alignItems: video.name < 28 ? 'center' : 'flex-start',

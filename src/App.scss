@@ -41,7 +41,7 @@ h3 {
 }
 
 section {
-  min-height: 760px;
+  min-height: 840px;
   h2 {
     font-weight: 400;
     padding: 2rem 0;
@@ -51,7 +51,8 @@ section {
       min-height: auto;
     }
   }
-  margin-top: 2rem;
+  /*  margin-top: 2rem; */
+  padding-top: 85px;
   margin-bottom: 7rem;
 
   @media only screen and (max-width: 700px) {
@@ -158,9 +159,13 @@ form.custom-search-2 {
 
     border-bottom: solid 1px #dedede;
     border-top: solid 1px #ebebeb;
+    position: relative;
 
     padding: 5px;
     margin: 0 !important;
+    top: 74px;
+    z-index: 77777;
+    background: #fff;
     input {
       width: 100%;
       border: none !important;

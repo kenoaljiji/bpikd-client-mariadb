@@ -24,7 +24,7 @@ const Posts = () => {
 
   const navigate = useNavigate();
 
-  const { listPosts: previewPost, previewSinglePost } = usePreviewContext();
+  const { previewSinglePost } = usePreviewContext();
 
   useEffect(() => {
     previewSinglePost({});
@@ -32,6 +32,7 @@ const Posts = () => {
       type: LIST_SINGLE_POST,
       payload: {},
     });
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -47,14 +48,12 @@ const Posts = () => {
     if (category === 'Partners') {
       getPartnersData(setLoading);
     }
+    //eslint-disable-next-line
   }, [category]);
 
   return (
     <div className='posts my-5 text-center'>
       <div className='mb-4'>
-        {/* <div className={`alert p-1 alert-success`}>
-          <i className='fas fa-info-circle' /> {'Halo my muther '}
-        </div> */}
         <Alerts />
       </div>
       <h2 className='mb-5'>Posts</h2>
@@ -71,6 +70,7 @@ const Posts = () => {
             <option value='Partners'>Partners</option>
             <option value='About'>About</option>
             <option value='Button2'>Button2Page</option>
+            <option value='Button1'>Button1Page</option>
             <option value='Shop'>Shop</option>
             <option value='Soon'>Coming</option>
           </select>

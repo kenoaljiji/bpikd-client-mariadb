@@ -24,7 +24,7 @@ function CreateEditPartners() {
   };
 
   useEffect(() => {
-    getPartnersData(setLoading);
+    /*    getPartnersData(setLoading); */
   }, [category]);
 
   useEffect(() => {
@@ -41,10 +41,6 @@ function CreateEditPartners() {
     newImageFiles[index] = { ...newImageFiles[index], url: e.target.value };
     setImageFiles(newImageFiles);
   };
-
-  useEffect(() => {
-    console.log(imageFiles);
-  }, [imageFiles]);
 
   const uploadAddDeletePartnersImages = async () => {
     const formData = new FormData();
@@ -103,11 +99,11 @@ function CreateEditPartners() {
     }
   };
 
-  const clearImage = (index) => {
+  /* const clearImage = (index) => {
     const updatedFiles = [...imageFiles];
     updatedFiles[index] = null; // Set the image at the specific index back to null
     setImageFiles(updatedFiles);
-  };
+  }; */
 
   const handleRemovePartner = async (index) => {
     const partner = imageFiles[index];
@@ -139,9 +135,6 @@ function CreateEditPartners() {
     setImageFiles(updatedFiles);
   };
 
-  useEffect(() => {
-    console.log(imageFiles);
-  }, [imageFiles]);
   return (
     <div className='container partners mt-5'>
       <div className='partners-create'>
@@ -206,9 +199,9 @@ function CreateEditPartners() {
             <div className='mt-4'>
               <Loader />
             </div>
-            <span class='mt-3 blink-text'>
+            <span className='mt-3 blink-text'>
               Please Wait
-              <span class='dots'></span>
+              <span className='dots'></span>
             </span>
           </div>
         )}

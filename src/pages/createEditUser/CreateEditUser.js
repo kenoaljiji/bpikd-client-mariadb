@@ -10,11 +10,8 @@ import Loader from '../../components/loader/Loader';
 
 const CreateEditUser = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const { registerUser, updateUser, success, error, user, users } =
-    useAuthContext();
 
-  const [userData, setUserData] = useState(null);
+  const { registerUser, updateUser, user } = useAuthContext();
 
   const [loading, setLoading] = useState(true);
 
@@ -92,6 +89,7 @@ const CreateEditUser = () => {
     } else {
       setLoading(false);
     }
+    //eslint-disable-next-line
   }, [id]);
 
   const options =
