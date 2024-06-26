@@ -21,12 +21,12 @@ const SingleNews = () => {
 
   return (
     <section className='single-news container'>
-      <div className='single-news-content'>
-        <div className='news-header'>
-          <h2 className='h2'>{singlePost.title}</h2>
-          <span className='news-date'>
+      <div className='single-news-content mt-5'>
+        <div className='news-heade r'>
+          <h3 className='h3'>{singlePost.title}</h3>
+          {/*   <span className='news-date'>
             {moment(singlePost.scheduledPublishTime).format('DD MMMM YYYY')}
-          </span>
+          </span> */}
         </div>
         <div className='news-body mt-3'>
           {singlePost?.featured && (

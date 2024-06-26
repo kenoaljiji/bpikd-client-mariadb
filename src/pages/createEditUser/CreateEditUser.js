@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useAuthContext } from '../../context/auth/AuthState';
@@ -33,8 +33,6 @@ const CreateEditUser = () => {
         ...fetchedUserData,
         password: '', // Keep password field empty
       });
-
-      console.log('Fetched user data:', fetchedUserData);
     } catch (err) {
       console.error('Error fetching user:', err);
     }

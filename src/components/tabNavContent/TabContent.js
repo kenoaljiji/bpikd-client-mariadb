@@ -3,14 +3,6 @@ import VideoGallery from '../videoGallery/VideoGallery';
 import './tab-content.scss';
 import ImageGallery from '../image/ImageGallery';
 
-import 'lightgallery/css/lightgallery.css';
-import 'lightgallery/css/lg-zoom.css';
-import 'lightgallery/css/lg-thumbnail.css';
-
-// If you want you can use SCSS instead of css
-import 'lightgallery/scss/lightgallery.scss';
-import 'lightgallery/scss/lg-zoom.scss';
-
 import DOMPurify from 'dompurify';
 import moment from 'moment';
 import StopAudioButton from '../../icons/StopAudioButton';
@@ -77,8 +69,6 @@ const TabContent = ({
 
   const { images, documents, audios, videos } = selectedMedia;
 
-  useEffect(() => {}, [selectedWork, tab]);
-
   // Function to handle file download
   const handleDownload = (event, url, filename) => {
     event.preventDefault(); // Prevent the default anchor tag behaviour
@@ -121,19 +111,20 @@ const TabContent = ({
     </svg>
   );
 
-  const checkIfAllEmpty = (items) => {
-    return items.every((item) => item.length === 0);
-  };
-
-  const allItems = [documents, audios, videos, images];
-  const style = { margin: checkIfAllEmpty(allItems) ? '27px 0' : '34px 0' };
-
   switch (tab) {
     case 'releases':
       return (
         <div className='tab-content releases'>
           {selectedWork.content?.length > 0 ? (
-            <div style={{ width: '100%' }}>
+            <div
+              style={{
+                width: '100%',
+                margin:
+                  selectedWork.content && selectedWork.content.length === 0
+                    ? '27px 0'
+                    : '28px 0',
+              }}
+            >
               <ContentComponent content={selectedWork?.content} />
               <div className='counter-date' style={{ marginTop: '0px' }}>
                 <span style={{ marginRight: '5px' }}>
@@ -158,11 +149,24 @@ const TabContent = ({
       );
     case 'documents':
       return (
-        <div className='tab-content documents' style={style}>
-          <ul className='grid-document-style'>
+        <div className='tab-content documents'>
+          <ul
+            className='grid-document-style'
+            style={{
+              margin: documents && documents.length === 0 ? '27px 0' : '34px 0',
+            }}
+          >
             {documents?.length > 0 ? (
               documents?.map((doc, index) => (
-                <li key={index} className=''>
+                <li
+                  key={index}
+                  className=''
+                  style={{
+                    alignItems: doc.name.length < 23 ? 'center' : 'flex-start',
+                    display: 'flex',
+                    padding: '0',
+                  }}
+                >
                   {/* Font Awesome icons for file types */}
                   {doc?.url.endsWith('.pdf') && (
                     <i
@@ -210,14 +214,19 @@ const TabContent = ({
                   {doc?.url.endsWith('.pdf') ? (
                     <a
                       href={doc.url}
-                      className=''
+                      className='p-0'
                       target='_blank'
                       rel='noreferrer'
+                      style={{ marginTop: '-5px' }}
                     >
                       {doc.name}
                     </a>
                   ) : (
-                    <a href={doc.url} download={doc.name}>
+                    <a
+                      href={doc.url}
+                      download={doc.name}
+                      style={{ marginTop: '-5px' }}
+                    >
                       {doc.name}
                     </a>
                   )}
@@ -232,13 +241,23 @@ const TabContent = ({
 
     case 'images':
       return (
-        <div className='tab-content images' style={style}>
+        <div
+          className='tab-content images'
+          style={{
+            margin: images && images.length === 0 ? '27px 0' : '34px 0',
+          }}
+        >
           <ImageGallery images={images} />
         </div>
       );
     case 'audio':
       return (
-        <div className='tab-content audio' style={style}>
+        <div
+          className='tab-content audio'
+          style={{
+            margin: audios && audios.length === 0 ? '27px 0' : '34px 0',
+          }}
+        >
           <ul className='grid-document-style'>
             {audios?.length > 0 ? (
               audios?.map((audio, index) => (
@@ -258,7 +277,14 @@ const TabContent = ({
       );
     case 'video':
       return (
-        <div className='tab-content videos' style={style}>
+        <div
+          className='tab-content videos'
+          style={
+            videos && {
+              margin: videos && videos.length === 0 ? '27px 0' : '34px 0',
+            }
+          }
+        >
           {selectedMedia.videos.length > 0 ? (
             <VideoGallery
               selectedMedia={selectedMedia}

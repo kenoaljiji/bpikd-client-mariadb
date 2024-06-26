@@ -151,9 +151,9 @@ const Authors = () => {
     // Find the work by title
     if (title) {
       const work = author?.works?.map((work, index) => {
-        if (slugify(work.title) === title) {
+        if (slugify(work.title) === slugify(title)) {
           setExpandedWorkId(work.workId);
-          /* setSelectedWork(work); */
+          setSelectedWork(work);
           setOpenWorkIndex(openWorkIndex === index ? -1 : index);
         }
       });

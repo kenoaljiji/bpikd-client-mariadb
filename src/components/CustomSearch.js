@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../context/theme/ThemeContext';
 
@@ -9,7 +9,9 @@ const CustomSearch = ({ type }) => {
   const navigate = useNavigate();
 
   const onClickHandeler = () => {
-    navigate(`/search?words=${value}`);
+    if (value !== '') {
+      navigate(`/search?words=${value}&sort=relevance&page=1`);
+    } else navigate(`/search?words=${value}`);
   };
 
   return (

@@ -181,10 +181,6 @@ const PersonSortSearch = () => {
     updateSortedItems(data, setLoading);
   };
 
-  useEffect(() => {
-    console.log(selectedFirstRow);
-  }, [selectedFirstRow]);
-
   return (
     <div className='person-sort-search mb-5'>
       <div className='sort-search'>

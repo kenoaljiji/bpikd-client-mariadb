@@ -8,7 +8,9 @@ const Search = () => {
   const navigate = useNavigate();
 
   const onSubmit = () => {
-    navigate(`/search?words=${value}`);
+    if (value !== '') {
+      navigate(`/search?words=${value}&sort=relevance&page=1`);
+    } else navigate(`/search?words=${value}`);
   };
 
   return (

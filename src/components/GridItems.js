@@ -34,8 +34,6 @@ const GridItems = () => {
     }, 200);
   }, []);
 
-  useEffect(() => {}, [authors]);
-
   const { firstRowItems, secondRowItems } = sortedItems;
 
   const settings = {
@@ -95,13 +93,22 @@ const GridItems = () => {
 
   const sliderRef = React.createRef(null);
 
-  /*  const handleAuthorClick = (author) => {
-    const fullName = slugify(author.firstName + '-' + author.lastName);
+  const fullNameFirstRow = slugify(
+    firstRowItems.firstName + '-' + firstRowItems.lastName
+  );
 
-    if (!author.placeholder) {
-      window.open(`/person/${fullName}`, '_blank', 'noopener,noreferrer');
-    }
-  }; */
+  // Calculate how many placeholders are needed
+  const placeholdersNeeded = Math.max(0, 5 - authors.length);
+  const placeholders = Array.from(
+    { length: placeholdersNeeded },
+    (_, index) => ({
+      id: `placeholder-${index}`,
+      placeholder: true,
+    })
+  );
+
+  // Combine real authors with placeholders
+  const displayItems = [...authors, ...placeholders];
 
   return (
     <div className='authors'>
@@ -109,32 +116,40 @@ const GridItems = () => {
         <div className={'flex-center mb-3 firstRowItem'}>
           <div className='img-container'>
             <a
-              href={`/person/${slugify(
-                firstRowItems.firstName + '-' + firstRowItems.lastName
-              )}`}
-              target='_blank'
-              rel='noreferrer'
+              href={
+                firstRowItems.firstName
+                  ? `/person-of-interest/${fullNameFirstRow}`
+                  : ''
+              }
+              target={firstRowItems.firstName ? '_blank' : undefined}
+              rel={firstRowItems.firstName ? 'noreferrer' : undefined}
+              onClick={
+                !firstRowItems.firstName ? (e) => e.preventDefault() : undefined
+              }
             >
-              <div>
-                {!firstRowItems.placeholder ? (
-                  <img
-                    src={
-                      firstRowItems?.featured
-                        ? firstRowItems?.featured
-                        : '/assets/no-picture.png'
-                    }
-                    alt=''
-                  />
-                ) : (
-                  <LazyLoadImage
-                    src='/assets/no-picture.png'
-                    alt='No author available'
-                    effect='blur'
-                    style={{ border: '1px solid #eee', cursor: 'default' }}
-                  />
-                )}
-              </div>
-              {!firstRowItems.featured ? (
+              {!firstRowItems.placeholder && firstRowItems.featured ? (
+                <img
+                  src={
+                    firstRowItems?.featured
+                      ? firstRowItems.featured
+                      : '/assets/no-picture.png'
+                  }
+                  alt=''
+                  style={{
+                    border: !firstRowItems.firstName ? '1px solid #eee' : '',
+                    cursor: firstRowItems.featured ? 'pointer' : 'default',
+                  }}
+                />
+              ) : (
+                <LazyLoadImage
+                  src='/assets/no-picture.png' // This is the image to be lazy loaded
+                  alt='No author available' // Alternative text for the image
+                  effect='blur' // Apply a blur effect while the image is loading
+                  style={{ border: '1px solid #eee', cursor: 'default' }}
+                />
+              )}
+
+              {firstRowItems?.placeholder || !firstRowItems.firstName ? (
                 <h5
                   style={{
                     padding: '13px 0',
@@ -164,9 +179,14 @@ const GridItems = () => {
                 key={author.id + 'e5er45'}
               >
                 <a
-                  href={`/person/${fullName}`}
-                  target='_blank'
-                  rel='noreferrer'
+                  href={
+                    author.firstName ? `/person-of-interest/${fullName}` : ''
+                  }
+                  target={!author.placeholder ? '_blank' : undefined}
+                  rel={!author.placeholder ? 'noreferrer' : undefined}
+                  onClick={
+                    !author.firstName ? (e) => e.preventDefault() : undefined
+                  }
                 >
                   <div className='img-container'>
                     {!author?.placeholder && author.featured ? (
@@ -203,57 +223,63 @@ const GridItems = () => {
         </div>
         <div className='custom-slider'>
           <Slider {...settings} ref={sliderRef}>
-            {authors?.map((author, index) => {
-              const { firstName, lastName } = author;
-
-              const fullName = slugify(
-                author.firstName + '-' + author.lastName
-              );
-              return (
-                <div key={author.id + 'ffe45g'} className='slide-item'>
-                  <a
-                    href={`/person/${fullName}`}
-                    target='_blank'
-                    rel='noreferrer'
-                  >
-                    <div className='img-container'>
-                      {!author?.placeholder && author.featured ? (
-                        <img src={author?.featured} alt='' />
+            {displayItems.map((item) => (
+              <div key={item.id} className='slide-item'>
+                <a
+                  href={
+                    !item.placeholder
+                      ? `/person-of-interest/${slugify(
+                          item.firstName + '-' + item.lastName
+                        )}`
+                      : ''
+                  }
+                  target={!item.placeholder ? '_blank' : undefined}
+                  rel={!item.placeholder ? 'noreferrer' : undefined}
+                  onClick={
+                    item.placeholder ? (e) => e.preventDefault() : undefined
+                  }
+                  style={{
+                    cursor: item.featured ? 'pointer' : 'default',
+                  }}
+                >
+                  <div className='img-container'>
+                    {!item.placeholder && item.featured ? (
+                      <img
+                        src={item.featured}
+                        alt={`${item.firstName} ${item.lastName}`}
+                      />
+                    ) : (
+                      <LazyLoadImage
+                        src='/assets/no-picture.png'
+                        alt='No author available'
+                        effect='blur'
+                        style={{ border: '1px solid #eee' }}
+                      />
+                    )}
+                    <h5
+                      style={{
+                        backgroundColor: !item.featured && 'transparent',
+                        marginBottom: !item.featured && '8px',
+                        padding: item.placeholder ? '13px 0' : undefined,
+                        background: item.placeholder
+                          ? 'transparent'
+                          : undefined,
+                      }}
+                    >
+                      {item.placeholder ? (
+                        'coming'
                       ) : (
-                        <LazyLoadImage
-                          src='/assets/no-picture.png' // This is the image to be lazy loaded
-                          alt='No author available' // Alternative text for the image
-                          effect='blur' // Apply a blur effect while the image is loading
-                          style={{ border: '1px solid #eee' }}
-                        />
+                        <>
+                          {item.firstName}
+                          <br />
+                          {item.lastName}
+                        </>
                       )}
-
-                      {author.placeholder ? (
-                        <h5
-                          style={{
-                            padding: '13px 0',
-                            background: 'transparent',
-                            cursor: 'default',
-                          }}
-                        >
-                          coming
-                        </h5>
-                      ) : (
-                        <h5
-                          style={{
-                            backgroundColor: !author?.featured && 'transparent',
-                            marginBottom: !author?.featured && '8px',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          {firstName} <br /> {lastName}
-                        </h5>
-                      )}
-                    </div>
-                  </a>
-                </div>
-              );
-            })}
+                    </h5>
+                  </div>
+                </a>
+              </div>
+            ))}
           </Slider>
         </div>
       </div>

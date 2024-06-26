@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/navbar/Navbar';
 import { useLocation } from 'react-router-dom';
@@ -14,7 +14,8 @@ const Header = ({ handleClick, isActive }) => {
   const { headersData } = state;
 
   const { routes, buttons, logoImgPath } = headersData;
-  const { pathname } = useLocation();
+  const location = useLocation(); // This hook provides access to the location object
+  const { pathname } = location;
 
   const moveLeftOnActive = {
     left: isActive ? '10px' : '-6px',
@@ -33,10 +34,19 @@ const Header = ({ handleClick, isActive }) => {
     );
   };
 
+  useEffect(() => {
+    if (pathname === '*') {
+      console.log('exist');
+    } else {
+      console.log('not exist');
+    }
+  }, []);
+
+  // Apply 'margin-reduce' if the path is '/' or if no other routes matched ('*')
+  const headerClass = pathname === '/' ? 'margin-reduce' : '';
+
   return (
-    <div
-      className={`header-container ${pathname === '/' ? 'margin-reduce' : ''}`}
-    >
+    <div className={`header-container ${headerClass}`}>
       <header
         className='header'
         style={{

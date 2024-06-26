@@ -16,15 +16,12 @@ import {
   PROGRESS_UPLOAD,
 } from '../types';
 import { useAlertContext } from '../alert/AlertState';
-import { complexString } from '../../utils/complexString';
 
 const GlobalContext = createContext();
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
 // Provider Component
-
-// Helper functions for local storage
 
 export const GlobalState = ({ children }) => {
   // Initial State
@@ -275,7 +272,7 @@ export const GlobalState = ({ children }) => {
         payload: res.data.results,
       });
     } catch (error) {
-      setAlert(error.message, 'error'); // Display any errors as alerts
+      /*  setAlert(error.message, 'error');  */
     } finally {
       setLoading(false);
     }

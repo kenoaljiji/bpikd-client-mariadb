@@ -30,7 +30,11 @@ const PersonOfInterest = () => {
     
  */
     if (!author.placeholder) {
-      window.open(`/person/${fullName}`, '_blank', 'noopener,noreferrer');
+      window.open(
+        `/person-of-interest/${fullName}`,
+        '_blank',
+        'noopener,noreferrer'
+      );
     }
   };
 
@@ -38,51 +42,56 @@ const PersonOfInterest = () => {
     <section className='persons'>
       <div className='container'>
         <h2>{routes.person}</h2>
-
         <div
           className='grid grid-5'
           style={{ columnGap: '18px', rowGap: '25px' }}
         >
           {authors?.map((author, index) => {
+            const fullName = slugify(author.firstName + '-' + author.lastName);
             return (
-              <div
-                key={'aut456' + author._id + index}
-                className='img-container'
-                onClick={() => handleAuthorClick(author)}
+              <a
+                href={fullName ? `/person-of-interest/${fullName}` : '#'}
+                onClick={!fullName ? (e) => e.preventDefault() : null}
               >
-                {author.featured ? (
-                  <>
-                    <img
-                      src={author.featured}
-                      alt=''
-                      className='img-fluid w-100'
-                    />
-                    <h5>
-                      {author.firstName} <br /> {author.lastName}
-                    </h5>
-                  </>
-                ) : (
-                  <>
-                    <LazyLoadImage
-                      src='/assets/no-picture.png' // This is the image to be lazy loaded
-                      alt='No author available' // Alternative text for the image
-                      effect='blur' // Apply a blur effect while the image is loading
-                      width='100%'
-                      height='100%'
-                      style={{ border: '1px solid #eee' }}
-                    />
-                    <h5
-                      style={{
-                        padding: '5px 25px',
-                        background: 'transparent',
-                        width: '120%',
-                      }}
-                    >
-                      {author.firstName} <br /> {author.lastName}
-                    </h5>
-                  </>
-                )}
-              </div>
+                <div
+                  key={'aut456' + author._id + index}
+                  className='img-container'
+                  /*  onClick={() => handleAuthorClick(author)} */
+                >
+                  {author && author.featured ? (
+                    <>
+                      <img
+                        src={author.featured}
+                        alt=''
+                        className='img-fluid w-100'
+                      />
+                      <h5>
+                        {author.firstName} <br /> {author.lastName}
+                      </h5>
+                    </>
+                  ) : (
+                    <>
+                      <LazyLoadImage
+                        src='/assets/no-picture.png' // This is the image to be lazy loaded
+                        alt='No author available' // Alternative text for the image
+                        style={{
+                          border: '1px solid #eee',
+                        }}
+                        className='lazy-load'
+                      />
+                      <h5
+                        style={{
+                          padding: '5px 25px',
+                          background: 'transparent',
+                          width: '100%',
+                        }}
+                      >
+                        {author.firstName} <br /> {author.lastName}
+                      </h5>
+                    </>
+                  )}
+                </div>
+              </a>
             );
           })}
         </div>

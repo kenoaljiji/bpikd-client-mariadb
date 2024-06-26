@@ -35,9 +35,7 @@ import { ThemeContext } from './context/theme/ThemeContext';
 import React, { useContext } from 'react';
 import MaintenancePage from './pages/maintenancePage/MaintenancePage';
 import NotFound from './pages/notFound/NotFound';
-import BackupPage from './pages/backupPage/BackupPage';
 import { complexString } from './utils/complexString';
-import AuthHeader from './layout/AuthHeader';
 
 function App() {
   const { state } = useRouteContext();
@@ -54,9 +52,9 @@ function App() {
     return (
       <PreviewState>
         <Routes>
+          <Route path={'*'} element={<NotFound />} />
           <Route path='/' element={<Layout />}>
             <Route path='/' element={<Home />} />
-            <Route path={'*'} element={<NotFound />} />
 
             <Route
               path={transformPath(routes.person)}
@@ -79,8 +77,8 @@ function App() {
             />
             <Route path={transformPath(buttons.button1)} element={<Donate />} />
             <Route path='/search' element={<SearchResult />} />
-            <Route path='/person/:id' element={<Author />} />
-            <Route path='/person/:id/:title' element={<Author />} />
+            <Route path='/person-of-interest/:id' element={<Author />} />
+            <Route path='/person-of-interest/:id/:title' element={<Author />} />
             <Route path='/shop' element={<Shop />} />
           </Route>
 

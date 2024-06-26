@@ -43,8 +43,8 @@
           height: 227px;
         }
       }
-      .div1 > .img-container,
-      .div3 > .img-container {
+      div.items.div1 > a > div.img-container,
+      div.items.div3 > a > div.img-container {
         margin-left: auto;
       }
     }
@@ -193,7 +193,7 @@
 
   .custom-slider {
     position: relative;
-    z-index: 8888;
+    z-index: 7777;
 
     button {
       background: black;

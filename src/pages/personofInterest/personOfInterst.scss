@@ -13,6 +13,12 @@
       font-weight: 400;
     }
   }
+
+  .lazy-load {
+    width: 100%;
+    height: 100%;
+  }
+
   .grid-5 {
     grid-template-columns: repeat(6, 150px);
 
@@ -27,6 +33,7 @@
 
       h5 {
         font-size: 18px;
+        width: 100%;
       }
 
       img {

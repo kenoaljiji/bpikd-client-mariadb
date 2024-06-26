@@ -25,18 +25,18 @@ const Donate = () => {
       </div>
       <div className='card-custom mt-3'>
         <h2
-          class='card-title p-3 rounded'
+          className='card-title p-3 rounded'
           style={{ ...style, background: '#d9edf7' }}
         >
           Paypal
         </h2>
-        <div class='card mt-3 border-top-0 rounded-0'>
-          <div class='card-body p-0'>
+        <div className='card mt-3 border-top-0 rounded-0'>
+          <div className='card-body p-0'>
             <div className='p-3'>
               <p className='font-weight-bold' style={{ fontWeight: 'bold' }}>
                 Global PayPal donations
               </p>
-              <p class=''>
+              <p>
                 Donations made via the Wau Holland Foundation are tax deductible
                 in the EU.
               </p>

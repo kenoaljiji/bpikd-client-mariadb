@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
-import { VideoThumbnailGenerator } from 'browser-video-thumbnail-generator';
 import Loader from '../loader/Loader';
 import './videoGallery.scss';
 import StopAudioButton from '../../icons/StopAudioButton';

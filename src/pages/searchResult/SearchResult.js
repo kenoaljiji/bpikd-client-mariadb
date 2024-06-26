@@ -231,21 +231,6 @@ const SearchResult = () => {
 
   const resultsElementRef = useRef(null);
 
-  /* useEffect(() => {
-    if (location.state?.hasNavigatedBack) {
-      if (resultsElementRef.current) {
-        resultsElementRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
-    }
-  }, [location]); */
-
-  /* useEffect(() => {
-    setSearchDescription(queryParams.get('words'));
-  }, [queryParams]); */
-
   useEffect(() => {
     if (results?.data?.length > 0 && resultsElementRef.current) {
       setTimeout(() => {
@@ -308,10 +293,12 @@ const SearchResult = () => {
   const handleNavigation = async (result) => {
     if (result.source_table === 'works') {
       navigate(
-        `/person/${slugify(`${result.id}`)}/${slugify(`${result.title}`)}`
+        `/person-of-interest/${slugify(`${result.id}`)}/${slugify(
+          `${result.title}`
+        )}`
       );
     } else if (result.source_table === 'persons') {
-      navigate(`/person/${slugify(result.title)}`);
+      navigate(`/person-of-interest/${slugify(result.title)}`);
     } else if (result.source_table === 'news') {
       // Use the special function for news
       await getNewsByIdAndTitle(result.id, result.title);
@@ -537,22 +524,7 @@ const SearchResult = () => {
           </div>
         </form>
       </div>
-      {/* <div className='container'>
-        {results?.data?.length === 0 &&
-          formik.values.categories &&
-          formik?.values.categories.map((category, index) => (
-            <div key={index} className='categories'>
-              <span>{category}</span>
-              <div
-                className='categories-x'
-                onClick={() => handleRemoveCategory(category)}
-              >
-                X
-              </div>
-            </div>
-          ))}
-      </div>
- */}
+
       {results && (
         <div
           className='search-result-display'

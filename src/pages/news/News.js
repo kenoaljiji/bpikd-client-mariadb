@@ -5,8 +5,9 @@ import { useRouteContext } from '../../context/route/RouteProvider';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import './news.scss';
 import DOMPurify from 'dompurify';
+import { ContentComponent } from '../../components/ContentComponent';
 
-export function ContentComponent({ content }) {
+/* export function ContentComponent({ content }) {
   const [shortenedContent, setShortenedContent] = useState('');
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export function ContentComponent({ content }) {
   }, [content]);
 
   return <div dangerouslySetInnerHTML={{ __html: shortenedContent }} />;
-}
+} */
 
 const News = () => {
   const { state } = useRouteContext();
@@ -64,21 +65,21 @@ const News = () => {
       {posts?.map((news) => {
         if (news.isPublished) {
           return (
-            <div className='news-content' key={news.id}>
-              <div className='news-header'>
+            <div className='news-content box' key={news.id}>
+              <div className='news-header mt-2'>
                 <h3
                   className='h3'
-                  onClick={() => onClickHandler(news.id, news.title)}
+                  /*   onClick={() => onClickHandler(news.id, news.title)} */
                 >
                   {news.title}
                 </h3>
-                <span className='news-date'>
+                {/*  <span className='news-date'>
                   {moment(news?.scheduledPublishTime).format('DD MMMM YYYY')}
-                </span>
+                </span> */}
               </div>
               <div className='news-body'>
                 {news.featured && (
-                  <div className=' '>
+                  <div className='featured-images'>
                     <img src={news.featured} alt='news '></img>
                   </div>
                 )}
