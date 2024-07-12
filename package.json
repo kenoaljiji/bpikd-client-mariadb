@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "proxy": "http://bpikd.vizitke.ba",
+  "proxy": "http://bpikd.site",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
