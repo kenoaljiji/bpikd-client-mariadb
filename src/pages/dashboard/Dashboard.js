@@ -7,10 +7,12 @@ import SortPersonIcon from '../../icons/SortPersonIcon';
 import IPtrackIcon from '../../icons/IPtrackIcon';
 import './dashboard.scss';
 import { useAuthContext } from '../../context/auth/AuthState';
-
 import { Link } from 'react-router-dom';
 import ProfileIcon from '../../icons/ProfileIcon';
 import Alerts from '../../components/Alerts';
+import ThemeColorComponent from '../../components/themeColorComponnet/ThemeColorComponent';
+import MaintenanceComponent from '../../components/maintenanceComponent.js/MaintenanceComponent';
+import BackupIcon from '../../icons/BackupIcon';
 
 const Dashboard = () => {
   const { user, error, success } = useAuthContext();
@@ -19,15 +21,16 @@ const Dashboard = () => {
     <div className='container my-5 text-center dashboard'>
       {success && <Alerts />}
       {error && <Alerts />}
-      <h2 className='pt-3'>Dashboard</h2>
+      <h2 className='py-3'>Dashboard</h2>
+      <ThemeColorComponent />
       <div className='grid mt-5'>
-        {user.user.role !== 'admin' ? (
-          <Link to={'/admin/users/create-edit/' + user.user._id}>
-            <ProfileIcon />
-          </Link>
-        ) : (
+        {user.user.role === 'admin' || user.user.role === 'owner' ? (
           <Link to='/admin/users'>
             <UsersIcon />
+          </Link>
+        ) : (
+          <Link to={'/admin/users/create-edit/' + user.user.id}>
+            <ProfileIcon />
           </Link>
         )}
 
@@ -49,7 +52,11 @@ const Dashboard = () => {
         <Link to='/admin/ip-visitors'>
           <IPtrackIcon />
         </Link>
+        {/*   <Link to='/admin/backup'>
+          <BackupIcon />
+        </Link> */}
       </div>
+      <MaintenanceComponent />
     </div>
   );
 };

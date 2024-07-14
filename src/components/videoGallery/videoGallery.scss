@@ -1,14 +1,55 @@
 .video-gallery {
   display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  grid-template-columns: repeat(5, 1fr);
 
-  div {
-    cursor: pointer;
-    opacity: 0.8;
+  @media only screen and (max-width: 900px) {
+    grid-template-columns: repeat(4, 1fr);
   }
 
+  @media only screen and (max-width: 700px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media only screen and (max-width: 400px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .video-container {
+    display: flex;
+    gap: 5px;
+    /* border: 1px solid #eee; */
+    padding: 0px 25px;
+
+    svg {
+      cursor: pointer;
+    }
+
+    span {
+      margin-top: 1px;
+      font-size: 13px;
+    }
+  }
+}
+
+.react-thumbnail-generator {
+  width: 130px;
   img {
-    width: 100%;
+    width: 50%;
+  }
+}
+.video-gallery-item {
+  overflow: hidden;
+  width: 130px;
+  cursor: pointer;
+
+  img {
+    width: 130px;
+    height: 98px;
+    object-fit: cover;
+    transition: all 0.3s;
+  }
+  img:hover {
+    transform: scale(1.1);
   }
 }

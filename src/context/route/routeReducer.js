@@ -10,9 +10,10 @@ export const routeReducer = (state, action) => {
     case GET_HEADER_CONFIG:
       return {
         ...state,
-        headersData: { ...action.payload },
+        headersData: action.payload,
         loading: false,
       };
+
     case "UPDATE_ROUTE_PATHS":
       const newState = {
         ...state,
@@ -23,6 +24,19 @@ export const routeReducer = (state, action) => {
       };
 
       return newState;
+
+    case "GET_TEXT_SETTINGS_DATA":
+      return {
+        ...state,
+        textTrack: action.payload,
+        loading: false,
+      };
+    case "GET_THEME_DATA":
+      return {
+        ...state,
+        themeColor: action.payload,
+        loading: false,
+      };
     default:
       return state;
   }

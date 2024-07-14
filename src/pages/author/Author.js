@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import TabContent from "../../components/tabNavContent/TabContent";
-/* import { authors } from '../../helpers/people'; */
-import "../author/author.scss";
-import VideoModal from "../../components/VideoModal/VideoModal";
-import { slugify } from "../../utils/slugify";
-import { useGlobalContext } from "../../context/bpikd/GlobalState";
-import { localhost } from "../../config/config";
-import axios from "axios";
-import moment from "moment";
-import Loader from "../../components/loader/Loader";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import TabContent from '../../components/tabNavContent/TabContent';
+import '../author/author.scss';
+import VideoModal from '../../components/VideoModal/VideoModal';
+import { slugify } from '../../utils/slugify';
+import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import { localhost } from '../../config/config';
+import axios from 'axios';
+import moment from 'moment';
+import Loader from '../../components/loader/Loader';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const displayContentWithLineBreaks = (content) => {
-  return content.split("\n").map((line, index) => (
+  return content.split('\n').map((line, index) => (
     <React.Fragment key={index}>
       {line}
       <br />
@@ -21,17 +21,26 @@ const displayContentWithLineBreaks = (content) => {
 };
 
 const Authors = () => {
-  const { authors } = useGlobalContext();
+  const { authors, listAuthors } = useGlobalContext();
   const [loading, setLoading] = useState();
   const [author, setAuthor] = useState(null);
   const [selectedWork, setSelectedWork] = useState(null);
-  const [selectedTab, setSelectedTab] = useState("releases");
+  const [selectedTab, setSelectedTab] = useState('releases');
   const [openWorkItems, setOpenWorkItems] = useState([]);
   const [openWorkIndex, setOpenWorkIndex] = useState(-1);
-  const [isVideoGalleryOpen, setIsVideoGalleryOpen] = React.useState(false); // State for modal visibility
+  const [isVideoGalleryOpen, setIsVideoGalleryOpen] = React.useState(false);
   const [expandedWorkId, setExpandedWorkId] = useState(null);
+  const [smallLoading, setSmallLoading] = useState(false);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 
   const { id } = useParams();
+
+  useEffect(() => {
+    if (authors && authors.length === 0) {
+      listAuthors(setLoading);
+    }
+    //eslint-disable-next-line
+  }, []);
 
   useEffect(() => {
     const slugFromUrl = id; // 'id' is the slug from URL params
@@ -44,11 +53,8 @@ const Authors = () => {
       return authorSlug === decodedSlug;
     });
 
-    console.log(foundAuthor);
-
     // If the author is found, use their _id to fetch detailed data
     if (foundAuthor) {
-      console.log(foundAuthor);
       const authorId = foundAuthor.id;
 
       fetchAuthorDataById(authorId);
@@ -63,10 +69,10 @@ const Authors = () => {
       );
       const data = response.data;
 
-      setAuthor(data); // Assuming you have a setAuthor function to update the author state
+      setAuthor(data);
       // Handle setting works and other states as needed
     } catch (error) {
-      console.error("Failed to fetch author data:", error);
+      console.error('Failed to fetch author data:', error);
       // Handle errors
     } finally {
       setLoading(false); // Ensure loading state is updated regardless of request outcome
@@ -75,9 +81,9 @@ const Authors = () => {
 
   useEffect(() => {
     if (author && author.works) {
-      setSelectedWork(author.works[0]);
-      console.log(author);
-      setOpenWorkItems(new Array(author.works.length).fill(false)); // Init with the length of works
+      /* setSelectedWork(author.works[0]); */
+
+      setOpenWorkItems(new Array(author.works.length).fill(false));
       setOpenWorkIndex(-1);
     } else {
       // Reset states if author or works are not available
@@ -92,7 +98,6 @@ const Authors = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    console.log();
   }, [id]);
 
   useEffect(() => {
@@ -106,11 +111,11 @@ const Authors = () => {
     };
 
     // Add event listener for the scroll event
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     // Clean up by removing the event listener when the component unmounts
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []); // Empty de
 
@@ -118,19 +123,35 @@ const Authors = () => {
 
   const toggleTextDisplay = (work) => {
     const id = work.workId;
-    console.log(expandedWorkId, id);
+
     if (expandedWorkId === id) {
       setExpandedWorkId(null); // Collapse if it's already expanded
     } else {
       setExpandedWorkId(id); // Expand this item
+      fetchWorkDetails(work.workId);
     }
+  };
+
+  const fetchWorkDetails = async (workId) => {
+    if (!workId) {
+      return;
+    }
+    try {
+      setSmallLoading(true);
+      const res = await axios.get(`${localhost}/post/persons/works/${workId}`);
+      setSelectedWork(res.data);
+      /*    setSelectedWork(res.data); */
+    } catch (err) {
+      console.error('Error fetching work details:', err);
+    }
+    setSmallLoading(false);
   };
 
   useEffect(() => {
     // Find the work by title
     if (title) {
       const work = author?.works?.map((work, index) => {
-        if (slugify(work.title) === title) {
+        if (slugify(work.title) === slugify(title)) {
           setExpandedWorkId(work.workId);
           setSelectedWork(work);
           setOpenWorkIndex(openWorkIndex === index ? -1 : index);
@@ -141,179 +162,191 @@ const Authors = () => {
 
   const handleWorkClick = (index) => {
     setSelectedWork(author?.works[index]);
-    setSelectedTab("releases"); // Reset tab to 'releases' when selecting a new work
+    setSelectedTab('releases');
 
-    setOpenWorkIndex(openWorkIndex === index ? -1 : index); // Toggle the open/close state
+    setOpenWorkIndex(openWorkIndex === index ? -1 : index);
   };
 
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
   };
 
+  const svgEye = () => (
+    <svg
+      width='21px'
+      height='21px'
+      viewBox='0 0 24 24'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path
+        fillRule='evenodd'
+        clipRule='evenodd'
+        d='M1.5 12c0-2.25 3.75-7.5 10.5-7.5S22.5 9.75 22.5 12s-3.75 7.5-10.5 7.5S1.5 14.25 1.5 12zM12 16.75a4.75 4.75 0 1 0 0-9.5 4.75 4.75 0 0 0 0 9.5zM14.7 12a2.7 2.7 0 1 1-5.4 0 2.7 2.7 0 0 1 5.4 0z'
+        fill='#000000'
+      />
+    </svg>
+  );
+
   return (
-    <section className="author">
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="container d-flex">
-            <div className="d-flex" style={{ gap: "10px", width: "100%" }}>
-              {author && (
-                <div className="box">
-                  <div className="">
-                    <img src={author?.featured} alt="persons" />
-                  </div>
-                  <div className="">
-                    <p>{displayContentWithLineBreaks(author?.aboutPerson)}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="container">
-            <div className="works">
-              <div className="">
-                <div>
-                  {author?.works?.map((work, index) =>
-                    work.isPublished ? (
-                      <>
-                        <a
-                          key={"work" + work.id}
-                          className="link"
-                          onClick={(e) => {
-                            handleWorkClick(index);
-                            e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
-                            toggleTextDisplay(work);
-                          }}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <span
-                            className={index === openWorkIndex ? "active" : ""}
-                            /* onClick={(e) => {
-                              e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
-                              toggleTextDisplay(work.id);
-                            }} */
-                          >
-                            {expandedWorkId !== work.workId &&
-                            work.title.length > 10
-                              ? `${work.title.slice(0, 10)}...`
-                              : work.title}
-                          </span>
-                          <span
-                            style={{ color: "#333333", marginRight: "10px" }}
-                          >
-                            {` - ${moment(work.scheduledPublishTime).format(
-                              "DD MMMM YYYY"
-                            )}`}
-                          </span>
-                          {work.title.length > 10 && (
-                            <span
-                              onClick={(e) => {
-                                e.stopPropagation(); // Prevent the click from triggering the onClick of the parent
-                                /*   toggleTextDisplay(work.id); */
-                              }}
-                              style={{
-                                cursor: "pointer",
-                                color: "#0087d5",
-                                marginLeft: "5px",
-                              }}
-                            >
-                              {/*   {expandedWorkId === work.id ? "Hide" : "Show more"} */}
-                            </span>
-                          )}
-                          <span
-                            className={`arrow ${
-                              index === openWorkIndex ? "down" : "up"
-                            }`}
-                          >
-                            {/*  &#9660; */}
-                          </span>
-                        </a>
-                        {selectedWork && (
-                          <div
-                            className={`selected-work ${
-                              index === openWorkIndex ? "open" : "close"
-                            }`}
-                          >
-                            <div className="">
-                              <div className="tab-header">
-                                <div className="nav-tabs">
-                                  <button
-                                    className={
-                                      selectedTab === "releases"
-                                        ? "selected"
-                                        : ""
-                                    }
-                                    onClick={() => handleTabClick("releases")}
-                                  >
-                                    Releases
-                                    <span className="arrow">&#9660;</span>
-                                  </button>
-                                  <button
-                                    className={
-                                      selectedTab === "documents"
-                                        ? "selected"
-                                        : ""
-                                    }
-                                    onClick={() => handleTabClick("documents")}
-                                  >
-                                    Documents
-                                    <span className="arrow">&#9660;</span>
-                                  </button>
-                                  <button
-                                    className={
-                                      selectedTab === "images" ? "selected" : ""
-                                    }
-                                    onClick={() => handleTabClick("images")}
-                                  >
-                                    Images
-                                    <span className="arrow">&#9660;</span>
-                                  </button>
-                                  <button
-                                    className={
-                                      selectedTab === "audio" ? "selected" : ""
-                                    }
-                                    onClick={() => handleTabClick("audio")}
-                                  >
-                                    Audio
-                                    <span className="arrow">&#9660;</span>
-                                  </button>
-                                  <button
-                                    className={
-                                      selectedTab === "video" ? "selected" : ""
-                                    }
-                                    onClick={() => handleTabClick("video")}
-                                  >
-                                    Video
-                                    <span className="arrow">&#9660;</span>
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="tab-body">
-                                <TabContent
-                                  tab={selectedTab}
-                                  selectedWork={selectedWork}
-                                  openModal={handleOpenModal}
-                                  closeModal={handleCloseModal}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    ) : null
+    <section className='author'>
+      <>
+        <div className='container d-flex'>
+          <div
+            className='d-flex'
+            style={{ gap: '10px', width: '100%', maxWidth: '1068px' }}
+          >
+            {author && (
+              <div className='box'>
+                <div className='item-1'>
+                  {!author?.featured ? (
+                    <LazyLoadImage
+                      src='/assets/no-picture.png'
+                      alt='No author available'
+                      effect='blur'
+                      style={{ border: '1px solid #eee' }}
+                    />
+                  ) : (
+                    <img src={author?.featured} alt='persons' />
                   )}
                 </div>
+                <div className='item-2'>
+                  <p>{displayContentWithLineBreaks(author?.aboutPerson)}</p>{' '}
+                  <div className='counter-date'>
+                    <span style={{ marginRight: '5px' }}>
+                      {author?.personViewCount}
+                    </span>
+                    {svgEye()}
+                    <span>{`${moment(author?.createdAt).format(
+                      'HH:mm DD.MM.YYYY'
+                    )}`}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className='container'>
+          <div className='works'>
+            <div className=''>
+              <div>
+                {author?.works?.map((work, index) =>
+                  work.isPublished ? (
+                    <React.Fragment key={'work' + index}>
+                      <a
+                        className='link'
+                        onClick={(e) => {
+                          handleWorkClick(index);
+                          e.stopPropagation();
+                          toggleTextDisplay(work);
+                        }}
+                        style={{ cursor: 'pointer', display: 'flex' }}
+                      >
+                        <span
+                          className={index === openWorkIndex ? 'active' : ''}
+                          style={{
+                            minWidth: '263px',
+                          }}
+                        >
+                          {expandedWorkId !== work.workId &&
+                          work.title.length > 27
+                            ? `${work.title.slice(0, 27)}...`
+                            : work.title}
+                        </span>
+
+                        <span
+                          className={`arrow ${
+                            index === openWorkIndex ? 'down' : 'up'
+                          }`}
+                        ></span>
+                      </a>
+                      {selectedWork && (
+                        <div
+                          className={`selected-work ${
+                            index === openWorkIndex ? 'open' : 'close'
+                          }`}
+                        >
+                          <div className=''>
+                            <div className='tab-header'>
+                              <div className='nav-tabs'>
+                                <button
+                                  className={
+                                    selectedTab === 'releases' ? 'selected' : ''
+                                  }
+                                  onClick={() => handleTabClick('releases')}
+                                >
+                                  Releases
+                                  <span className='arrow'>&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === 'documents'
+                                      ? 'selected'
+                                      : ''
+                                  }
+                                  onClick={() => handleTabClick('documents')}
+                                >
+                                  Documents
+                                  <span className='arrow'>&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === 'images' ? 'selected' : ''
+                                  }
+                                  onClick={() => handleTabClick('images')}
+                                >
+                                  Images
+                                  <span className='arrow'>&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === 'audio' ? 'selected' : ''
+                                  }
+                                  onClick={() => handleTabClick('audio')}
+                                >
+                                  Audio
+                                  <span className='arrow'>&#9660;</span>
+                                </button>
+                                <button
+                                  className={
+                                    selectedTab === 'video' ? 'selected' : ''
+                                  }
+                                  onClick={() => handleTabClick('video')}
+                                >
+                                  Video
+                                  <span className='arrow'>&#9660;</span>
+                                </button>
+                              </div>
+                            </div>
+                            <div className='tab-body' id='tabBody'>
+                              <TabContent
+                                tab={selectedTab}
+                                selectedWork={selectedWork}
+                                openModal={handleOpenModal}
+                                closeModal={handleCloseModal}
+                                isPlaying={isVideoPlaying}
+                                setIsPlaying={setIsVideoPlaying}
+                                smallLoading={smallLoading}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </React.Fragment>
+                  ) : null
+                )}
               </div>
             </div>
           </div>
+        </div>
 
-          <VideoModal
-            closeModal={handleCloseModal}
-            isVideoGalleryOpen={isVideoGalleryOpen}
-          />
-        </>
-      )}
+        <VideoModal
+          closeModal={handleCloseModal}
+          isVideoGalleryOpen={isVideoGalleryOpen}
+          isPlaying={isVideoPlaying}
+          setIsPlaying={setIsVideoPlaying}
+        />
+      </>
     </section>
   );
 };

@@ -3,82 +3,130 @@ import './createEditPartners.scss';
 import { localhost } from '../../config/config';
 import axios from 'axios';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import { useAlertContext } from '../../context/alert/AlertState';
+import Loader from '../../components/loader/Loader';
 
 function CreateEditPartners() {
   const { partners, getPartnersData, category } = useGlobalContext();
+  const { setAlert } = useAlertContext();
 
   const [imageFiles, setImageFiles] = useState(
-    partners?.map((partner) => ({
-      file: null,
-      preview: partner.imagePath,
-    }))
-  );
+    partners.map((partner) => ({ ...partner, url: '' }))
+  ); // Initialize with URL property
 
   const [loading, setLoading] = useState(false);
 
   const handleAddImage = () => {
-    setImageFiles((imageFiles) => [...imageFiles, null]); // Add a null entry to represent a new empty field
+    setImageFiles((imageFiles) => [
+      ...imageFiles,
+      { file: null, url: '', preview: '' }, // Initialize with structured object
+    ]);
   };
 
   useEffect(() => {
-    getPartnersData(setLoading);
+    /*    getPartnersData(setLoading); */
   }, [category]);
+
+  useEffect(() => {
+    setImageFiles(
+      partners.map((partner) => ({
+        ...partner,
+        url: partner?.url ? partner.url : '',
+      }))
+    ); // Initialize with URL property on data fetch
+  }, [partners]);
+
+  const handleImageUrlChange = (e, index) => {
+    const newImageFiles = imageFiles.slice();
+    newImageFiles[index] = { ...newImageFiles[index], url: e.target.value };
+    setImageFiles(newImageFiles);
+  };
 
   const uploadAddDeletePartnersImages = async () => {
     const formData = new FormData();
 
-    // Append all current image data to formData
-    formData.append('images', JSON.stringify(imageFiles));
+    formData.append('partnersData', JSON.stringify(imageFiles)); // Only send non-file data
 
     imageFiles.forEach((img, index) => {
       if (img && img.file) {
-        // Append file only if it's newly uploaded
         formData.append(`partnersImages-${index}`, img.file, img.file.name);
       }
     });
-    // Handle sending the request
+
     try {
+      setLoading(true);
       const response = await axios.post(
-        localhost + '/post/partners',
+        `${localhost}/post/partners`,
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            // Content-Type should not be manually set, let axios handle it
           },
         }
       );
 
-      getPartnersData(setLoading);
+      getPartnersData(setLoading); // Refresh data after the operation
+      setAlert('Files uploaded successfully', 'success'); // Simple success feedback
     } catch (error) {
       console.error('Error uploading images:', error);
-      if (error.response) {
-        console.error('Server response:', error.response.data);
-        console.error('Status code:', error.response.status);
-        console.error('Headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('Axios request error:', error.request);
-      } else {
-        console.error('Error', error.message);
-      }
+      setAlert('Failed to upload images', 'danger');
     }
+    setLoading(false);
   };
 
   const handleImageChange = (event, index) => {
     const file = event.target.files[0];
     if (file) {
-      const newImageFiles = imageFiles.slice();
-      newImageFiles[index] = {
-        file: file,
-        preview: URL.createObjectURL(file),
-      };
-      setImageFiles(newImageFiles);
+      const newImageFiles = imageFiles.slice(); // Create a shallow copy of the imageFiles array
+      const currentEntry = imageFiles[index]; // Access the current entry at the specified index
+
+      if (currentEntry && currentEntry.id) {
+        // If there's an existing entry with an ID, preserve the ID
+        newImageFiles[index] = {
+          ...currentEntry, // Spread existing properties
+          file: file,
+          preview: URL.createObjectURL(file),
+        };
+      } else {
+        // If it's a new entry (no existing ID), add without ID
+        newImageFiles[index] = {
+          file: file,
+          preview: URL.createObjectURL(file),
+        };
+      }
+
+      setImageFiles(newImageFiles); // Update state
     }
   };
 
-  const clearImage = (index) => {
+  /* const clearImage = (index) => {
     const updatedFiles = [...imageFiles];
     updatedFiles[index] = null; // Set the image at the specific index back to null
     setImageFiles(updatedFiles);
+  }; */
+
+  const handleRemovePartner = async (index) => {
+    const partner = imageFiles[index];
+
+    if (partner?.id) {
+      // Partner has an ID, attempt to delete from the server
+      try {
+        setLoading(true);
+        const response = await axios.delete(
+          `${localhost}/post/partners/${partner?.id}`
+        );
+        console.log(response.data);
+
+        // Successfully deleted from the server, now remove from local state
+        removeImageField(index);
+      } catch (error) {
+        console.error('Error deleting partner:', error);
+      }
+    } else {
+      // No ID, so this is a newly added field that hasn't been saved to the server yet
+      removeImageField(index);
+    }
+    setLoading(false);
   };
 
   const removeImageField = (index) => {
@@ -87,58 +135,18 @@ function CreateEditPartners() {
     setImageFiles(updatedFiles);
   };
 
-  const updatePartners = async () => {
-    const formData = new FormData();
-
-    imageFiles.forEach((img, index) => {
-      if (img.file) {
-        formData.append(`file-${index}`, img.file, img.file.name);
-      }
-      formData.append(`preview-${index}`, img.preview);
-      if (img.id) {
-        formData.append(`id-${index}`, img.id);
-      }
-    });
-
-    try {
-      const response = await axios.put(
-        'http://localhost:8000/post/partners',
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
-      );
-      console.log('Success:', response.data);
-    } catch (error) {
-      console.error('Error updating partners:', error);
-    }
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedFiles = imageFiles.filter((_, idx) => idx !== index);
-    setImageFiles(updatedFiles);
-    updatePartners();
-  };
-
   return (
     <div className='container partners mt-5'>
       <div className='partners-create'>
-        {!loading &&
+        {imageFiles.length > 0 &&
           imageFiles.map((img, index) => (
             <div className='image-container' key={`partnersImages-${index}`}>
-              {img && (
-                <div
-                  className='featured-close'
-                  onClick={() => clearImage(index)}
-                ></div>
-              )}
-
-              {img ? (
+              {img.preview !== '' ? (
                 <img
-                  src={img.preview}
+                  src={img.preview ? img.preview : img.imagePath}
                   alt={`Preview ${index}`}
                   style={{ objectFit: 'cover' }}
-                  onLoad={() => URL.revokeObjectURL(img.preview)}
+                  onLoad={() => URL.revokeObjectURL(img.imagePath)}
                 />
               ) : (
                 <div
@@ -153,6 +161,14 @@ function CreateEditPartners() {
                   <span>ADD IMAGE</span>
                 </div>
               )}
+              <input
+                type='text'
+                value={img.url}
+                onChange={(e) => handleImageUrlChange(e, index)}
+                placeholder='Enter image URL'
+                className='form-control my-2'
+              />
+
               <input
                 type='file'
                 id={`featured-image-upload-${index}`}
@@ -171,13 +187,27 @@ function CreateEditPartners() {
               </label>
               <button
                 type='button'
-                onClick={() => removeImageField(index)}
+                onClick={() => handleRemovePartner(index)}
                 className='btn btn-danger mt-2 w-100'
               >
                 Remove Field
               </button>
             </div>
           ))}
+        {loading && (
+          <div className='text-center d-flex align-items-center justify-content-center flex-column'>
+            <div className='mt-4'>
+              <Loader />
+            </div>
+            <span className='mt-3 blink-text'>
+              Please Wait
+              <span className='dots'></span>
+            </span>
+          </div>
+        )}
+        <div className='text-center d-flex align-items-center justify-content-center flex-column'>
+          {/* <Alerts /> */}
+        </div>
       </div>
       <button onClick={handleAddImage} className='add-field-button'>
         ADD FIELD

@@ -20,6 +20,8 @@ import axios from "axios";
 import { localhost } from "../../config/config";
 import Alerts from "../../components/Alerts";
 import { useAlertContext } from "../../context/alert/AlertState";
+import { usePreviewContext } from "../../context/previewContext/PreviewState";
+import ProgressUpload from "../../components/ProgressUpload";
 
 const CreateEditPost = () => {
   const {
@@ -31,12 +33,24 @@ const CreateEditPost = () => {
     listPages,
     getPostById,
     authors,
+    progress,
+    resetProgressUpload,
   } = useGlobalContext();
 
+  const formRef = useRef();
+
   const [imageURL, setImageURL] = useState("");
+
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setIsLoading] = useState(false);
   const [featuredImage, setFeaturedImage] = useState("");
+  const {
+    isPreview,
+    togglePreviewMode,
+    previewSinglePost,
+    singlePost: previewPost,
+    previewNewsAndPagePost,
+  } = usePreviewContext();
 
   const { setAlert } = useAlertContext();
 
@@ -54,62 +68,98 @@ const CreateEditPost = () => {
       singlePost?.publishTime === "Now" ? Boolean(true) : Boolean(false),
     scheduledPublishTime:
       singlePost?.publishTime === "Now"
-        ? new Date(singlePost.created_at)
+        ? new Date(singlePost?.created_at)
         : new Date(singlePost?.scheduledPublishTime),
     externalSource: singlePost.externalSource || "",
     content: singlePost.content || "",
     category: category,
-    featured: singlePost?.featured || "",
     ...(category === "Person of Interest" && {
       person: {
         firstName: "",
         lastName: "",
         aboutPerson: "",
-        featured: "",
       },
     }),
   });
   const [selectedPerson, setSelectedPerson] = useState(null);
 
-  const isEditing = postId !== undefined; // Determine if you are in edit mode
+  const fileTypes = ["images", "audios", "videos", "documents"];
+  const fileInputs = useRef({});
+
+  const [uploadedFiles, setUploadedFiles] = useState({
+    images: [],
+    audios: [],
+    videos: [],
+    documents: [],
+  });
 
   useEffect(() => {
-    if (singlePost && postId) {
-      console.log(new Date(singlePost.scheduledPublishTime));
-      setImageURL(singlePost.featured);
-      console.log(singlePost.featured);
+    fileTypes.forEach((type) => {
+      fileInputs.current[type] = React.createRef();
+    });
+    //eslint-disable-next-line
+  }, []);
+
+  /*  const clearFileInput = (fileType) => {
+    const inputElement = fileInputs.current[fileType].current;
+    if (inputElement) {
+      inputElement.value = ''; // Reset the input field
     }
-  }, [singlePost, postId]);
+    setUploadedFiles((prev) => ({
+      ...prev,
+      [fileType]: [], // Clear the state for this fileType
+    }));
+  };
+ */
 
   useEffect(() => {
-    console.log("Checking singlePost:", singlePost);
-
     if (postId && category === "News") {
       getPostById(postId, "news", setIsLoading);
     } else {
-      listPages(setIsLoading, category);
+      getPostById(postId, "news", setIsLoading);
     }
   }, [postId, paramCategory]); // Include singlePost in the dependency array
 
+  /*   const resetData = () => {
+    setInitialValues({
+      title: '',
+      visibility: 'Public',
+      publishTime: 'Now',
+      isPublished: 'Now' ? Boolean(true) : Boolean(false),
+      scheduledPublishTime: null,
+      externalSource: '',
+      content: '',
+      category: category,
+      ...(category === 'Person of Interest' && {
+        person: {
+          firstName: '',
+          lastName: '',
+          aboutPerson: '',
+        },
+      }),
+    });
+    togglePreviewMode(false);
+    previewSinglePost(null);
+    setUploadedFiles({
+      images: [],
+      audios: [],
+      videos: [],
+      documents: [],
+    });
+    setFeaturedImage(null);
+    setImageURL('');
+    setSelectedPerson('');
+  }; */
+
+  const categoryAndReset = (value) => {
+    setCategory(value);
+  };
+
   useEffect(() => {
-    /*  if (category === 'News') {
-      setInitialValues({
-        title: singlePost?.title,
-        content: singlePost?.content,
-        person_id: singlePost?.person_id,
-        publishTime: singlePost?.publishTime || 'Now', // Adjust logic for handling "Now" if necessary
-        isPublished: singlePost?.isPublished,
-        scheduledPublishTime:
-          singlePost?.scheduledPublishTime &&
-          new Date(singlePost.scheduledPublishTime),
-        externalSource: singlePost?.externalSource,
-      });
-    } */
     if (singlePost && postId) {
-      // Ensures that singlePost is not null or empty
       const data = singlePost; // Directly use singlePost as it is already available
       setInitialValues({
-        title: data && data?.title,
+        title: (data && data?.title) || "",
         visibility: data?.visibility || "Public",
         publishTime: data?.publishTime || "Now",
         isPublished:
@@ -120,20 +170,53 @@ const CreateEditPost = () => {
             : new Date(data?.scheduledPublishTime),
 
         externalSource: data.externalSource || "",
-        content: data.content || "",
+        content: data?.content || "",
         category: category,
-        featured: data.featured || "",
         ...(category === "Person of Interest" && {
           person: {
             firstName: "",
             lastName: "",
             aboutPerson: "",
-            featured: "",
           },
         }),
       });
-    } else {
+      setImageURL(data?.featured || "");
+    } else if (previewPost) {
       // Reset to defaults if no postId or singlePost is empty
+
+      setInitialValues((prev) => ({
+        ...prev,
+        title: previewPost.title || "",
+        visibility: previewPost.visibility || "Public",
+        publishTime: previewPost.publishTime || "Now",
+        isPublished: true,
+        scheduledPublishTime: null,
+        externalSource: "",
+        content: previewPost.content || "",
+        category: category,
+        ...(category === "Person of Interest" && {
+          person: {
+            firstName: previewPost?.person?.firstName || "",
+            lastName: previewPost?.person?.lastName || "",
+            aboutPerson: previewPost?.person?.aboutPerson || "",
+          },
+        }),
+      }));
+
+      setImageURL(previewPost?.person?.featured || previewPost.featured);
+      setFeaturedImage(
+        previewPost?.person ? previewPost?.person.featuredImage : ""
+      );
+      /*    setSelectedPerson(previewPost?.person?.id || ''); */
+
+      setUploadedFiles({
+        images: previewPost.media?.images || [],
+        audios: previewPost.media?.audios || [],
+        videos: previewPost.media?.videos || [],
+        documents: previewPost.media?.documents || [],
+      });
+      setSelectedPerson(previewPost?.person?.id || "");
+    } else {
       setInitialValues((prev) => ({
         ...prev,
         title: "",
@@ -144,53 +227,45 @@ const CreateEditPost = () => {
         externalSource: "",
         content: "",
         category: category,
-        featured: "",
         ...(category === "Person of Interest" && {
           person: {
             firstName: "",
             lastName: "",
             aboutPerson: "",
-            featured: "",
           },
         }),
       }));
+
+      setImageURL("");
+      setUploadedFiles([]);
     }
+    //eslint-disable-next-line
   }, [singlePost, postId]);
+
+  useEffect(() => {
+    togglePreviewMode(false);
+    //eslint-disable-next-line
+  }, []);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Optionally, display the image preview
     setFeaturedImage(file);
     const previewUrl = URL.createObjectURL(file);
     setImageURL(previewUrl);
-
-    // No need to reset the file input here
   };
-
-  const [uploadedFiles, setUploadedFiles] = useState({
-    images: [],
-    audios: [],
-    videos: [],
-    documents: [],
-  });
-
-  useEffect(() => {
-    console.log(uploadedFiles);
-  }, [uploadedFiles]);
 
   // Handling multiple file uploads
   const handleFileUpload = (event, fileType) => {
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
-    // Store both the blob URL for preview and the file object for upload
     const newFiles = files.map((file) => ({
-      url: URL.createObjectURL(file), // Used for displaying preview
-      file: file, // The actual file object for upload
+      url: URL.createObjectURL(file),
+      file: file,
       name: file.name,
-      fileType: file.type, // Changed from fileType to type for consistency
+      type: file.type,
     }));
 
     const targetKey =
@@ -208,6 +283,28 @@ const CreateEditPost = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = ""; // Reset file input
     }
+  };
+
+  const clearLastUploadedFile = (fileType) => {
+    setUploadedFiles((prev) => {
+      // Get the current array of files for the specified fileType
+      const currentFiles = prev[fileType];
+
+      if (currentFiles.length > 0) {
+        // Create a new array without the last element
+        const updatedFiles = currentFiles.slice(0, -1);
+
+        // Reset the input if necessary. This part depends on whether you need to
+        // clear the input field (e.g., if an error occurred during the upload of the last file).
+        const inputElement = fileInputs.current[fileType].current;
+        if (inputElement && updatedFiles.length === 0) {
+          inputElement.value = ""; // Only reset the input field if there are no more files after removal
+        }
+
+        return { ...prev, [fileType]: updatedFiles };
+      }
+      return prev; // If no files were there, return state unchanged
+    });
   };
 
   const personValidationSchema = Yup.object().shape({
@@ -275,10 +372,6 @@ const CreateEditPost = () => {
     ],
   };
 
-  useEffect(() => {
-    console.log(selectedPerson);
-  }, [selectedPerson]);
-
   const updateNewsPost = async (id, data, featuredImage, setIsLoading) => {
     try {
       setIsLoading(true);
@@ -303,8 +396,6 @@ const CreateEditPost = () => {
       );
 
       setAlert("Update successful", "success");
-
-      console.log("Update successful:", response.data);
     } catch (error) {
       console.error(
         "Failed to update post:",
@@ -317,18 +408,17 @@ const CreateEditPost = () => {
 
   const handleChange = (event) => {
     const authorId = event.target.value;
+
     if (authorId) {
       const authorObject = authors.find((author) => author.id == authorId);
       const { firstName, lastName, featured, aboutPerson, id } = authorObject;
       setInitialValues({
         ...initialValues,
-        featured: authorObject,
         ...(category === "Person of Interest" && {
           person: {
             firstName,
             lastName,
             aboutPerson,
-            featured,
           },
         }),
       });
@@ -341,7 +431,6 @@ const CreateEditPost = () => {
             firstName: "",
             lastName: "",
             aboutPerson: "",
-            featured: "",
           },
         }),
       });
@@ -350,6 +439,14 @@ const CreateEditPost = () => {
 
     setSelectedPerson(authorId); // Set the full author object in state
   };
+
+  const abortController = new AbortController();
+
+  useEffect(() => {
+    resetProgressUpload();
+    return () => abortController.abort();
+  }, []);
+
   return (
     <div className="post">
       <h2 className="text-center mt-5 mb-2">
@@ -362,38 +459,38 @@ const CreateEditPost = () => {
             <select
               className=""
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => categoryAndReset(e.target.value)}
             >
               <option value="Person of Interest">Person of Interest</option>
               <option value="News">News</option>
-              {/* <option value="Partners">Partners</option>
+              {/*  <option value="Partners">Partners</option> */}
               <option value="About">About</option>
               <option value="Button1">Button1Page</option>
               <option value="Button2">Button2Page</option>
               <option value="Soon">Soon Page</option>
-              <option value="Shop">Shop</option> */}
+              <option value="Shop">Shop</option>
             </select>
           </div>
         </div>
       )}
       <div className="container mt-5">
         <h4>{category}</h4>
-        <div className="work-title-select mt-4">
-          <select
-            value={selectedPerson}
-            onChange={handleChange}
-            className="form-control px-2"
-          >
-            <option value="">Select Existing Author</option>
-            {authors?.map((author) => (
-              <>
+        {category === "Person of Interest" && (
+          <div className="work-title-select mt-4">
+            <select
+              value={selectedPerson}
+              onChange={handleChange}
+              className="form-control px-2"
+            >
+              <option value="">Select Existing Author</option>
+              {authors?.map((author) => (
                 <option key={author?.id} value={author.id}>
                   {author.firstName + " " + author.lastName}
                 </option>
-              </>
-            ))}
-          </select>
-        </div>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
       {category === "Partners" ? (
         <CreateEditPartners />
@@ -401,96 +498,126 @@ const CreateEditPost = () => {
         <div className="position-relative">
           <div className="container mt-5">
             <Formik
+              innerRef={formRef}
               initialValues={initialValues}
               validationSchema={getValidationSchema}
               enableReinitialize={true}
               onSubmit={(values, { resetForm }) => {
                 let submissionData = { ...values };
 
-                /* const newMediaData = cleanMedia(uploadedFiles); */
-
-                /* 
-              const scheduledTimeUTC = moment
-                .tz(submissionData.scheduledPublishTime, 'Europe/Berlin')
-                .utc()
-                .toISOString(); */
-
-                if (submissionData.externalSource === "") {
+                // Remove externalSource if it's empty
+                if (!submissionData.externalSource) {
                   delete submissionData.externalSource;
                 }
 
-                // If the category is not 'Person of Interest', delete 'media' and 'featured' from submissionData
+                // Handle date formatting
+                function formatScheduledPublishTime() {
+                  return submissionData.publishTime === "Now"
+                    ? new Date(now)
+                    : moment(
+                        new Date(submissionData.scheduledPublishTime)
+                      ).format("YYYY-MM-DD HH:mm:ss");
+                }
+
+                // Common properties for all categories
+                submissionData = {
+                  person: {
+                    ...submissionData.person,
+                    id: selectedPerson && selectedPerson,
+                  },
+                  ...submissionData,
+                  publishTime: submissionData.publishTime,
+                  scheduledPublishTime: formatScheduledPublishTime(),
+                  externalSource: submissionData.externalSource,
+                  isPublished: isPublished,
+                };
+
                 if (category !== "Person of Interest") {
-                  delete submissionData.media;
-                  delete submissionData.featured;
-                  delete submissionData.person;
+                  // Specific handling for non 'Person of Interest' categories
+                  ["media", "featured", "person"].forEach(
+                    (key) => delete submissionData[key]
+                  );
 
-                  submissionData = {
-                    ...submissionData,
-                    category: category,
-                    isPublished: isPublished,
-                    publishTime: submissionData.publishTime,
-                    scheduledPublishTime:
-                      submissionData.publishTime === "Now"
-                        ? new Date(now) // Use formatted current time if "Now"
-                        : moment(
-                            new Date(submissionData.scheduledPublishTime)
-                          ).format("YYYY-MM-DD HH:mm:ss"), // Format existing date
-                    externalSource: submissionData.externalSource,
-                  };
+                  submissionData.category = category;
 
-                  if (postId && category === "News") {
+                  if (isPreview) {
+                    const previewData = {
+                      ...submissionData,
+                      featuredImage: featuredImage || "",
+                      featured: imageURL,
+                    };
+                    previewNewsAndPagePost(previewData);
+                    return;
+                  }
+                  if (postId && category !== "Person of Interest") {
                     updateNewsPost(
                       postId,
                       submissionData,
                       featuredImage,
                       setIsLoading
                     );
-                  } else
+                  } else {
                     createNewsAndPagePost(
                       submissionData,
                       featuredImage,
-                      setIsLoading
+                      setIsLoading,
+                      abortController
                     );
+                  }
                 } else {
-                  // If 'Person-of-Interest', include 'media' and 'featured' in submissionData
-                  // Assuming media and featured are handled outside Formik's initialValues
-                  // and you have the state uploadedFiles and imageURL to include
-
-                  submissionData = {
-                    person: {
-                      ...submissionData.person,
-                      id: selectedPerson && selectedPerson,
-                    },
-                    title: submissionData.title,
-                    media: cleanMedia(uploadedFiles),
-                    content: submissionData.content,
-                    category: category,
-                    publishTime: submissionData.publishTime,
-                    scheduledPublishTime:
-                      submissionData.publishTime === "Now"
-                        ? new Date(now) // Use formatted current time if "Now"
-                        : moment(
-                            new Date(submissionData.scheduledPublishTime)
-                          ).format("YYYY-MM-DD HH:mm:ss"), // Format existing date
-                    externalSource: submissionData.externalSource
-                      ? submissionData.externalSource
-                      : null,
-
-                    visibility: submissionData.visibility,
-                    isPublished: isPublished,
+                  // Handling for 'Person of Interest'
+                  submissionData.person = {
+                    ...submissionData.person,
+                    id: selectedPerson,
                   };
+                  submissionData.media = cleanMedia(uploadedFiles);
 
-                  createPersonsPost(
-                    submissionData,
-                    uploadedFiles,
-                    featuredImage,
-                    setIsLoading
-                  );
+                  if (isPreview) {
+                    const data = {
+                      ...submissionData,
+                      person: {
+                        ...submissionData.person,
+                        featured: imageURL,
+                        featuredImage: featuredImage,
+                      },
+                      works: [
+                        {
+                          title: submissionData.title,
+                          media: uploadedFiles,
+                          content: submissionData.content,
+                          category: category,
+                          publishTime: submissionData.publishTime,
+                          scheduledPublishTime:
+                            submissionData.publishTime === "Now"
+                              ? new Date(now) // Use formatted current time if "Now"
+                              : moment(
+                                  new Date(submissionData.scheduledPublishTime)
+                                ).format("YYYY-MM-DD HH:mm:ss"), // Format existing date
+                          externalSource: submissionData.externalSource
+                            ? submissionData.externalSource
+                            : null,
+
+                          visibility: submissionData.visibility,
+                          isPublished: isPublished,
+                        },
+                      ],
+                    };
+
+                    previewSinglePost(data);
+                  } else {
+                    createPersonsPost(
+                      submissionData,
+                      uploadedFiles,
+                      featuredImage,
+                      setIsLoading,
+                      abortController,
+                      clearLastUploadedFile
+                    );
+                  }
                 }
               }}
             >
-              {({ setFieldValue, values }) => (
+              {({ setFieldValue, values, handleSubmit }) => (
                 <Form>
                   <div className="row">
                     <div className="col-md-8">
@@ -513,6 +640,7 @@ const CreateEditPost = () => {
                                   <Field
                                     className="form-control"
                                     name="person.firstName"
+                                    required
                                   />
                                 </div>
                                 <div className="d-flex ms-3 align-items-center">
@@ -522,6 +650,7 @@ const CreateEditPost = () => {
                                   <Field
                                     className="form-control"
                                     name="person.lastName"
+                                    required
                                   />
                                 </div>
                               </div>
@@ -532,6 +661,7 @@ const CreateEditPost = () => {
                                 style={{ padding: "20px" }}
                                 name="person.aboutPerson"
                                 placeholder="About person"
+                                required
                               />
                             </>
                           )}
@@ -542,6 +672,7 @@ const CreateEditPost = () => {
                           style={{ padding: "20px", height: "280px" }}
                           name="title"
                           placeholder="Title"
+                          required
                         />
                       </div>
                       {category === "Person of Interest" && (
@@ -582,6 +713,7 @@ const CreateEditPost = () => {
                                     onChange={(e) =>
                                       handleFileUpload(e, fileType)
                                     }
+                                    ref={fileInputs.current[fileType]}
                                     accept={
                                       fileType === "images"
                                         ? "image/*"
@@ -602,11 +734,6 @@ const CreateEditPost = () => {
                                       <Icon color={iconColor} />
                                     </div>
                                   </label>
-                                  {/*  {uploadedFiles[fileType].map((file, index) => (
-                                  <p key={index} className='small'>
-                                    {file.name}
-                                  </p>
-                                ))} */}
                                 </div>
                               </div>
                             );
@@ -622,68 +749,65 @@ const CreateEditPost = () => {
                             setFieldValue("content", content)
                           }
                           modules={modules}
+                          required
                         />
                       )}
                     </div>
 
                     <div className="col-md-4 ">
-                      {["Person of Interest", "News", "Soon", "Shop"].includes(
-                        category
-                      ) && (
-                        <div className="featured">
-                          {imageURL && imageURL !== "" && (
-                            <div
-                              className="featured-close"
-                              onClick={() => clearImage()}
-                            >
-                              <i class="fa-solid fa-trash"></i>
-                            </div>
-                          )}
-
-                          {/* Image upload and display */}
-                          {imageURL ? (
-                            <img
-                              src={imageURL}
-                              alt="Featured"
-                              style={{
-                                width: "305px",
-                                height: "250px",
-                                objectFit: "cover",
-                              }}
-                            />
-                          ) : (
-                            <div
-                              style={{
-                                width: "305px",
-                                height: "250px",
-                                border: "2px dashed #ccc",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <span>Add Featured Image</span>
-                            </div>
-                          )}
-                          <input
-                            type="file"
-                            id="featured-image-upload"
-                            style={{ display: "none" }}
-                            ref={fileInputRef}
-                            onChange={handleImageUpload}
-                            accept="image/*" // Accept images only
-                          />
-                          <label
-                            htmlFor="featured-image-upload"
-                            className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
+                      <div className="featured">
+                        {imageURL && imageURL !== "" && (
+                          <div
+                            className="featured-close"
+                            onClick={() => clearImage()}
                           >
-                            <div className="add-image-placeholder">
-                              <i className="fas fa-plus"></i>{" "}
-                              <span>ADD FEATURE IMAGE</span>
-                            </div>
-                          </label>
-                        </div>
-                      )}
+                            <i className="fa-solid fa-trash"></i>
+                          </div>
+                        )}
+
+                        {/* Image upload and display */}
+                        {imageURL ? (
+                          <img
+                            src={imageURL}
+                            alt="Featured"
+                            style={{
+                              width: "305px",
+                              height: "250px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: "305px",
+                              height: "250px",
+                              border: "2px dashed #ccc",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span>Add Featured Image</span>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          id="featured-image-upload"
+                          style={{ display: "none" }}
+                          ref={fileInputRef}
+                          onChange={handleImageUpload}
+                          accept="image/*" // Accept images only
+                        />
+                        <label
+                          htmlFor="featured-image-upload"
+                          className="featured-image-container bg-success text-white p-1 w-100 mt-1 cursor-pointer"
+                        >
+                          <div className="add-image-placeholder">
+                            <i className="fas fa-plus"></i>{" "}
+                            <span>ADD FEATURE IMAGE</span>
+                          </div>
+                        </label>
+                      </div>
 
                       <div className="border">
                         <div className="d-flex justify-content-between align-items-center px-2 border-0 border-bottom py-2 ">
@@ -724,7 +848,9 @@ const CreateEditPost = () => {
                               setFieldValue("scheduledPublishTime", date)
                             }
                             showTimeSelect
-                            dateFormat="Pp"
+                            timeFormat="HH:mm"
+                            timeIntervals={15} // Time selection interval in minutes
+                            dateFormat="MMMM d, yyyy HH:mm"
                             className="form-control mb-2 mx-2"
                             placeholderText="Select date"
                             style={{ cursor: "pointer" }}
@@ -742,7 +868,14 @@ const CreateEditPost = () => {
                         </div>
 
                         <div className="button-container px-2 my-3">
-                          <button type="button" className="me-2">
+                          <button
+                            type="button"
+                            className="me-2"
+                            onClick={() => {
+                              togglePreviewMode(true);
+                              formRef.current.handleSubmit();
+                            }}
+                          >
                             Preview
                           </button>
                           <button type="submit" className="btn btn-primary">
@@ -751,7 +884,26 @@ const CreateEditPost = () => {
                           {postId && <Alerts />}
                         </div>
                       </div>
-                      <div className="mt-3">{loading && <Loader />}</div>
+
+                      {progress > 0 && (
+                        <div className="my-2">
+                          <span className="">Uploading</span>
+                          <ProgressUpload progress={progress} />
+                        </div>
+                      )}
+                      <div className="mt-3">
+                        {loading && (
+                          <div className="text-center">
+                            <div className="mt-4">
+                              <Loader />
+                            </div>
+                            <span class="mt-5 blink-text">
+                              Please Wait
+                              <span class="dots"></span>
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div>
                       {category === "Person of Interest" && (
@@ -763,6 +915,7 @@ const CreateEditPost = () => {
                             setFieldValue("content", content)
                           }
                           modules={modules}
+                          required={true}
                         />
                       )}
                     </div>

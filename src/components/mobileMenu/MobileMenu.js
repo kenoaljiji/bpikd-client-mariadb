@@ -27,8 +27,19 @@ const MobileMenu = ({ isActive, setIsActive }) => {
         className={`fullscreenmenu ${isActive ? 'show' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
+        <div
+          className={`hamburger-menu active-close `}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsActive(false);
+          }}
+        >
+          <span className={`bar bar-top`} />
+          <span className={`bar bar-bottom`} />
+        </div>
+
         <ul>
-          <li>
+          <li style={{ textAlign: 'left' }}>
             <Link to={transformPath(routes.person)}>{routes.person}</Link>
           </li>
           <li>

@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authors } from '../../helpers/people';
 import './personOfInterst.scss';
 import { useRouteContext } from '../../context/route/RouteProvider';
 import { slugify } from '../../utils/slugify';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
-import Loader from '../../components/loader/Loader';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const PersonOfInterest = () => {
   const { state } = useRouteContext();
+
+  useEffect(() => {
+    listAuthors(setLoading);
+  }, []);
 
   const [loading, setLoading] = useState(false);
 
@@ -17,48 +20,82 @@ const PersonOfInterest = () => {
 
   const { listAuthors, authors } = useGlobalContext();
 
-  useEffect(() => {
-    listAuthors(setLoading);
-  }, []);
+  const handleAuthorClick = (author) => {
+    const fullName = slugify(author.firstName + '-' + author.lastName);
+
+    /* if (!author.placeholder) {
+      navigate(`/person/${fullName}`);
+    }
+
+    
+ */
+    if (!author.placeholder) {
+      window.open(
+        `/person-of-interest/${fullName}`,
+        '_blank',
+        'noopener,noreferrer'
+      );
+    }
+  };
 
   return (
     <section className='persons'>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className='container'>
-          <h2>{routes.person}</h2>
-          <div
-            className='grid grid-5'
-            style={{ columnGap: '18px', rowGap: '25px' }}
-          >
-            {authors?.map((author, index) => {
-              return (
+      <div className='container'>
+        <h2>{routes.person}</h2>
+        <div
+          className='grid grid-5'
+          style={{ columnGap: '18px', rowGap: '25px' }}
+        >
+          {authors?.map((author, index) => {
+            const fullName = slugify(author.firstName + '-' + author.lastName);
+            return (
+              <a
+                href={fullName ? `/person-of-interest/${fullName}` : '#'}
+                onClick={!fullName ? (e) => e.preventDefault() : null}
+              >
                 <div
-                  key={'aut456' + author._id}
+                  key={'aut456' + author._id + index}
                   className='img-container'
-                  onClick={() =>
-                    navigate(
-                      `/person/${slugify(
-                        author.firstName + '-' + author.lastName
-                      )}`
-                    )
-                  }
+                  /*  onClick={() => handleAuthorClick(author)} */
                 >
-                  <img
-                    src={author.featured}
-                    alt=''
-                    className='img-fluid w-100'
-                  />
-                  <h5>
-                    {author.firstName} <br /> {author.lastName}
-                  </h5>
+                  {author && author.featured ? (
+                    <>
+                      <img
+                        src={author.featured}
+                        alt=''
+                        className='img-fluid w-100'
+                      />
+                      <h5>
+                        {author.firstName} <br /> {author.lastName}
+                      </h5>
+                    </>
+                  ) : (
+                    <>
+                      <LazyLoadImage
+                        src='/assets/no-picture.png' // This is the image to be lazy loaded
+                        alt='No author available' // Alternative text for the image
+                        style={{
+                          border: '1px solid #eee',
+                        }}
+                        className='lazy-load'
+                      />
+                      <h5
+                        style={{
+                          padding: '5px 25px',
+                          background: 'transparent',
+                          width: '100%',
+                        }}
+                      >
+                        {author.firstName} <br /> {author.lastName}
+                      </h5>
+                    </>
+                  )}
                 </div>
-              );
-            })}
-          </div>
+              </a>
+            );
+          })}
         </div>
-      )}
+      </div>
     </section>
   );
 };

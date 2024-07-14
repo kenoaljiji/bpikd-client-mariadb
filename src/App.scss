@@ -6,7 +6,7 @@ $success: #0c9200;
 
 @media (min-width: 1400px) {
   .container {
-    max-width: 1140px !important;
+    max-width: 1068px !important;
   }
 }
 @media (min-width: 1200px) {
@@ -25,6 +25,7 @@ body {
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: 400; /* Apply the light font weight */
   letter-spacing: 1px;
+  overflow-x: hidden;
 }
 
 p {
@@ -40,15 +41,18 @@ h3 {
 }
 
 section {
+  min-height: 840px;
   h2 {
     font-weight: 400;
     padding: 2rem 0;
 
     @media only screen and (max-width: 700px) {
       padding: 15px 0;
+      min-height: auto;
     }
   }
-  margin-top: 2rem;
+  /*  margin-top: 2rem; */
+  padding-top: 85px;
   margin-bottom: 7rem;
 
   @media only screen and (max-width: 700px) {
@@ -99,7 +103,7 @@ blockquote {
 .img-container {
   position: relative;
   cursor: pointer;
-  max-width: 200px;
+  max-width: 177px;
 
   &:hover {
     opacity: 0.8;
@@ -119,13 +123,14 @@ blockquote {
     border-bottom-right-radius: 5px;
   }
   img {
-    width: 100%; // Make the images fill the entire card
+    width: 177px; // Make the images fill the entire card
     /* height: 100%; */
-    height: 240px; // Preserve aspect ratio
+    height: 227px; // Preserve aspect ratio
+    object-fit: cover;
 
     @media only screen and (max-width: 700px) {
-      height: 100%;
-      width: 100%;
+      /* height: 100%;
+      width: 100%; */
     }
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
@@ -133,6 +138,11 @@ blockquote {
 }
 img {
   border-radius: 5px;
+}
+
+.loader-image {
+  width: 35px !important;
+  height: 'auto' !important;
 }
 
 // Ulitillity
@@ -149,13 +159,52 @@ form.custom-search-2 {
 
     border-bottom: solid 1px #dedede;
     border-top: solid 1px #ebebeb;
+    position: relative;
 
     padding: 5px;
     margin: 0 !important;
+    top: 74px;
+    z-index: 7777;
+    background: #fff;
     input {
       width: 100%;
       border: none !important;
       letter-spacing: 2px;
     }
   }
+}
+
+// animations
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    content: '..';
+  }
+  40%,
+  60% {
+    content: '..';
+  }
+  80%,
+  100% {
+    content: '...';
+  }
+}
+
+.blink-text {
+  animation: blink 1s step-start 0s infinite;
+  font-weight: bold;
+  position: relative;
+  top: 10px;
+}
+
+.blink-text .dots::after {
+  animation: dots 2s step-start 0s infinite;
+  content: '';
 }

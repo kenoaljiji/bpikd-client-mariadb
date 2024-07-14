@@ -1,7 +1,7 @@
-import React, { useReducer, useEffect, useContext, createContext } from "react";
-import axios from "axios";
-import authReducer from "./authReducer";
-import setAuthToken from "../../utils/setAuthToken";
+import React, { useReducer, useEffect, useContext, createContext } from 'react';
+import axios from 'axios';
+import authReducer from './authReducer';
+import setAuthToken from '../../utils/setAuthToken';
 import {
   USER_LOADED,
   AUTH_ERROR,
@@ -12,10 +12,11 @@ import {
   SET_LOADING,
   SET_SUCCESS,
   SET_ERROR,
-} from "../types";
-import { localhost } from "../../config/config";
-import { useNavigation } from "../../hooks/useNavigation";
-import { useAlertContext } from "../alert/AlertState";
+} from '../types';
+import { localhost } from '../../config/config';
+import { useNavigation } from '../../hooks/useNavigation';
+import { useAlertContext } from '../alert/AlertState';
+import { complexString } from '../../utils/complexString';
 
 const AuthContext = createContext();
 
@@ -76,7 +77,7 @@ const AuthState = (props) => {
   const login = async (formData) => {
     const config = {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     };
 
@@ -100,7 +101,7 @@ const AuthState = (props) => {
         payload: err.response.data.error,
       });
     } finally {
-      navigate("/admin/dashboard");
+      navigate(`/admin/dashboard`);
     }
   };
 
@@ -111,7 +112,7 @@ const AuthState = (props) => {
     try {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${state.user.token}`, // Use the admin's token from state
         },
       };
@@ -131,10 +132,10 @@ const AuthState = (props) => {
         payload: err.message,
       });
     }
-    if (state.user.user.role !== "admin") {
-      navigate("/admin/dashboard");
+    if (state.user.user.role !== 'admin') {
+      navigate('/admin/dashboard');
     } else {
-      navigate("/admin/users");
+      navigate('/admin/users');
     }
   };
 
@@ -143,7 +144,7 @@ const AuthState = (props) => {
     clearErrors();
   };
 
-  const deleteUser = async (userId) => {
+  const deleteUser = async (userId, listUsers) => {
     clearErrors();
     try {
       // Optional: Add a token or authorization header if needed
@@ -160,6 +161,8 @@ const AuthState = (props) => {
         type: SET_SUCCESS,
         payload: res.data.message,
       });
+
+      listUsers();
 
       // Navigate to dashboard or login page after successful registration
       // Optional: Redirect or load users again
@@ -178,7 +181,7 @@ const AuthState = (props) => {
     try {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${state.user.token}`, // Assuming you're using Bearer token authentication
         },
       };
@@ -200,26 +203,26 @@ const AuthState = (props) => {
       /* return response.data; */
     } catch (error) {
       console.error(
-        "Error updating user:",
+        'Error updating user:',
         error.response ? error.response.data : error.message
       );
       // Optionally, throw the error or handle it based on your error handling strategy
       throw error;
     }
-    if (state.user.user.role !== "admin") {
-      navigate("/admin/dashboard");
+    if (state.user.user.role !== 'admin') {
+      navigate('/admin/dashboard');
     } else {
-      navigate("/admin/users");
+      navigate('/admin/users');
     }
   };
 
   const { error, success } = state;
   useEffect(() => {
     if (error) {
-      setAlert(error, "danger");
+      setAlert(error, 'danger');
     }
     if (success) {
-      setAlert(success, "success");
+      setAlert(success, 'success');
     }
   }, [error, success]);
 

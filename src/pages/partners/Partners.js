@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { footerCompanies } from '../../helpers/people';
-import { useRouteContext } from '../../context/route/RouteProvider';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
+import { useRouteContext } from '../../context/route/RouteProvider';
 import './partners.scss';
-import Loader from '../../components/loader/Loader';
 
 const Partners = () => {
   const { state } = useRouteContext();
@@ -15,27 +13,33 @@ const Partners = () => {
 
   useEffect(() => {
     getPartnersData(setLoading);
+    //eslint-disable-next-line
   }, []);
 
   return (
     <section className='partners'>
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className='container'>
-          <h2>{routes?.partners}</h2>
+      <div className='container'>
+        {partners && partners.length > 0 && <h2>{routes?.partners}</h2>}
 
-          <div className='grid grid-5 items-center mt-4'>
-            {partners.length > 0 ? (
-              partners.map((img) => (
-                <img src={img.imagePath} alt={'partners-' + img.id} />
-              ))
-            ) : (
-              <p> There is no partners data</p>
-            )}
-          </div>
+        <div className='grid grid-5 items-center mt-4'>
+          {partners &&
+            partners?.map((img, index) => (
+              <a
+                key={'partners' + index}
+                href={img.url}
+                target='_blank'
+                rel='noreferrer'
+                className='partners-links'
+              >
+                <img
+                  src={img.imagePath}
+                  alt={'partners-' + img.id}
+                  key={img.id ? img.id : index + 'pd2'}
+                />
+              </a>
+            ))}
         </div>
-      )}
+      </div>
     </section>
   );
 };

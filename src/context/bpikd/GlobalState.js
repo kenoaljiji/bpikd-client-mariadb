@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuthContext } from "../auth/AuthState";
 import globalReducer from "./globalReducer";
 import { localhost } from "../../config/config";
-import { NavigationType, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   GET_PARTNERS_DATA,
   LIST_AUTHORS,
@@ -12,11 +12,10 @@ import {
   LIST_SINGLE_POST,
   LIST_SINGLE_POST_FAIL,
   SET_CATEGORY,
-  COUNT_VISITORS,
   GET_VIDEOS_DATA,
+  PROGRESS_UPLOAD,
 } from "../types";
 import { useAlertContext } from "../alert/AlertState";
-import { Action } from "@remix-run/router";
 
 const GlobalContext = createContext();
 
@@ -27,17 +26,20 @@ export const useGlobalContext = () => useContext(GlobalContext);
 export const GlobalState = ({ children }) => {
   // Initial State
 
+  const authorsLocalStorage = localStorage.getItem("authors");
+
   const initialState = {
     loading: false,
     posts: [],
     singlePost: {},
-    authors: [{}],
+    authors: authorsLocalStorage ? JSON.parse(authorsLocalStorage) : [{}],
     success: null,
     error: null,
     searchTerm: "",
     searchResult: "",
     category: "Person of Interest",
     partners: [],
+    progress: 0,
     videosData: {
       index: 0,
       videos: [],
@@ -51,15 +53,15 @@ export const GlobalState = ({ children }) => {
 
   const { setAlert } = useAlertContext();
 
-  const listPosts = async (setLoading) => {
+  const listPosts = async (setLoading, category = "news") => {
     setLoading(true); // Control loading state globally or locally
     try {
-      const response = await axios.get(`${localhost}/post/news`);
+      const response = await axios.get(`${localhost}/post/news/${category}`);
       if (response.data && response.data.length > 0) {
         dispatch({ type: LIST_POSTS, payload: response.data });
       } else {
-        dispatch({ type: LIST_POSTS, payload: [] }); // Ensure empty data is handled gracefully
-        setAlert("No posts available", "info"); // Optionally set an alert if no data
+        dispatch({ type: LIST_POSTS, payload: [] });
+        setAlert("No posts available", "info");
       }
     } catch (error) {
       dispatch({ type: LIST_POSTS_FAIL, payload: error.message });
@@ -71,7 +73,7 @@ export const GlobalState = ({ children }) => {
 
   const listPages = async (setLoading, term) => {
     const category = term.toLowerCase();
-    setLoading(true); // Control loading state globally or locally
+    setLoading(true);
     try {
       const res = await axios.get(`${localhost}/post/page/${category}`);
 
@@ -87,7 +89,6 @@ export const GlobalState = ({ children }) => {
   };
 
   const getVideosData = async (data) => {
-    console.log(data);
     dispatch({
       type: GET_VIDEOS_DATA,
       payload: data,
@@ -122,6 +123,8 @@ export const GlobalState = ({ children }) => {
       if (authorsData.length === 0) {
         setAlert("No authors found", "danger");
       }
+
+      console.log(response);
     } catch (error) {
       console.error("Failed to fetch authors:", error);
       dispatch({ type: LIST_AUTHORS, payload: [] }); // Ensure payload is always an array
@@ -131,37 +134,37 @@ export const GlobalState = ({ children }) => {
   };
 
   useEffect(() => {
-    let hasVisited = false;
-    const fetchVisitors = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`${localhost}/visitors`); // Adjust this URL to your API endpoint
-        console.log(res);
-        hasVisited = true;
+        let deviceInfo = null;
+
+        if (navigator.userAgentData) {
+          // Get high-entropy values
+          const ua = await navigator.userAgentData.getHighEntropyValues([
+            "architecture",
+            "model",
+            "platform",
+            "platformVersion",
+            "fullVersionList",
+          ]);
+          deviceInfo = ua["model"] ? ua["model"] : null;
+        } else {
+          console.error(
+            "navigator.userAgentData is not supported in this browser."
+          );
+        }
+
+        // Send device information to the backend
+        const res = await axios.post(`${localhost}/visitors`, {
+          params: deviceInfo,
+        });
       } catch (error) {
+        setAlert(error.message, "danger");
         console.error("Error fetching visitor data:", error);
       }
     };
 
-    if (!hasVisited) {
-      fetchVisitors();
-    }
-  }, []);
-
-  useEffect(() => {
-    let hasVisited = false;
-    const fetchVisitors = async () => {
-      try {
-        const res = await axios.get(`${localhost}/total`); // Adjust this URL to your API endpoint
-        console.log(res);
-        dispatch({ type: COUNT_VISITORS, payload: res });
-      } catch (error) {
-        console.error("Error fetching visitor data:", error);
-      }
-    };
-
-    if (!hasVisited) {
-      fetchVisitors();
-    }
+    fetchData();
   }, []);
 
   const getPostById = async (
@@ -172,9 +175,8 @@ export const GlobalState = ({ children }) => {
   ) => {
     try {
       setIsLoading && setIsLoading(true);
-      const res = await axios.get(`${localhost}/post/${slugRoute}/${id}`);
-
-      console.log(res);
+      /* const res = await axios.get(`${localhost}/post/${slugRoute}/${id}`); */
+      const res = await axios.get(`${localhost}/post/news/${id}`);
 
       dispatch({
         type: LIST_SINGLE_POST,
@@ -200,13 +202,19 @@ export const GlobalState = ({ children }) => {
     data,
     uploadedFiles,
     featuredImage,
-    setIsLoading
+    setIsLoading,
+    abortController, // Pass this controller from the component
+    clearLastUploadedFile
   ) => {
     const formData = new FormData();
 
+    let lastFileTypeUsed = "";
+
+    // Append uploaded files and featured image to formData
     Object.entries(uploadedFiles).forEach(([key, files]) => {
       files.forEach(({ file }) => {
         formData.append(key, file, file.name);
+        lastFileTypeUsed = key;
       });
     });
 
@@ -216,29 +224,42 @@ export const GlobalState = ({ children }) => {
 
     formData.append("data", JSON.stringify(data));
 
-    // Append files to formData
+    const { title } = data;
 
     try {
       setIsLoading(true);
 
-      const response = await axios.post(`${localhost}/post/persons`, formData, {
-        headers: {
-          Authorization: user.token, // Include authorization if needed
-        },
-      });
+      const response = await axios.post(
+        `${localhost}/post/persons/${title}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+          },
+          signal: abortController.signal, // Use AbortController signal
+        }
+      );
 
       setAlert("Post created successfully", "success");
-
-      console.log(response);
+      navigate(`/admin/posts`);
     } catch (error) {
-      console.log(error);
-
-      setAlert(error.message, "danger");
+      if (axios.isCancel(error)) {
+        setAlert("Upload Canceled", "danger");
+        clearLastUploadedFile(lastFileTypeUsed);
+      } else {
+        setAlert(error.message, "danger");
+        clearLastUploadedFile(lastFileTypeUsed);
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
-
-    navigate("/admin/posts");
   };
 
   const getPartnersData = async (setLoading) => {
@@ -251,14 +272,19 @@ export const GlobalState = ({ children }) => {
         payload: res.data.results,
       });
     } catch (error) {
-      setAlert(error.message, "error"); // Display any errors as alerts
+      /*  setAlert(error.message, 'error');  */
     } finally {
       setLoading(false);
     }
   };
 
-  const createNewsAndPagePost = async (data, featuredImage, setIsLoading) => {
-    const category = data.category?.toLowerCase();
+  const createNewsAndPagePost = async (
+    data,
+    featuredImage,
+    setIsLoading,
+    abortController
+  ) => {
+    /* const category = data.category?.toLowerCase(); */
     const formData = new FormData();
 
     if (featuredImage !== "") {
@@ -272,17 +298,37 @@ export const GlobalState = ({ children }) => {
     try {
       setIsLoading(true);
 
-      const response = await axios.post(
+      /* const response = await axios.post(
         `${localhost}/post/${category}`,
         formData,
         {
           headers: {
-            Authorization: user.token, // Include authorization if needed
+            Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+            'Content-Type': 'multipart/form-data',
           },
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+          },
+          signal: abortController.signal,
         }
-      );
+      ); */
 
-      console.log(response);
+      const response = await axios.post(`${localhost}/post/news`, formData, {
+        headers: {
+          Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+        },
+        signal: abortController.signal,
+      });
 
       setAlert("Post created", "success");
     } catch (error) {
@@ -291,7 +337,7 @@ export const GlobalState = ({ children }) => {
     }
 
     setIsLoading(false);
-    navigate("/admin/posts");
+    navigate(`/admin/posts`);
   };
 
   const editPost = async (id, data) => {
@@ -335,7 +381,6 @@ export const GlobalState = ({ children }) => {
       };
 
       const res = await axios.delete(`${localhost}/admin/posts/${id}`, config);
-      console.log(res);
 
       dispatch({
         type: "DELETE_POST",
@@ -372,6 +417,9 @@ export const GlobalState = ({ children }) => {
   const setCategory = (category) => {
     dispatch({ type: SET_CATEGORY, payload: category });
   };
+  const resetProgressUpload = () => {
+    dispatch({ type: PROGRESS_UPLOAD, payload: 0 });
+  };
 
   const setSmallLoading = () => dispatch({ type: "SET_SMALL_LOADING" });
 
@@ -392,7 +440,9 @@ export const GlobalState = ({ children }) => {
         getPartnersData,
         dispatch,
         getVideosData,
+        resetProgressUpload,
         partners: state.partners,
+        progress: state.progress,
         videosData: state.videosData,
         authors: state.authors,
         error: state.error,

@@ -17,7 +17,7 @@
   position: fixed;
   top: 0;
   opacity: 0;
-  z-index: 999;
+  z-index: 99999999999999;
   background-color: rgba(0, 0, 0, 0.226);
   pointer-events: none;
   transition: all 0.3s;
@@ -47,6 +47,7 @@
   z-index: 9999;
   pointer-events: none;
 }
+
 .fullscreenmenu.show {
   pointer-events: initial;
   opacity: 1;
@@ -62,7 +63,7 @@
   padding: 10%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-direction: column;
   list-style: none;
 
@@ -72,10 +73,33 @@
 }
 .fullscreenmenu li a {
   visibility: inherit;
-  color: #000;
-  font-size: 22px;
+  color: #4d4b4b;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: "Helvetica Neue", sans-serif;
   text-decoration: none;
-  font-weight: 100;
-  text-transform: uppercase;
   line-height: 150%;
+}
+
+.hamburger-menu.active-close {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  cursor: pointer;
+
+  .bar-top {
+    transform: rotate(45deg) translate(-9px, 6px);
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background: #000;
+  }
+
+  .bar-bottom {
+    transform: rotate(-45deg) translate(-6px, -8px);
+    width: 20px;
+    height: 2px;
+    background: #000;
+    position: absolute;
+  }
 }

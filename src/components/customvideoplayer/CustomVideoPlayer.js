@@ -1,29 +1,24 @@
-import React, { useRef, useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPlay,
-  faPause,
-  faVolumeMute,
-  faVolumeUp,
-  faCheck,
-} from "@fortawesome/free-solid-svg-icons";
-import "./customvideoplayer.scss";
-import VideoPlayer from "../VideoPlayer/VideoPlayer";
-import Draggable from "react-draggable";
-import VideoOptions from "../videooptions/VideoOptions";
+import React, { useRef, useState, useEffect } from 'react';
+import './customvideoplayer.scss';
+import VideoPlayer from '../VideoPlayer/VideoPlayer';
+import Draggable from 'react-draggable';
+import VideoOptions from '../videooptions/VideoOptions';
 
-const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
+const CustomVideoPlayer = ({
+  videos,
+  closeModal,
+  isVideoGalleryOpen,
+  isPlaying,
+  setIsPlaying,
+}) => {
   const [isMinimized, setIsMinimized] = useState(false);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showSpeedMenu, setShowSpeedMenu] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(50); // Initial volume
-
+  const [volume, setVolume] = useState(50);
   const [selectedSpeed, setSelectedSpeed] = useState(1.0);
   const videoRef = useRef(null);
 
@@ -41,15 +36,15 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
 
   return isMinimized ? (
     <div
-      className="overlay-background video-minimized"
+      className='overlay-background video-minimized'
       onClick={() => setShowSpeedMenu(false)}
     >
       <Draggable
-        handle=".draggable-handle" // Ensure that the handle targets the draggable element's class
+        handle='.draggable-handle' // Ensure that the handle targets the draggable element's class
         defaultPosition={modalPosition}
         onDrag={handleDrag}
       >
-        <div className="draggable-handle">
+        <div className='draggable-handle'>
           <VideoPlayer
             videos={videos}
             showSpeedMenu={showSpeedMenu}
@@ -77,15 +72,17 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
       </Draggable>
     </div>
   ) : (
-    <div className={`video-modal ${isVideoGalleryOpen ? "active" : ""}`}>
+    <div className={`video-modal ${isVideoGalleryOpen ? 'active' : ''}`}>
       <>
         <div
-          className="overlay-background"
+          className='overlay-background'
           onClick={() => setShowSpeedMenu(false)}
         ></div>
         <span
-          className="closeModal"
+          className='closeModal'
+          style={{ zIndex: '999999999999' }}
           onClick={() => {
+            setIsPlaying(false);
             closeModal();
           }}
         >
@@ -114,7 +111,7 @@ const CustomVideoPlayer = ({ videos, closeModal, isVideoGalleryOpen }) => {
           setSelectedSpeed={setSelectedSpeed}
         />
       </>
-      <VideoOptions />
+      <VideoOptions videos={videos} />
     </div>
   );
 };

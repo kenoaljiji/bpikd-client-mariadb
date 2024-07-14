@@ -2,21 +2,19 @@ import React, { useEffect, useState } from 'react';
 import UsersTable from '../../components/usersTable/UsersTable';
 import { useAuthContext } from '../../context/auth/AuthState';
 import Alerts from '../../components/Alerts';
-import { useAlertContext } from '../../context/alert/AlertState';
 import Loader from '../../components/loader/Loader';
 import { localhost } from '../../config/config';
 import axios from 'axios';
 import { SET_USERS } from '../../context/types';
 
 const UsersPage = () => {
-  const { success, error, user, dispatch } = useAuthContext();
+  const { success, user, dispatch } = useAuthContext();
 
   const [loading, setLoading] = useState(true);
 
   const loadUsers = async () => {
     setLoading(true);
     try {
-      // Assuming you store the admin token in state.user.token
       const token = user.token;
       const config = {
         headers: {
@@ -39,13 +37,13 @@ const UsersPage = () => {
 
   useEffect(() => {
     loadUsers();
+    //eslint-disable-next-line
   }, []);
 
   return (
     <div className='users-page text-center'>
       <div className='container mt-5'>
         {success && <Alerts />}
-        {/*  {error && <Alerts />} */}
         <h2 className='my-5'>Users</h2>
       </div>
       {loading ? (

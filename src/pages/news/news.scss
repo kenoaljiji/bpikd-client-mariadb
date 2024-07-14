@@ -1,13 +1,13 @@
 .news {
-  padding-top: 40px;
+  padding-top: 118px;
 
   @media only screen and (max-width: 600px) {
-    padding-top: 10px;
+    padding-top: 85px;
   }
 
   h3 {
-    cursor: pointer;
     margin-bottom: 0;
+    font-size: 24px;
   }
   h3:hover {
     color: #0d5964;
@@ -25,15 +25,26 @@
   &-body {
     padding-top: 5px;
     padding-bottom: 15px;
+    display: flex;
+    gap: 15px;
+
+    @media only screen and (max-width: 500px) {
+      flex-direction: column;
+    }
   }
 
   img {
-    max-width: 400px;
-    width: 100%;
+    width: 132px;
+    height: 160px;
+    object-fit: cover;
+
+    @media only screen and (max-width: 500px) {
+      width: 100%;
+    }
   }
 
   &-description {
-    margin-top: 10px;
+    margin-top: 0px;
     color: #333333;
     letter-spacing: 0.5px;
   }

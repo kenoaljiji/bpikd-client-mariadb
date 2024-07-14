@@ -1,12 +1,33 @@
 .partners {
+  &-links img:hover {
+    filter: saturate(60%);
+  }
   h2 {
+    padding-top: 60px;
     margin-bottom: 0;
     padding-bottom: 0 !important;
+
+    @media only screen and (max-width: 993px) {
+      padding-top: 10px;
+    }
   }
 
   .grid-5 {
+    grid-template-columns: repeat(6, 130px) !important;
+    gap: 10px;
+    img {
+      width: 130px;
+      height: 100px;
+      text-align: center;
+    }
+
     @media only screen and (max-width: 940px) {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    }
+
+    @media only screen and (max-width: 700px) {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 5px;
     }
   }
 }

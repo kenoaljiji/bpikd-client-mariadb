@@ -1,4 +1,11 @@
 .persons {
+  h2 {
+    margin-top: 60px;
+
+    @media only screen and (max-width: 940px) {
+      margin-top: initial;
+    }
+  }
   .img-container {
     max-width: 100%;
 
@@ -6,11 +13,37 @@
       font-weight: 400;
     }
   }
+
+  .lazy-load {
+    width: 100%;
+    height: 100%;
+  }
+
   .grid-5 {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 150px);
+
+    .img-container {
+      width: 150px;
+      height: 204px;
+
+      @media only screen and (max-width: 600px) {
+        width: 100%;
+        min-height: 300px;
+      }
+
+      h5 {
+        font-size: 18px;
+        width: 100%;
+      }
+
+      img {
+        height: 100%;
+        object-fit: cover;
+      }
+    }
 
     @media only screen and (max-width: 940px) {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
   }
 }

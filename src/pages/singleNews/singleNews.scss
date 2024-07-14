@@ -5,12 +5,24 @@
     padding-bottom: 0;
   }
 
-  img {
+  .single-post-image {
     width: 100%;
     max-width: 400px;
   }
 
   .news-body {
     border-bottom: none;
+    display: flex;
+    gap: 20px;
+
+    @media only screen and (max-width: 600px) {
+      flex-direction: column;
+    }
+
+    img {
+      width: 130px;
+      height: 170px;
+      object-fit: cover;
+    }
   }
 }

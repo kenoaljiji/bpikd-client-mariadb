@@ -12,9 +12,16 @@ export const SortedItemsProvider = ({ children }) => {
     id: `placeholder-${index}`,
     placeholder: true,
     text: `Select person ${index + 1}`,
+    featured: '/assets/no-picture.png',
   }));
+
   const [sortedItems, setSortedItems] = useState({
-    firstRowItems: {},
+    firstRowItems: {
+      id: `placeholder-`,
+      placeholder: true,
+      img: '/assets/no-picture.png',
+      featured: '/assets/no-picture.png',
+    },
     secondRowItems: initialPlaceholders,
   });
   const [error, setError] = useState(false);
@@ -22,12 +29,11 @@ export const SortedItemsProvider = ({ children }) => {
 
   const { setAlert } = useAlertContext();
 
-  /*   const updateSortedItems = (firstRow, secondRow) => {
-    setSortedItems({ firstRow, secondRow });
-  }; */
-
-  const updateSortedItems = async (data) => {
+  const updateSortedItems = async (data, setLoading) => {
+    console.log(data);
     try {
+      setLoading(true);
+      console.log(data);
       const response = await axios.put(`${localhost}/sort/data`, data);
 
       setSortedItems(response.data);
@@ -43,6 +49,7 @@ export const SortedItemsProvider = ({ children }) => {
     }
     setSuccess(false);
     setError(false);
+    setLoading(false);
   };
 
   const getSortedItems = async () => {
@@ -54,11 +61,24 @@ export const SortedItemsProvider = ({ children }) => {
       };
 
       const res = await axios.get(`${localhost}/sort`, config);
-      if (res.data && res.data.secondRowItems) {
-        // Check how many items were received
-        const receivedItemsCount = res.data.secondRowItems.length;
 
-        // If fewer than 4 items are received, fill in the rest with placeholders
+      if (res.data && res.data.secondRowItems) {
+        // Map through secondRowItems and replace any with null id with more detailed placeholders
+        res.data.secondRowItems = res.data.secondRowItems.map((item, index) => {
+          if (item.id === null) {
+            return {
+              ...item,
+              id: `placeholder-${index}`,
+              placeholder: true,
+              text: `Select person ${index + 1}`,
+              featured: '/assets/no-picture.png',
+            };
+          }
+          return item;
+        });
+
+        // Ensure there are always 4 items, fill in the rest with placeholders if fewer
+        const receivedItemsCount = res.data.secondRowItems.length;
         if (receivedItemsCount < 4) {
           res.data.secondRowItems = [
             ...res.data.secondRowItems,
@@ -79,10 +99,7 @@ export const SortedItemsProvider = ({ children }) => {
 
   useEffect(() => {
     getSortedItems();
-  }, []);
-
-  useEffect(() => {
-    console.log(sortedItems);
+    //eslint-disable-next-line
   }, []);
 
   return (

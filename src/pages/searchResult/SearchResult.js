@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,7 +11,6 @@ import DOMPurify from 'dompurify';
 import { slugify } from '../../utils/slugify';
 import { useGlobalContext } from '../../context/bpikd/GlobalState';
 import Loader from '../../components/loader/Loader';
-import * as Yup from 'yup';
 
 export function ContentComponent({ content }) {
   const [shortenedContent, setShortenedContent] = useState('');
@@ -51,11 +50,13 @@ const SearchResult = () => {
 
   const { getPostById } = useGlobalContext();
 
-  const [results, setResults] = useState([]);
-  const [shouldScroll, setShouldScroll] = useState(false);
+  const [results, setResults] = useState(null);
+
   const [loading, setLoading] = useState();
 
   const initialCategories = queryParams.getAll('categories');
+
+  const [initialRender, setInitialRender] = useState(true);
 
   const [selectedCategories, setSelectedCategories] =
     useState(initialCategories);
@@ -101,22 +102,6 @@ const SearchResult = () => {
       : '',
     sort: queryParams.get('sort') || 'relevance', // Default sort order
   };
-
-  // Effect to submit the form on mount if query parameters exist
-  /* useEffect(() => {
-    if (!results.page) {
-      formik.setFieldValue('categories', '');
-    }
-  }, [results]); */
-
-  /*   useEffect(() => {
-    if (
-      initialCategories.includes('Person of Interest', 'News', 'Coming') &&
-      results.data.length !== 0
-    ) {
-      console.log('Postoji');
-    }
-  }, [results]); */
 
   const handleSearch = async (data) => {
     try {
@@ -217,13 +202,10 @@ const SearchResult = () => {
         }
 
         filteredValues.sort = values.sort;
+        setSearchDescription(values.words);
       });
 
       const queryString = new URLSearchParams(filteredValues).toString();
-
-      console.log(queryString);
-
-      console.log(filteredValues);
 
       navigate(`/search?${queryString}`);
 
@@ -243,20 +225,11 @@ const SearchResult = () => {
     },
   });
 
-  const [searchDescription, setSearchDescription] = useState('');
+  const [searchDescription, setSearchDescription] = useState(
+    queryParams.get('words')
+  );
 
   const resultsElementRef = useRef(null);
-
-  /* useEffect(() => {
-    if (location.state?.hasNavigatedBack) {
-      if (resultsElementRef.current) {
-        resultsElementRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }
-    }
-  }, [location]); */
 
   useEffect(() => {
     if (results?.data?.length > 0 && resultsElementRef.current) {
@@ -266,20 +239,15 @@ const SearchResult = () => {
     }
   }, [results]);
 
-  // Effect to handle navigation and potentially trigger scroll
-  /*  useEffect(() => {
-    if (location.state?.fromBackNavigation) {
-      const resultsElement = document.getElementById('results');
-      if (resultsElement) {
-        resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
-  }, [location.state]); */
-
   useEffect(() => {
-    formik.submitForm();
+    // Check if 'sort' query parameter is present
+    if (queryParams.has('sort')) {
+      // Submit the form only if 'sort' is present in the query
+      formik.submitForm();
+    }
+
     setSelectedCategories(queryParams.getAll('categories'));
-  }, [location.search]);
+  }, [location.search]); // Depend on location.search to re-run this effect when the search query changes
 
   function createSearchDescription(params) {
     let description = '';
@@ -325,13 +293,17 @@ const SearchResult = () => {
   const handleNavigation = async (result) => {
     if (result.source_table === 'works') {
       navigate(
-        `/person/${slugify(`${result.id}`)}/${slugify(`${result.title}`)}`
+        `/person-of-interest/${slugify(`${result.id}`)}/${slugify(
+          `${result.title}`
+        )}`
       );
     } else if (result.source_table === 'persons') {
-      navigate(`/person/${slugify(result.title)}`);
+      navigate(`/person-of-interest/${slugify(result.title)}`);
     } else if (result.source_table === 'news') {
       // Use the special function for news
       await getNewsByIdAndTitle(result.id, result.title);
+    } else if (result.source_table === 'soon') {
+      navigate(`/coming`);
     } else {
       navigate(`/${slugify(result.category)}`);
     }
@@ -552,23 +524,8 @@ const SearchResult = () => {
           </div>
         </form>
       </div>
-      {/* <div className='container'>
-        {results?.data?.length === 0 &&
-          formik.values.categories &&
-          formik?.values.categories.map((category, index) => (
-            <div key={index} className='categories'>
-              <span>{category}</span>
-              <div
-                className='categories-x'
-                onClick={() => handleRemoveCategory(category)}
-              >
-                X
-              </div>
-            </div>
-          ))}
-      </div>
- */}
-      {results?.data?.length > 0 && (
+
+      {results && (
         <div
           className='search-result-display'
           id='results'
@@ -702,8 +659,13 @@ const SearchResult = () => {
                         </div>
                       </div>
                       <div className='col-md-4 text-center'>
-                        {/* <p className=''>{result?.category && result.category}</p> */}
-                        <p style={{ fontWeight: 'bold' }}>{result.createdBy}</p>
+                        {result.source_table === 'works' && (
+                          <p style={{ fontWeight: 'bold' }}>{result.id}</p>
+                        )}
+                        {result.source_table === 'persons' && (
+                          <p style={{ fontWeight: 'bold' }}>{result.title}</p>
+                        )}
+
                         <img
                           src={'assets/images/default.png'}
                           alt='Result'
@@ -714,7 +676,7 @@ const SearchResult = () => {
                           style={{ fontSize: '12px' }}
                         >
                           <div>
-                            <span className='d-block'>created:</span>
+                            <span className='d-block'>Created:</span>
                             <span>
                               {moment(result.created_at).format('YYYY-MM-DD')}
                             </span>
@@ -732,7 +694,7 @@ const SearchResult = () => {
                     </div>
                   ))
                 )}
-                {!loading && results !== 0 && (
+                {!loading && results.data.length !== 0 && (
                   <div className='mt-4'>
                     <Pagination
                       totalPages={results?.pages}

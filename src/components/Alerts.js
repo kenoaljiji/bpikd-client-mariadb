@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { useAlertContext } from "../context/alert/AlertState";
+import React from 'react';
+import { useAlertContext } from '../context/alert/AlertState';
 
 const Alerts = () => {
   const { alerts } = useAlertContext();
@@ -8,7 +8,7 @@ const Alerts = () => {
     alerts.length > 0 &&
     alerts.map((alert) => (
       <div key={alert.id} className={`alert p-1 alert-${alert.type}`}>
-        <i className="fas fa-info-circle" /> {alert.msg}
+        <i className='fas fa-info-circle' /> {alert.msg}
       </div>
     ))
   );

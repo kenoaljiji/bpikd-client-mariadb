@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { localhost } from "../../config/config";
-import Loader from "../loader/Loader";
-import "./visitorsTable.scss";
-import { useAlertContext } from "../../context/alert/AlertState";
-import Alerts from "../Alerts";
-import ConfirmationModal from "../confirmationModal/ConfirmationModal";
-/* import moment from 'moment'; */
-import moment from "moment";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import Loader from '../loader/Loader';
+import './visitorsTable.scss';
+import { useAlertContext } from '../../context/alert/AlertState';
+import Alerts from '../Alerts';
+import ConfirmationModal from '../confirmationModal/ConfirmationModal';
+
 function VisitorsTable() {
   const [visitors, setVisitors] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -22,7 +21,7 @@ function VisitorsTable() {
       const res = await axios.get(`${localhost}/visitors/all`); // Adjust this URL to your API endpoint
       setVisitors(res.data);
     } catch (error) {
-      console.error("Error fetching visitor data:", error);
+      console.error('Error fetching visitor data:', error);
     }
     setLoading(false);
   };
@@ -38,10 +37,10 @@ function VisitorsTable() {
         (visitor) => visitor.id !== visitorId
       );
       setVisitors(newVisitors);
-      setAlert(`Visitor with ID ${visitorId} has been deleted.`, "success");
+      setAlert(`Visitor with ID ${visitorId} has been deleted.`, 'success');
     } catch (error) {
-      console.error("Error deleting visitor data:", error);
-      setAlert("Failed to delete visitor.", "danger");
+      console.error('Error deleting visitor data:', error);
+      setAlert('Failed to delete visitor.', 'danger');
     }
   };
 
@@ -59,24 +58,26 @@ function VisitorsTable() {
   function formatDate(dateString) {
     if (dateString) {
       const date = new Date(dateString);
-      return date.toISOString().replace("T", " ").slice(0, 19);
+      return date.toISOString().replace('T', ' ').slice(0, 19);
     }
   }
 
   return (
-    <div className="container mt-5 visitors">
-      <div className="my-2">
+    <div className='container my-5 visitors'>
+      <div className='my-2'>
         <Alerts />
       </div>
-      <div className="text-center">
+      <div className='text-center'>
         <h2>Visitor Log</h2>
       </div>
-      <table className="table table-striped">
+      <table className='table table-striped'>
         <thead>
           <tr>
-            <th>ID</th>
+            {/*   <th>ID</th> */}
             <th>IP Address</th>
-            <th>System Info</th>
+            <th>Browser</th>
+            <th>Os</th>
+            <th>Device</th>
             <th>Visit Count</th>
             <th>Last Visit</th>
             <th></th>
@@ -84,7 +85,7 @@ function VisitorsTable() {
         </thead>
         <tbody>
           {loading ? (
-            <tr className="pt-2">
+            <tr className='pt-2'>
               <td>
                 <Loader />
               </td>
@@ -92,15 +93,35 @@ function VisitorsTable() {
           ) : (
             visitors?.map((visitor) => (
               <tr key={visitor.id}>
-                <td>{visitor.id}</td>
+                {/*  <td>{visitor.id}</td> */}
                 <td>{visitor.ip_address}</td>
-                <td>{visitor.system_info}</td>
+                <td>{visitor.browser_name}</td>
+                <td>{visitor.os}</td>
+                {visitor.is_desktop !== 0 && (
+                  <td>
+                    <span>Desktop: {visitor.device}</span>
+                  </td>
+                )}
+                {visitor.is_mobile !== 0 && (
+                  <td>
+                    <span>Mobile: {visitor.device}</span>
+                  </td>
+                )}
+                {visitor.is_tablet !== 0 && (
+                  <td>
+                    <span>Tablet: {visitor.device}</span>
+                  </td>
+                )}
+
+                {/*  {visitor.is_tablet && <td>Tablet: {visitor.device}</td>}
+                {visitor.is_desktop && <td>Desktop: {visitor.device}</td>} */}
+
                 <td>{visitor.count}</td>
                 <td>{visitor && formatDate(visitor?.last_visit)}</td>
                 <td>
-                  <div className="action-icons">
+                  <div className='action-icons'>
                     <i
-                      className="fa fa-trash"
+                      className='fa fa-trash'
                       onClick={() => handleDeleteClick(visitor.id)}
                     ></i>
                   </div>
@@ -110,6 +131,16 @@ function VisitorsTable() {
           )}
         </tbody>
       </table>
+      <div className='mt-4'>
+        <div className=''>
+          {loading && (
+            <div>
+              <Loader />
+            </div>
+          )}
+        </div>
+        <Alerts />
+      </div>
       {isModalOpen && (
         <ConfirmationModal
           isOpen={isModalOpen}

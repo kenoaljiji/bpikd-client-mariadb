@@ -1,84 +1,93 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+
+import { useRouteContext } from "../../context/route/RouteProvider";
+import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import { ContentComponent } from "../../components/ContentComponent";
+
+/* export function ContentComponent({ content }) {
+  const [shortenedContent, setShortenedContent] = useState('');
+
+  useEffect(() => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const textContent = doc.body.textContent || '';
+
+    // Truncate the text content to the first sentence or up to a maximum character length.
+    const maxCharacters = 250;
+    let shortened = textContent.substr(0, maxCharacters).trim();
+    const lastSpaceIndex = shortened.lastIndexOf(' ');
+
+    // Try to avoid cutting words in half
+    if (lastSpaceIndex > 0 && lastSpaceIndex < maxCharacters) {
+      shortened = shortened.substr(0, lastSpaceIndex);
+    }
+
+    if (textContent.length > maxCharacters) {
+      shortened += '...';
+    }
+
+    // Re-sanitize and set the shortened content.
+    // This does not preserve HTML formatting since it might introduce complexity with unmatched tags.
+    // If preserving HTML tags up to the truncation point is critical, a more sophisticated approach is needed.
+    const sanitizedShortenedContent = DOMPurify.sanitize(shortened);
+    setShortenedContent(sanitizedShortenedContent);
+  }, [content]);
+
+  return <div dangerouslySetInnerHTML={{ __html: shortenedContent }} />;
+} */
 
 const Donate = () => {
-  const style = {
-    color: '#317eac',
-  };
-  return (
-    <section className='container donate'>
-      <h2 className='pb-0 fs-1' style={style}>
-        {' '}
-        Donate to Bpikd
-      </h2>
-      <p className='pb-0 mb-1 mt-2'>
-        WikiLeaks is entirely supported by the general public.
-      </p>
-      <p className=''>
-        Your donations pay for WikiLeaks projects, staff, servers and protective
-        infrastructure.
-      </p>
+  const { state } = useRouteContext();
 
-      <div className='btn-group' role='group' aria-label='Basic example'>
-        <button type='button' className='btn btn-light px-3 py-2'>
-          Credit Card
-        </button>
-        <button type='button' className='btn btn-light px-3 py-2'>
-          Paypal
-        </button>
-        <button type='button' className='btn btn-light px-3 py-2'>
-          Bitcoin
-        </button>
-      </div>
-      <div className='card-custom mt-3'>
-        <h2
-          class='card-title p-3 rounded'
-          style={{ ...style, background: '#d9edf7' }}
-        >
-          Credit Card
-        </h2>
-        <div class='card mt-3 border-top-0 rounded-0'>
-          <div class='card-body p-0'>
-            <div className='p-3'>
-              <p class='card-text font-weight-bold'>
-                Global credit card donations via the Wau Holland Foundation
-              </p>
-              <p class='card-text '>
-                Donations made via the Wau Holland Foundation are tax deductible
-                in the EU.
-              </p>
-              <a href='#' class='btn btn-success'>
-                Wau holland fondation
-              </a>
+  const { posts, listPosts, getPostById } = useGlobalContext();
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    listPosts(setLoading, "Button1");
+
+    //eslint-disable-next-line
+  }, []);
+
+  const onClickHandler = async (id, title) => {
+    // Shorten the title to the first 5 words and replace spaces with hyphens
+    const shortenedTitle = title.split(" ").slice(0, 5).join("-").toLowerCase();
+    // Wait for getPostById to complete before navigating
+    await getPostById(id, "news", setLoading, shortenedTitle);
+  };
+
+  return (
+    <section className="news container">
+      {posts?.map((news) => {
+        if (news.isPublished) {
+          return (
+            <div className="news-content box" key={news.id}>
+              <div className="news-header mt-2">
+                <h3
+                  className="h3"
+                  /*   onClick={() => onClickHandler(news.id, news.title)} */
+                >
+                  {news.title}
+                </h3>
+                {/*  <span className='news-date'>
+                  {moment(news?.scheduledPublishTime).format('DD MMMM YYYY')}
+                </span> */}
+              </div>
+              <div className="news-body">
+                {news.featured && (
+                  <div className="featured-images">
+                    <img src={news.featured} alt="news "></img>
+                  </div>
+                )}
+                <div className="news-description">
+                  <ContentComponent content={news.content} />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className='card-custom mt-3'>
-        <h2
-          class='card-title p-3 rounded'
-          style={{ ...style, background: '#d9edf7' }}
-        >
-          Paypal
-        </h2>
-        <div class='card mt-3 border-top-0 rounded-0'>
-          <div class='card-body p-0'>
-            <div className='p-3'>
-              <p className='font-weight-bold'>
-                Global PayPal donations via the Wau Holland Foundation
-              </p>
-              <p class=''>
-                Donations made via the Wau Holland Foundation are tax deductible
-                in the EU.
-              </p>
-              <a href='#' class='btn btn-success'>
-                Wau holland fondation
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+          );
+        }
+      })}
     </section>
   );
 };
-
 export default Donate;

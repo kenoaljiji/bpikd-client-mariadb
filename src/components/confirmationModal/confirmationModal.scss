@@ -15,12 +15,15 @@
   background-color: #fff;
   padding: 20px;
   border-radius: 5px;
+  text-align: center;
 
   button:not(:last-of-type) {
     background: #093a41;
+    width: 120px;
   }
 
   button:not(:last-of-type):hover {
     background: #0c4b55;
+    width: 120px;
   }
 }

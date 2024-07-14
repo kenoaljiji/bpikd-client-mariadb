@@ -1,0 +1,24 @@
+.single-news {
+  button {
+    background: transparent;
+    border: 1px solid #093a41;
+  }
+  button:hover {
+    background: #093a41;
+    color: #fff;
+  }
+  h2 {
+    color: #0078c6;
+    margin-bottom: 5px;
+    padding-bottom: 0;
+  }
+
+  img {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .news-body {
+    border-bottom: none;
+  }
+}

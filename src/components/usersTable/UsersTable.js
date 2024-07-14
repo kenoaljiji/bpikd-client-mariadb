@@ -1,23 +1,21 @@
-import React, { useEffect, useInsertionEffect, useState } from "react";
-import "../styles/tables.scss";
-import { json, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../context/auth/AuthState";
-import ConfirmationModal from "../confirmationModal/ConfirmationModal";
-import { localhost } from "../../config/config";
-import axios from "axios";
-import { SET_ERROR, SET_SUCCESS } from "../../context/types";
+import React, { useEffect, useState } from 'react';
+import '../styles/tables.scss';
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../../context/auth/AuthState';
+import ConfirmationModal from '../confirmationModal/ConfirmationModal';
+import { localhost } from '../../config/config';
+import axios from 'axios';
+import { SET_ERROR, SET_SUCCESS } from '../../context/types';
+import { complexString } from '../../utils/complexString';
 
 const UsersTable = ({ loadUsers }) => {
-  const { users, user, deleteUser, clearErrors, dispatch, loading } =
-    useAuthContext();
-
+  const { users, user, deleteUser, clearErrors, dispatch } = useAuthContext();
   const userId = user.user.id;
-
+  const loggedInUserRole = user.user.role;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [modalContent, setModalContent] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
-  // Inside your UsersTable component
+  const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
   const deleteSelectedUsers = async () => {
@@ -25,7 +23,7 @@ const UsersTable = ({ loadUsers }) => {
     try {
       const config = {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: user.token, // Use the admin's token from state
         },
         data: {
@@ -69,8 +67,7 @@ const UsersTable = ({ loadUsers }) => {
     setModalContent({
       message: `Are you sure you want to delete ${user.firstname} ${user.lastname}`,
       onConfirm: () => {
-        deleteUser(user.id);
-        loadUsers();
+        deleteUser(user.id, loadUsers);
       },
     });
   };
@@ -93,9 +90,20 @@ const UsersTable = ({ loadUsers }) => {
     return () => clearTimeout(timerId);
   }, [searchTerm]);
 
+  const displayUsersBasedOnRole = (users) => {
+    if (loggedInUserRole === 'owner') {
+      return users; // Owners see everyone
+    } else if (['admin'].includes(loggedInUserRole)) {
+      return users.filter((user) => ['admin', 'editor'].includes(user.role)); // Admins and Editors see only Admins and Editors
+    } else {
+      return []; // For safety, if role isn't recognized, show no one (or handle as appropriate)
+    }
+  };
+
+  // Filtering users based on search term and role
   const filteredUsers =
     debouncedSearchTerm.length >= 3
-      ? users.filter(
+      ? displayUsersBasedOnRole(users).filter(
           (user) =>
             user.firstname
               .toLowerCase()
@@ -107,38 +115,37 @@ const UsersTable = ({ loadUsers }) => {
               .toLowerCase()
               .includes(debouncedSearchTerm.toLowerCase())
         )
-      : users;
-
+      : displayUsersBasedOnRole(users);
   // Function to handle selecting/deselecting a user
 
   const navigate = useNavigate();
   // Function to handle deleting selected users
 
   return (
-    <div className="custom-table mt-5">
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center mb-3">
+    <div className='custom-table mt-5'>
+      <div className='container'>
+        <div className='d-flex justify-content-between align-items-center mb-3'>
           <button
-            className="btn btn-success"
-            onClick={() => navigate("create-edit")}
+            className='btn btn-success'
+            onClick={() => navigate('create-edit')}
           >
-            <i class="fa-solid fa-plus"></i> Add User
+            <i className='fa-solid fa-plus'></i> Add User
           </button>
-          <div className="search-bar">
+          <div className='search-bar'>
             <input
-              type="text"
-              className="form-control"
-              placeholder="Search Users..."
-              style={{ border: "1px solid #093A41" }}
+              type='text'
+              className='form-control'
+              placeholder='Search Users...'
+              style={{ border: '1px solid #093A41' }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <span className="text-white p-2" style={{ background: "#093A41" }}>
-              <i class="fa-solid fa-magnifying-glass"></i>
+            <span className='text-white p-2' style={{ background: '#093A41' }}>
+              <i className='fa-solid fa-magnifying-glass'></i>
             </span>
           </div>
         </div>
-        <table className="table table-striped">
+        <table className='table table-striped'>
           <thead>
             <tr>
               <th>Role</th>
@@ -154,31 +161,34 @@ const UsersTable = ({ loadUsers }) => {
             {filteredUsers?.length > 0 ? (
               filteredUsers?.map((user) => (
                 <tr key={user.id}>
-                  <td className="ps-4 text-start d-flex">
+                  <td className='ps-4 text-start d-flex'>
                     <input
-                      className="me-2"
-                      type="checkbox"
+                      className='me-2'
+                      type='checkbox'
                       onChange={() => handleSelectUser(user.id)}
                       checked={selectedUserIds.includes(user.id)}
                       disabled={user.id === userId}
                     />
                     <span>{user.role}</span>
-                    {/* Container for icons */}
-                    <div className="action-icons">
+
+                    <div className='action-icons'>
                       <i
-                        className="fa fa-edit"
+                        className='fa fa-edit'
                         onClick={() =>
                           navigate(`/admin/users/create-edit/${user.id}`)
                         }
                       ></i>
+
+                      {/* Delete Icon: Only show if the current user is not the owner and not the same as the logged-in user */}
                       {user.id !== userId && (
                         <i
-                          className="fa fa-trash"
+                          className='fa fa-trash'
                           onClick={() => handleDeleteClick(user)}
                         ></i>
                       )}
                     </div>
                   </td>
+
                   <td>{user.firstname}</td>
                   <td>{user.lastname}</td>
                   <td>{user.email}</td>
@@ -188,17 +198,17 @@ const UsersTable = ({ loadUsers }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="6" style={{ textAlign: "center" }}>
+                <td colSpan='6' style={{ textAlign: 'center' }}>
                   Cannot find user
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-        <div className="d-flex justify-content-start">
+        <div className='d-flex justify-content-start'>
           {selectedUserIds?.length > 0 && (
             <button
-              className="btn btn-sm btn-danger"
+              className='btn btn-sm btn-danger'
               onClick={handleBulkDeleteClick}
             >
               Delete
