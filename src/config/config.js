@@ -7,5 +7,5 @@ if (enviroment === 'development') {
 } else if (enviroment === 'production') {
   localhost = 'https://bpikd.vizitke.ba/api';
 } else {
-  localhost = '/';
+  localhost = '/api';
 }

@@ -1,28 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/tables.scss';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuthContext } from '../../context/auth/AuthState';
-import { localhost } from '../../config/config';
-import ConfirmationModal from '../confirmationModal/ConfirmationModal';
-import moment from 'moment';
-import transformPath from '../../utils/transformPath';
-import Loader from '../loader/Loader';
-import { complexString } from '../../utils/complexString';
+import React, { useEffect, useState } from "react";
+import "../styles/tables.scss";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuthContext } from "../../context/auth/AuthState";
+import { localhost } from "../../config/config";
+import ConfirmationModal from "../confirmationModal/ConfirmationModal";
+import moment from "moment";
+import transformPath from "../../utils/transformPath";
+import Loader from "../loader/Loader";
 
 const PostsTable = ({ posts, category, listPosts, loading }) => {
   const { user } = useAuthContext();
   const [selectedPostIds, setSelectedPostIds] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({});
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   // Inside your UsersTable component
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
   const headers =
-    category !== 'Person of Interest'
-      ? { name: category, user: 'User', date: 'Date' }
-      : { name: 'Persons', user: 'User', date: 'Date' };
+    category !== "Person of Interest"
+      ? { name: category, user: "User", date: "Date" }
+      : { name: "Persons", user: "User", date: "Date" };
 
   const navigate = useNavigate();
 
@@ -38,7 +37,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
   };
 
   const deleteSelectedPosts = async () => {
-    const path = category !== 'Person of Interest' ? 'news' : 'persons';
+    const path = category !== "Person of Interest" ? "news" : "persons";
     try {
       const data = {
         personIds: selectedPostIds, // Pass the person IDs to delete here
@@ -46,7 +45,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
 
       const config = {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: user.token, // Use the user's token from state
         },
       };
@@ -57,12 +56,12 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
         config // config as the third argument
       );
 
-      console.log('Response:', res.data); // Logging the response from the server
+      console.log("Response:", res.data); // Logging the response from the server
       setSelectedPostIds([]); // Clear the selected person IDs
       listPosts(); // Assuming this is a function to refresh the list after deletion
       // Handle successful operation (e.g., display a message, update state if necessary)
     } catch (err) {
-      console.error('Error in deleting posts:', err);
+      console.error("Error in deleting posts:", err);
       // Handle errors (e.g., show error message)
     }
 
@@ -70,7 +69,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
   };
 
   const deletePost = async (postId) => {
-    const path = category !== 'Person of Interest' ? 'news' : 'persons';
+    const path = category !== "Person of Interest" ? "news" : "persons";
     try {
       // Optional: Add a token or authorization header if needed
       console.log(user.token);
@@ -98,7 +97,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
   // Call this when the delete button for a single user is clicked
   const handleDeleteClick = (post) => {
     // Assuming `category` is accessible here, directly or from state/context
-    const isPersonOfInterestCategory = category === 'Person of Interest';
+    const isPersonOfInterestCategory = category === "Person of Interest";
     const displayName = isPersonOfInterestCategory
       ? `${post.firstName} ${post.lastName}`
       : post.title;
@@ -132,7 +131,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
 
   const handleEditClick = (postId) => {
     let path;
-    if (category === 'Person of Interest') {
+    if (category === "Person of Interest") {
       path = `/admin/posts/person-edit/${postId}`;
     } else {
       path = `/admin/posts/create-edit/${transformPath(category)}/${postId}`;
@@ -142,8 +141,8 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
 
   function normalizeText(text) {
     return text
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
       .toLowerCase();
   }
 
@@ -151,7 +150,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
     debouncedSearchTerm.length >= 3
       ? posts.filter((post) => {
           const searchTermLower = normalizeText(debouncedSearchTerm);
-          if (category === 'Person of Interest') {
+          if (category === "Person of Interest") {
             // Normalize the search term
 
             // Combine first name and last name with a space, normalize, and then check
@@ -173,23 +172,23 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
       : posts;
 
   return (
-    <div className='custom-table mt-5'>
+    <div className="custom-table mt-5">
       {loading ? (
         <Loader />
       ) : (
-        <div className='container'>
-          <div className='d-flex justify-content-between align-items-center mb-3'>
+        <div className="container">
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <button
-              className='btn btn-success'
-              onClick={() => navigate('/admin/posts/create-edit')}
+              className="btn btn-success"
+              onClick={() => navigate("/admin/posts/create-edit")}
             >
-              <i className='fa fa-plus'></i> Add Post
+              <i className="fa fa-plus"></i> Add Post
             </button>
-            <div className='search-bar'>
+            <div className="search-bar">
               <input
-                type='text'
-                className='form-control'
-                placeholder='Search...'
+                type="text"
+                className="form-control"
+                placeholder="Search..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -197,10 +196,10 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
           </div>
 
           {filteredPosts?.length > 0 ? (
-            <table className='table table-striped text-start'>
+            <table className="table table-striped text-start">
               <thead>
                 <tr>
-                  <th className='ps-4'>{headers.name}</th>
+                  <th className="ps-4">{headers.name}</th>
                   <th>{headers.user}</th>
                   <th>{headers.date}</th>
                 </tr>
@@ -209,43 +208,43 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
                 {filteredPosts?.length > 0 ? (
                   filteredPosts?.map((post) => (
                     <tr key={category + post.id}>
-                      <td className='ps-4 text-start d-flex'>
+                      <td className="ps-4 text-start d-flex">
                         <input
-                          className='me-2'
-                          type='checkbox'
+                          className="me-2"
+                          type="checkbox"
                           onChange={() => handleSelectPost(post.id)}
                           checked={selectedPostIds.includes(post.id)}
                         />
-                        <span className='w-75 d-flex align-items-center'>
-                          {category !== 'Person of Interest'
+                        <span className="w-75 d-flex align-items-center">
+                          {category !== "Person of Interest"
                             ? post.title
                             : `${post.firstName} ${post.lastName}`}
                         </span>
 
-                        <div className='action-icons'>
+                        <div className="action-icons">
                           <i
-                            className='fa fa-edit'
+                            className="fa fa-edit"
                             onClick={() => handleEditClick(post.id)}
                           ></i>
 
                           <i
-                            className='fa fa-trash'
+                            className="fa fa-trash"
                             onClick={() => handleDeleteClick(post)}
                           ></i>
                         </div>
                       </td>
-                      {category === 'Person of Interest' ? (
+                      {category === "Person of Interest" ? (
                         <>
                           <td>{post.createdBy}</td>
                           <td>
-                            {moment(post.updatedAt).format('DD MMMM YYYY')}
+                            {moment(post.updatedAt).format("DD MMMM YYYY")}
                           </td>
                         </>
                       ) : (
                         <>
                           <td>{post.createdBy}</td>
                           <td>
-                            {moment(post.updatedAt).format('DD MMMM YYYY')}
+                            {moment(post.updatedAt).format("DD MMMM YYYY")}
                           </td>
                         </>
                       )}
@@ -253,7 +252,7 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan='6' style={{ textAlign: 'center' }}>
+                    <td colSpan="6" style={{ textAlign: "center" }}>
                       Cannot find user
                     </td>
                   </tr>
@@ -263,10 +262,10 @@ const PostsTable = ({ posts, category, listPosts, loading }) => {
           ) : (
             <p>No posts found.</p>
           )}
-          <div className='d-flex justify-content-start'>
+          <div className="d-flex justify-content-start">
             {selectedPostIds?.length > 0 && (
               <button
-                className='btn btn-sm btn-danger'
+                className="btn btn-sm btn-danger"
                 onClick={handleBulkDeleteClick}
               >
                 Delete

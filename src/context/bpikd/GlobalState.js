@@ -1,9 +1,9 @@
-import React, { useReducer, useEffect, useContext, createContext } from 'react';
-import axios from 'axios';
-import { useAuthContext } from '../auth/AuthState';
-import globalReducer from './globalReducer';
-import { localhost } from '../../config/config';
-import { useNavigate } from 'react-router-dom';
+import React, { useReducer, useEffect, useContext, createContext } from "react";
+import axios from "axios";
+import { useAuthContext } from "../auth/AuthState";
+import globalReducer from "./globalReducer";
+import { localhost } from "../../config/config";
+import { useNavigate } from "react-router-dom";
 import {
   GET_PARTNERS_DATA,
   LIST_AUTHORS,
@@ -14,8 +14,8 @@ import {
   SET_CATEGORY,
   GET_VIDEOS_DATA,
   PROGRESS_UPLOAD,
-} from '../types';
-import { useAlertContext } from '../alert/AlertState';
+} from "../types";
+import { useAlertContext } from "../alert/AlertState";
 
 const GlobalContext = createContext();
 
@@ -26,7 +26,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 export const GlobalState = ({ children }) => {
   // Initial State
 
-  const authorsLocalStorage = localStorage.getItem('authors');
+  const authorsLocalStorage = localStorage.getItem("authors");
 
   const initialState = {
     loading: false,
@@ -35,9 +35,9 @@ export const GlobalState = ({ children }) => {
     authors: authorsLocalStorage ? JSON.parse(authorsLocalStorage) : [{}],
     success: null,
     error: null,
-    searchTerm: '',
-    searchResult: '',
-    category: 'Person of Interest',
+    searchTerm: "",
+    searchResult: "",
+    category: "Person of Interest",
     partners: [],
     progress: 0,
     videosData: {
@@ -53,19 +53,19 @@ export const GlobalState = ({ children }) => {
 
   const { setAlert } = useAlertContext();
 
-  const listPosts = async (setLoading) => {
+  const listPosts = async (setLoading, category = "news") => {
     setLoading(true); // Control loading state globally or locally
     try {
-      const response = await axios.get(`${localhost}/post/news`);
+      const response = await axios.get(`${localhost}/post/news/${category}`);
       if (response.data && response.data.length > 0) {
         dispatch({ type: LIST_POSTS, payload: response.data });
       } else {
-        dispatch({ type: LIST_POSTS, payload: [] }); // Ensure empty data is handled gracefully
-        setAlert('No posts available', 'info'); // Optionally set an alert if no data
+        dispatch({ type: LIST_POSTS, payload: [] });
+        setAlert("No posts available", "info");
       }
     } catch (error) {
       dispatch({ type: LIST_POSTS_FAIL, payload: error.message });
-      setAlert(error.message, 'danger'); // Display any errors as alerts
+      setAlert(error.message, "danger"); // Display any errors as alerts
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ export const GlobalState = ({ children }) => {
 
   const listPages = async (setLoading, term) => {
     const category = term.toLowerCase();
-    setLoading(true); // Control loading state globally or locally
+    setLoading(true);
     try {
       const res = await axios.get(`${localhost}/post/page/${category}`);
 
@@ -82,14 +82,13 @@ export const GlobalState = ({ children }) => {
         payload: res.data,
       });
     } catch (error) {
-      setAlert(error.message, 'error'); // Display any errors as alerts
+      setAlert(error.message, "error"); // Display any errors as alerts
     } finally {
       setLoading(false);
     }
   };
 
   const getVideosData = async (data) => {
-    console.log(data);
     dispatch({
       type: GET_VIDEOS_DATA,
       payload: data,
@@ -104,12 +103,12 @@ export const GlobalState = ({ children }) => {
 
       dispatch({ type: LIST_AUTHORS, payload: authorsData });
       if (authorsData.length === 0) {
-        setAlert('No authors found', 'danger');
+        setAlert("No authors found", "danger");
       }
     } catch (error) {
-      console.error('Failed to fetch authors:', 'danger');
+      console.error("Failed to fetch authors:", "danger");
       dispatch({ type: LIST_AUTHORS, payload: [] }); // Ensure payload is always an array
-      setAlert('Error fetching authors. ' + error.message, 'danger');
+      setAlert("Error fetching authors. " + error.message, "danger");
     } finally {
       setLoading(false);
     }
@@ -122,14 +121,14 @@ export const GlobalState = ({ children }) => {
 
       dispatch({ type: LIST_AUTHORS, payload: authorsData });
       if (authorsData.length === 0) {
-        setAlert('No authors found', 'danger');
+        setAlert("No authors found", "danger");
       }
 
       console.log(response);
     } catch (error) {
-      console.error('Failed to fetch authors:', error);
+      console.error("Failed to fetch authors:", error);
       dispatch({ type: LIST_AUTHORS, payload: [] }); // Ensure payload is always an array
-      setAlert('Error fetching authors. ' + error.message, 'danger');
+      setAlert("Error fetching authors. " + error.message, "danger");
     } finally {
     }
   };
@@ -142,16 +141,16 @@ export const GlobalState = ({ children }) => {
         if (navigator.userAgentData) {
           // Get high-entropy values
           const ua = await navigator.userAgentData.getHighEntropyValues([
-            'architecture',
-            'model',
-            'platform',
-            'platformVersion',
-            'fullVersionList',
+            "architecture",
+            "model",
+            "platform",
+            "platformVersion",
+            "fullVersionList",
           ]);
-          deviceInfo = ua['model'] ? ua['model'] : null;
+          deviceInfo = ua["model"] ? ua["model"] : null;
         } else {
           console.error(
-            'navigator.userAgentData is not supported in this browser.'
+            "navigator.userAgentData is not supported in this browser."
           );
         }
 
@@ -160,8 +159,8 @@ export const GlobalState = ({ children }) => {
           params: deviceInfo,
         });
       } catch (error) {
-        setAlert(error.message, 'danger');
-        console.error('Error fetching visitor data:', error);
+        setAlert(error.message, "danger");
+        console.error("Error fetching visitor data:", error);
       }
     };
 
@@ -170,13 +169,14 @@ export const GlobalState = ({ children }) => {
 
   const getPostById = async (
     id,
-    slugRoute = 'news',
+    slugRoute = "news",
     setIsLoading,
-    title = ''
+    title = ""
   ) => {
     try {
       setIsLoading && setIsLoading(true);
-      const res = await axios.get(`${localhost}/post/${slugRoute}/${id}`);
+      /* const res = await axios.get(`${localhost}/post/${slugRoute}/${id}`); */
+      const res = await axios.get(`${localhost}/post/news/${id}`);
 
       dispatch({
         type: LIST_SINGLE_POST,
@@ -192,7 +192,7 @@ export const GlobalState = ({ children }) => {
       });
     }
     setIsLoading && setIsLoading(false);
-    if (title !== '') {
+    if (title !== "") {
       // Navigate to the news detail page with the shortened title
       navigate(`/news/${title}`);
     }
@@ -208,7 +208,7 @@ export const GlobalState = ({ children }) => {
   ) => {
     const formData = new FormData();
 
-    let lastFileTypeUsed = '';
+    let lastFileTypeUsed = "";
 
     // Append uploaded files and featured image to formData
     Object.entries(uploadedFiles).forEach(([key, files]) => {
@@ -218,13 +218,14 @@ export const GlobalState = ({ children }) => {
       });
     });
 
-    if (featuredImage !== '') {
-      formData.append('featuredImage', featuredImage, featuredImage.name);
+    if (featuredImage !== "") {
+      formData.append("featuredImage", featuredImage, featuredImage.name);
     }
 
-    formData.append('data', JSON.stringify(data));
+    formData.append("data", JSON.stringify(data));
 
     const { title } = data;
+
     try {
       setIsLoading(true);
 
@@ -234,7 +235,7 @@ export const GlobalState = ({ children }) => {
         {
           headers: {
             Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round(
@@ -246,15 +247,14 @@ export const GlobalState = ({ children }) => {
         }
       );
 
-      setAlert('Post created successfully', 'success');
-
+      setAlert("Post created successfully", "success");
       navigate(`/admin/posts`);
     } catch (error) {
       if (axios.isCancel(error)) {
-        setAlert('Upload Canceled', 'danger');
+        setAlert("Upload Canceled", "danger");
         clearLastUploadedFile(lastFileTypeUsed);
       } else {
-        setAlert(error.message, 'danger');
+        setAlert(error.message, "danger");
         clearLastUploadedFile(lastFileTypeUsed);
       }
     } finally {
@@ -284,21 +284,21 @@ export const GlobalState = ({ children }) => {
     setIsLoading,
     abortController
   ) => {
-    const category = data.category?.toLowerCase();
+    /* const category = data.category?.toLowerCase(); */
     const formData = new FormData();
 
-    if (featuredImage !== '') {
-      formData.append('featuredImage', featuredImage, featuredImage.name);
+    if (featuredImage !== "") {
+      formData.append("featuredImage", featuredImage, featuredImage.name);
     }
 
-    formData.append('data', JSON.stringify(data));
+    formData.append("data", JSON.stringify(data));
 
     // Append files to formData
 
     try {
       setIsLoading(true);
 
-      const response = await axios.post(
+      /* const response = await axios.post(
         `${localhost}/post/${category}`,
         formData,
         {
@@ -314,12 +314,26 @@ export const GlobalState = ({ children }) => {
           },
           signal: abortController.signal,
         }
-      );
+      ); */
 
-      setAlert('Post created', 'success');
+      const response = await axios.post(`${localhost}/post/news`, formData, {
+        headers: {
+          Authorization: `Bearer ${user.token}`, // Assume `user.token` is available
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          dispatch({ type: PROGRESS_UPLOAD, payload: percentCompleted });
+        },
+        signal: abortController.signal,
+      });
+
+      setAlert("Post created", "success");
     } catch (error) {
       console.log(error);
-      setAlert(error.message, 'danger');
+      setAlert(error.message, "danger");
     }
 
     setIsLoading(false);
@@ -330,10 +344,10 @@ export const GlobalState = ({ children }) => {
     try {
       const config = {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: user.data.token,
         },
-        credentials: 'include',
+        credentials: "include",
       };
       const res = await axios.put(
         `${localhost}/admin/posts/${id}`,
@@ -342,19 +356,19 @@ export const GlobalState = ({ children }) => {
       );
 
       dispatch({
-        type: 'SUCCESS_MESSAGE',
-        payload: res.status === 200 && 'Wort hinzugefügt',
+        type: "SUCCESS_MESSAGE",
+        payload: res.status === 200 && "Wort hinzugefügt",
       });
     } catch (error) {
       dispatch({
-        type: 'EDIT_POST_FAIL',
+        type: "EDIT_POST_FAIL",
         payload:
           error.response && error.response.data.message
             ? error.response.data.message
             : error.message,
       });
     }
-    navigate.push('/dashboard');
+    navigate.push("/dashboard");
   };
 
   const deletePost = async (id) => {
@@ -369,12 +383,12 @@ export const GlobalState = ({ children }) => {
       const res = await axios.delete(`${localhost}/admin/posts/${id}`, config);
 
       dispatch({
-        type: 'DELETE_POST',
+        type: "DELETE_POST",
         payload: res.data.data,
       });
     } catch (error) {
       dispatch({
-        type: 'DELETE_POST_FAIL',
+        type: "DELETE_POST_FAIL",
         payload:
           error.response && error.response.data.message
             ? error.response.data.message
@@ -386,13 +400,13 @@ export const GlobalState = ({ children }) => {
   const searchPosts = async (searchTerm, limit = 50) => {
     try {
       dispatch({
-        type: 'SET_SMALL_LOADING',
+        type: "SET_SMALL_LOADING",
       });
       const url = `${localhost}/search?limit=${limit}&word=${searchTerm}`;
       const res = await axios.get(url);
 
       dispatch({
-        type: 'SEARCH_WORDS',
+        type: "SEARCH_WORDS",
         payload: res.data.data,
       });
     } catch (e) {
@@ -407,7 +421,7 @@ export const GlobalState = ({ children }) => {
     dispatch({ type: PROGRESS_UPLOAD, payload: 0 });
   };
 
-  const setSmallLoading = () => dispatch({ type: 'SET_SMALL_LOADING' });
+  const setSmallLoading = () => dispatch({ type: "SET_SMALL_LOADING" });
 
   return (
     <GlobalContext.Provider

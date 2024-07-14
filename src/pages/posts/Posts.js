@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import Alerts from '../../components/Alerts';
-import PostsTable from '../../components/postsTable/PostsTable';
-import { useGlobalContext } from '../../context/bpikd/GlobalState';
-import PageTable from '../pageTable/PageTable';
-import { useNavigate } from 'react-router-dom';
-import { usePreviewContext } from '../../context/previewContext/PreviewState';
-import { LIST_SINGLE_POST } from '../../context/types';
+import React, { useEffect, useState } from "react";
+import Alerts from "../../components/Alerts";
+import PostsTable from "../../components/postsTable/PostsTable";
+import { useGlobalContext } from "../../context/bpikd/GlobalState";
+import { useNavigate } from "react-router-dom";
+import { usePreviewContext } from "../../context/previewContext/PreviewState";
+import { LIST_SINGLE_POST } from "../../context/types";
 
 const Posts = () => {
   const {
@@ -14,7 +13,7 @@ const Posts = () => {
     listAuthors,
     listPosts,
     setCategory,
-    listPages,
+    /*   listPages, */
     getPartnersData,
     category,
     dispatch,
@@ -36,58 +35,60 @@ const Posts = () => {
   }, []);
 
   useEffect(() => {
-    if (category === 'News') {
-      listPosts(setLoading);
+    if (category === "News") {
+      listPosts(setLoading, category);
     }
-    if (category === 'Person of Interest') {
+    if (category === "Person of Interest") {
       listAuthors(setLoading);
     }
-    if (['Button1', 'Button2', 'About', 'Shop', 'Soon'].includes(category)) {
-      listPages(setLoading, category);
+
+    if (["Button1", "Button2", "About", "Shop", "Soon"].includes(category)) {
+      listPosts(setLoading, category);
     }
-    if (category === 'Partners') {
+
+    if (category === "Partners") {
       getPartnersData(setLoading);
     }
     //eslint-disable-next-line
   }, [category]);
 
   return (
-    <div className='posts my-5 text-center'>
-      <div className='mb-4'>
+    <div className="posts my-5 text-center">
+      <div className="mb-4">
         <Alerts />
       </div>
-      <h2 className='mb-5'>Posts</h2>
-      <div className='post-category bg-gray '>
-        <div className='category-select d-flex align-items-center p-1'>
+      <h2 className="mb-5">Posts</h2>
+      <div className="post-category bg-gray ">
+        <div className="category-select d-flex align-items-center p-1">
           <label>Select category:</label>
           <select
-            className=''
+            className=""
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option value='Person of Interest'>Person of Interest</option>
-            <option value='News'>News</option>
-            <option value='Partners'>Partners</option>
-            <option value='About'>About</option>
-            <option value='Button2'>Button2Page</option>
-            <option value='Button1'>Button1Page</option>
-            <option value='Shop'>Shop</option>
-            <option value='Soon'>Coming</option>
+            <option value="Person of Interest">Person of Interest</option>
+            <option value="News">News</option>
+            <option value="Partners">Partners</option>
+            <option value="About">About</option>
+            <option value="Button2">Button2Page</option>
+            <option value="Button1">Button1Page</option>
+            <option value="Shop">Shop</option>
+            <option value="Soon">Coming</option>
           </select>
         </div>
       </div>
-      <div className='mt-5'>
-        <h3>{category === 'Soon' ? 'Coming' : category}</h3>
+      <div className="mt-5">
+        <h3>{category === "Soon" ? "Coming" : category}</h3>
       </div>
-      {category === 'News' && (
+      {category === "News" && (
         <PostsTable
           posts={posts}
           loading={loading}
-          listPosts={() => listPosts(setLoading)}
+          listPosts={() => listPosts(setLoading, category)}
           category={category}
         />
       )}
-      {category === 'Person of Interest' && (
+      {category === "Person of Interest" && (
         <PostsTable
           posts={authors}
           loading={loading}
@@ -95,15 +96,20 @@ const Posts = () => {
           category={category}
         />
       )}
-      {['Button1', 'Button2', 'About', 'Shop', 'Soon'].includes(category) && (
-        <PageTable loading={loading} setLoading={setLoading} />
+      {["Button1", "Button2", "About", "Shop", "Soon"].includes(category) && (
+        <PostsTable
+          posts={posts}
+          loading={loading}
+          listPosts={() => listPosts(setLoading, category)}
+          category={category}
+        />
       )}
-      {category === 'Partners' && (
-        <div className='container mt-5 custom-table'>
-          <table className='table table-striped text-start'>
+      {category === "Partners" && (
+        <div className="container mt-5 custom-table">
+          <table className="table table-striped text-start">
             <thead>
               <tr>
-                <th className='ps-4'>Page</th>
+                <th className="ps-4">Page</th>
               </tr>
             </thead>
             <tbody
@@ -113,16 +119,16 @@ const Posts = () => {
                   `
                 )
               }
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
             >
               <tr>
-                <td className='ps-4 text-start d-flex'>
-                  <span className='w-75 d-flex align-items-center'>
+                <td className="ps-4 text-start d-flex">
+                  <span className="w-75 d-flex align-items-center">
                     {category}
                   </span>
 
-                  <div className='action-icons'>
-                    <i className='fa fa-edit'></i>
+                  <div className="action-icons">
+                    <i className="fa fa-edit"></i>
                   </div>
                 </td>
               </tr>

@@ -94,7 +94,9 @@ const Header = ({ handleClick, isActive }) => {
                     style={{ color: theme.headerTextColor }}
                     type='button'
                     className=''
-                    onClick={() => (window.location.href = '/' + routes?.shop)}
+                    onClick={() =>
+                      (window.location.href = '/' + routes?.shop.toLowerCase())
+                    }
                   >
                     {routes?.shop}
                   </button>
@@ -112,7 +114,8 @@ const Header = ({ handleClick, isActive }) => {
                     type='button'
                     className='button2 btn-last'
                     onClick={() =>
-                      (window.location.href = '/' + buttons?.button2)
+                      (window.location.href =
+                        '/' + buttons?.button2.toLowerCase())
                     }
                   >
                     {buttons?.button2}
