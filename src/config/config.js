@@ -1,4 +1,4 @@
-let enviroment = 'development';
+let enviroment = 'production-main';
 
 export let localhost;
 
