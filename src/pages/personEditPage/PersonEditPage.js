@@ -156,6 +156,8 @@ const PersonEditPage = () => {
     externalSource: singleWork?.externalSource || '',
   });
 
+  const fullName = `${singlePost?.firstName}-${singlePost?.lastName}`;
+
   useEffect(() => {
     console.log('Checking singlePost:', singlePost);
 
@@ -442,7 +444,7 @@ const PersonEditPage = () => {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${localhost}/post/persons/work/${singleWork.id}/media`,
+        `${localhost}/post/persons/work/${singleWork.id}/${fullName}/media`,
         formData,
         {
           onUploadProgress: (progressEvent) => {
@@ -745,13 +747,15 @@ const PersonEditPage = () => {
                     isPublished: isPublished,
                   };
 
+                  console.log(submissionData, fullName);
+
                   if (isPreview) {
                     setWorkData(submissionData);
                     return;
                   } else {
                     try {
                       const res = await axios.put(
-                        `${localhost}/post/persons/work/${singleWork.id}`,
+                        `${localhost}/post/persons/work/${singleWork.id}/${fullName}`,
                         submissionData
                       );
 
