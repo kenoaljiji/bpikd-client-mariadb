@@ -35,6 +35,7 @@ import { ThemeContext } from './context/theme/ThemeContext';
 import React, { useContext } from 'react';
 import MaintenancePage from './pages/maintenancePage/MaintenancePage';
 import NotFound from './pages/notFound/NotFound';
+import BackupPage from './pages/backupPage/BackupPage';
 import { complexString } from './utils/complexString';
 
 function App() {
@@ -93,7 +94,7 @@ function App() {
               <Route path='footer-items' element={<FooterItems />} />
               <Route path='ip-visitors' element={<IpVisitorPage />} />
               <Route path='post/preview' element={<PreviewAuthor />} />
-              {/* <Route path='backup' element={<BackupPage />} /> */}
+              <Route path='backup' element={<BackupPage />} />
               <Route
                 path='news-page/preview'
                 element={<PreviewNewsAndPage />}

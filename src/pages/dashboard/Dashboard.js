@@ -52,9 +52,9 @@ const Dashboard = () => {
         <Link to='/admin/ip-visitors'>
           <IPtrackIcon />
         </Link>
-        {/*   <Link to='/admin/backup'>
+        <Link to='/admin/backup'>
           <BackupIcon />
-        </Link> */}
+        </Link>
       </div>
       <MaintenanceComponent />
     </div>
