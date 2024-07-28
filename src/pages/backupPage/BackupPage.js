@@ -63,7 +63,7 @@ const BackupPage = () => {
     setLoading(true);
     setProgress(0);
 
-    const ws = new WebSocket(`ws://${url.host}/api/download/ws/progress`);
+    const ws = new WebSocket(`wss://${url.host}/api/download/ws/progress`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
