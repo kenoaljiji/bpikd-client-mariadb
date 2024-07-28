@@ -14,9 +14,13 @@ const BackupPage = () => {
 
   const apiBaseUrl = `${window.location.origin}/api`;
 
+  const url = new URL(apiBaseUrl, window.location.origin);
+
+  const protocol = url.protocol === 'https:' ? 'ws:' : 'ws:';
+
   const getWebSocketUrl = () => {
     const url = new URL(apiBaseUrl, window.location.origin);
-    const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    const protocol = url.protocol === 'https:' ? 'ws:' : 'ws:';
     return `${protocol}//${url.host}/api/download/ws/progress`;
   };
   const handleDbDownload = async () => {
@@ -24,7 +28,7 @@ const BackupPage = () => {
     setLoading(true);
     try {
       const response = await axios({
-        url: `${localhost}/download/db-backup`,
+        url: `ws://${url.host}/api/download/ws/progress`,
         method: 'GET',
         responseType: 'blob', // Important for files
       });
