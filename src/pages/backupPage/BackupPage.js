@@ -1,14 +1,16 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { localhost } from '../../config/config';
 import { useAlertContext } from '../../context/alert/AlertState';
 import './backupPage.scss';
 import Alerts from '../../components/Alerts';
 import Loader from '../../components/loader/Loader';
+import { io } from 'socket.io-client';
 
 const BackupPage = () => {
-  const [loading, setLoading] = useState();
   const { setAlert } = useAlertContext();
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const handleDbDownload = async () => {
     setLoading(true);
     try {
@@ -40,6 +42,7 @@ const BackupPage = () => {
     }
     setLoading(false);
   };
+
   const handleBackendDownload = async () => {
     setLoading(true);
     try {
@@ -49,9 +52,18 @@ const BackupPage = () => {
         responseType: 'blob',
       });
 
-      setAlert('Backup Created Successufully', 'success');
+      // Check the size of the response data
+      console.log('Response Data Size:', response.data.size);
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      if (response.data.size === 0) {
+        throw new Error('Empty backup file received');
+      }
+
+      setAlert('Backup Created Successfully', 'success');
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: 'application/zip' })
+      );
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'project-backup.zip');
@@ -64,6 +76,7 @@ const BackupPage = () => {
     }
     setLoading(false);
   };
+
   const handleReactDownload = async () => {
     setLoading(true);
     const downloadUrl = localhost + '/download/react-build';
@@ -78,7 +91,7 @@ const BackupPage = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'react_build.zip'); // This sets the filename for the downloaded file
+      link.setAttribute('download', 'build.zip'); // This sets the filename for the downloaded file
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -90,6 +103,10 @@ const BackupPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log(progress);
+  }, [progress]);
 
   return (
     <div className='container backup-page text-center mt-5'>
@@ -122,6 +139,10 @@ const BackupPage = () => {
               Creating backup
               <span class='dots'></span>
             </span>
+            <div>
+              <p>Progress: {progress}%</p>
+              <progress value={progress} max='100'></progress>
+            </div>
           </div>
         )}
       </div>
