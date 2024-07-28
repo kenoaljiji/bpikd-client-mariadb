@@ -5,13 +5,22 @@ import { useAlertContext } from '../../context/alert/AlertState';
 import './backupPage.scss';
 import Alerts from '../../components/Alerts';
 import Loader from '../../components/loader/Loader';
-import { io } from 'socket.io-client';
 
 const BackupPage = () => {
   const { setAlert } = useAlertContext();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isBackend, setIsBackend] = useState(false);
+
+  const apiBaseUrl = `${window.location.origin}/api`;
+
+  const getWebSocketUrl = () => {
+    const url = new URL(apiBaseUrl, window.location.origin);
+    const protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocol}//${url.host}/api/download/ws/progress`;
+  };
   const handleDbDownload = async () => {
+    setIsBackend(false);
     setLoading(true);
     try {
       const response = await axios({
@@ -44,40 +53,66 @@ const BackupPage = () => {
   };
 
   const handleBackendDownload = async () => {
+    setIsBackend(true);
     setLoading(true);
-    try {
-      const response = await axios({
-        url: `${localhost}/download/backend`,
-        method: 'GET',
-        responseType: 'blob',
-      });
+    setProgress(0);
 
-      // Check the size of the response data
-      console.log('Response Data Size:', response.data.size);
+    const ws = new WebSocket(apiBaseUrl + '/download/ws/progress');
 
-      if (response.data.size === 0) {
-        throw new Error('Empty backup file received');
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.progress !== undefined) {
+        console.log(progress);
+        setProgress(data.progress);
       }
+      if (data.message) {
+        ws.close();
+        downloadBackup(data.path);
+      }
+      if (data.error) {
+        console.error('Backup error:', data.error);
+        ws.close();
+        setAlert('Failed to create backup', 'danger');
+        setLoading(false);
+      }
+    };
 
-      setAlert('Backup Created Successfully', 'success');
+    ws.onopen = () => {
+      console.log('WebSocket connection opened');
+    };
 
-      const url = window.URL.createObjectURL(
-        new Blob([response.data], { type: 'application/zip' })
-      );
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'backend-archive.zip');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error('Download failed:', error);
-      setAlert('Failed to create backup', 'danger');
-    }
-    setLoading(false);
+    ws.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    const downloadBackup = async (path) => {
+      try {
+        const response = await axios({
+          url: `${localhost}/download/backend`,
+          method: 'GET',
+          responseType: 'blob',
+        });
+
+        setAlert('Backup Created Successfully', 'success');
+
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'backend-archive.zip');
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setLoading(false);
+      } catch (error) {
+        console.error('Download failed:', error);
+        setAlert('Failed to download backup', 'danger');
+        setLoading(false);
+      }
+    };
   };
 
   const handleReactDownload = async () => {
+    setIsBackend(false);
     setLoading(true);
     const downloadUrl = localhost + '/download/react-build';
 
@@ -139,10 +174,12 @@ const BackupPage = () => {
               Creating backup
               <span class='dots'></span>
             </span>
-            <div>
-              <p>Progress: {progress}%</p>
-              <progress value={progress} max='100'></progress>
-            </div>
+            {isBackend && (
+              <div className='mt-3'>
+                <p>Progress: {progress}%</p>
+                <progress value={progress} max='100'></progress>
+              </div>
+            )}
           </div>
         )}
       </div>
