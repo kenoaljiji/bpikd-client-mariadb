@@ -62,9 +62,9 @@ const BackupPage = () => {
     let ws;
 
     if (localhost === '/api') {
-      ws = new WebSocket(`wss://${url.host}/download/ws/progress`);
+      ws = new WebSocket(`wss://${url.host}/api/download/ws/progress`);
     } else {
-      ws = new WebSocket(`ws://localhost:8000/download/ws/progress`);
+      ws = new WebSocket(`ws://localhost:8000/api/download/ws/progress`);
     }
 
     ws.onmessage = (event) => {
@@ -175,7 +175,8 @@ const BackupPage = () => {
             </span>
             {isBackend && (
               <div className='mt-3'>
-                <p>Progress: {progress > 100 ? 100 : progress}%</p>
+                {/* <p>Progress: {progress > 100 ? 100 : progress}%</p> */}
+                <p>Progress: {progress}%</p>
                 <progress value={progress} max='100'></progress>
               </div>
             )}
