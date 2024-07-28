@@ -4,13 +4,13 @@ import React, {
   useContext,
   useEffect,
   useReducer,
-} from "react";
-import { routeReducer } from "./routeReducer";
-import { useAlertContext } from "../alert/AlertState";
-import axios from "axios";
-import { localhost } from "../../config/config";
-import { useAuthContext } from "../auth/AuthState";
-import { GET_HEADER_CONFIG } from "../types";
+} from 'react';
+import { routeReducer } from './routeReducer';
+import { useAlertContext } from '../alert/AlertState';
+import axios from 'axios';
+import { localhost } from '../../config/config';
+import { useAuthContext } from '../auth/AuthState';
+import { GET_HEADER_CONFIG } from '../types';
 
 const RouteContext = createContext();
 
@@ -20,23 +20,23 @@ export const RouteProvider = ({ children }) => {
   const initialState = {
     headersData: {
       routes: {
-        person: "Person of Interest",
-        news: "News",
-        about: "About",
-        partners: "Partners",
-        shop: "Shop",
-        soon: "Coming",
+        person: 'Person of Interest',
+        news: 'News',
+        about: 'About',
+        partners: 'Partners',
+        shop: 'Shop',
+        soon: 'Coming',
       },
       buttons: {
-        button1: "Donate",
-        button2: "Submit",
+        button1: 'Donate',
+        button2: 'Submit',
       },
-      logoImgPath: "",
+      logoImgPath: '',
     },
     textTrack: {
       isPlaying: false,
       active: false,
-      text: "SOME RANDOM TEXT",
+      text: 'SOME RANDOM TEXT',
     },
     loading: false,
   };
@@ -49,11 +49,11 @@ export const RouteProvider = ({ children }) => {
       const res = await axios.get(`${localhost}/settings`);
 
       dispatch({
-        type: "GET_TEXT_SETTINGS_DATA",
+        type: 'GET_TEXT_SETTINGS_DATA',
         payload: res.data,
       });
     } catch (error) {
-      setAlert(error.message, "danger");
+      setAlert(error.message, 'danger');
     }
     //eslint-disable-next-line
   }, [dispatch]);
@@ -70,13 +70,13 @@ export const RouteProvider = ({ children }) => {
 
   const changeHeaderAndRoutes = async (values, setLoading) => {
     const formData = new FormData();
-    formData.append("routes", JSON.stringify(values.routes));
-    formData.append("buttons", JSON.stringify(values.buttons));
+    formData.append('routes', JSON.stringify(values.routes));
+    formData.append('buttons', JSON.stringify(values.buttons));
 
     if (values.logoImgPath instanceof File) {
       console.log(values.logoImgPath);
 
-      formData.append("logoImg", values.logoImgPath, values.logoImgPath.name);
+      formData.append('logoImg', values.logoImgPath, values.logoImgPath.name);
     }
 
     try {
@@ -93,20 +93,18 @@ export const RouteProvider = ({ children }) => {
       console.log(res);
 
       loadHeaderConfig();
-      setAlert("Header updated successfully", "success");
+      setAlert('Header updated successfully', 'success');
     } catch (error) {
-      console.error("Error updating header:", error);
-      setAlert("Error updating header", "danger");
+      console.error('Error updating header:', error);
+      setAlert('Error updating header', 'danger');
     }
     setLoading(false);
   };
 
   const loadHeaderConfig = async () => {
-    dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const res = await axios.get(`${localhost}/header/getHeader`);
-
-      console.log(res.data);
 
       dispatch({
         type: GET_HEADER_CONFIG,
@@ -114,14 +112,14 @@ export const RouteProvider = ({ children }) => {
       });
     } catch (error) {
       dispatch({
-        type: "SET_ERROR",
+        type: 'SET_ERROR',
         payload:
           error.response && error.response.data.message
             ? error.response.data.message
-            : "Failed to load header configuration",
+            : 'Failed to load header configuration',
       });
     }
-    dispatch({ type: "SET_LOADING", payload: false });
+    dispatch({ type: 'SET_LOADING', payload: false });
   };
 
   return (

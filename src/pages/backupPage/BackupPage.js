@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { localhost } from '../../config/config';
 import { useAlertContext } from '../../context/alert/AlertState';
 import './backupPage.scss';
@@ -16,21 +16,17 @@ const BackupPage = () => {
 
   const url = new URL(apiBaseUrl, window.location.origin);
 
-  console.log(url.host);
-
-  /* const protocol = url.protocol === 'https:' ? 'ws:' : 'ws:'; */
-
-  const getWebSocketUrl = () => {
+  /* const getWebSocketUrl = () => {
     const url = new URL(apiBaseUrl, window.location.origin);
     const protocol = url.protocol === 'https:' ? 'ws:' : 'ws:';
     return `${protocol}//${url.host}/api/download/ws/progress`;
-  };
+  }; */
   const handleDbDownload = async () => {
     setIsBackend(false);
     setLoading(true);
     try {
       const response = await axios({
-        url: `${localhost}/download/backup`,
+        url: `${localhost}/download/db-backup`,
         method: 'GET',
         responseType: 'blob', // Important for files
       });
@@ -63,12 +59,17 @@ const BackupPage = () => {
     setLoading(true);
     setProgress(0);
 
-    const ws = new WebSocket(`wss://${url.host}/api/download/ws/progress`);
+    let ws;
+
+    if (localhost === '/api') {
+      ws = new WebSocket(`wss://${url.host}/download/ws/progress`);
+    } else {
+      ws = new WebSocket(`ws://localhost:8000/download/ws/progress`);
+    }
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.progress !== undefined) {
-        console.log(progress);
         setProgress(data.progress);
       }
       if (data.message) {
@@ -83,12 +84,8 @@ const BackupPage = () => {
       }
     };
 
-    ws.onopen = () => {
-      console.log('WebSocket connection opened');
-    };
-
     ws.onclose = () => {
-      console.log('WebSocket connection closed');
+      setProgress(100);
     };
 
     const downloadBackup = async (path) => {
@@ -145,10 +142,6 @@ const BackupPage = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(progress);
-  }, [progress]);
-
   return (
     <div className='container backup-page text-center mt-5'>
       <div className='my-4'>
@@ -176,13 +169,13 @@ const BackupPage = () => {
             <div className='mt-4'>
               <Loader />
             </div>
-            <span class='mt-5 blink-text'>
+            <span className='mt-5 blink-text'>
               Creating backup
-              <span class='dots'></span>
+              <span className='dots'></span>
             </span>
             {isBackend && (
               <div className='mt-3'>
-                <p>Progress: {progress}%</p>
+                <p>Progress: {progress > 100 ? 100 : progress}%</p>
                 <progress value={progress} max='100'></progress>
               </div>
             )}
