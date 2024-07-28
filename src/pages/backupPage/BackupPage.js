@@ -66,7 +66,7 @@ const BackupPage = () => {
       );
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'project-backup.zip');
+      link.setAttribute('download', 'backend-archive.zip');
       document.body.appendChild(link);
       link.click();
       link.remove();
