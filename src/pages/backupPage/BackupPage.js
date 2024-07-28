@@ -176,7 +176,7 @@ const BackupPage = () => {
             {isBackend && (
               <div className='mt-3'>
                 {/* <p>Progress: {progress > 100 ? 100 : progress}%</p> */}
-                <p>Progress: {progress}%</p>
+                <p>Documents preparation {progress}%</p>
                 <progress value={progress} max='100'></progress>
               </div>
             )}
