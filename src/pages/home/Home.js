@@ -16,12 +16,12 @@ const Home = () => {
 
   return (
     <div>
-      <HomepageMetaTags
+      {/* <HomepageMetaTags
         title={'Bpikd'}
         description={'Persons of Interest'}
         imageUrl={logoImgPath && logoImgPath}
         url={url}
-      />
+      /> */}
       <Search />
       <GridItems />
     </div>
