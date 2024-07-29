@@ -38,6 +38,7 @@ import NotFound from './pages/notFound/NotFound';
 import BackupPage from './pages/backupPage/BackupPage';
 import { complexString } from './utils/complexString';
 import SearchInfo from './pages/searchInfo/SearchInfo';
+import { HomepageMetaTags } from './components/HomePageMetaTags';
 
 function App() {
   const { state } = useRouteContext();
