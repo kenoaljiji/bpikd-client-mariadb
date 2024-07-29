@@ -11,7 +11,7 @@ export const HomepageMetaTags = ({ title, description, imageUrl, url }) => {
         <meta property='og:title' content={title} />
         <meta property='og:site_name' content='Bpikd' />
         <meta property='og:description' content={description} />
-        <meta property='og:image' content={url} />
+        <meta property='og:image' content={imageUrl} />
         <meta property='og:url' content={url} />
         <meta property='og:type' content='website' />
 
