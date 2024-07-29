@@ -6,8 +6,6 @@ export const HomepageMetaTags = ({ title, description, imageUrl, url }) => {
     <HelmetProvider>
       <Helmet>
         <title>{title}</title>
-        <meta name='description' content={description} />
-        <meta property='image' content='/assets/images/logo-white.png' />
 
         {/* Open Graph Meta Tags */}
         <meta property='og:title' content={title} />

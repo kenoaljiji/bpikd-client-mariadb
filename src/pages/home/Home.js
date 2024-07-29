@@ -3,7 +3,7 @@ import GridItems from '../../components/GridItems';
 import { HomepageMetaTags } from '../../components/HomePageMetaTags';
 
 import Search from '../../components/Search';
-import { localhost } from '../../config/config';
+
 import { useRouteContext } from '../../context/route/RouteProvider';
 
 const Home = () => {
