@@ -3,6 +3,7 @@ import GridItems from '../../components/GridItems';
 import { HomepageMetaTags } from '../../components/HomePageMetaTags';
 
 import Search from '../../components/Search';
+import { localhost } from '../../config/config';
 import { useRouteContext } from '../../context/route/RouteProvider';
 
 const Home = () => {
@@ -11,12 +12,15 @@ const Home = () => {
 
   const { logoImgPath } = headersData;
 
+  const url = new URL(window.location.origin);
+
   return (
     <div>
       <HomepageMetaTags
         title={'Bpikd'}
-        description={'Bpikd'}
+        description={'Persons of Interest'}
         imageUrl={logoImgPath && logoImgPath}
+        url={url}
       />
       <Search />
       <GridItems />

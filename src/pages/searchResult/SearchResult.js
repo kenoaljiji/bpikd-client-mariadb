@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -216,7 +216,6 @@ const SearchResult = () => {
         });
 
         setResults(response.data);
-        console.log(response.data);
       } catch (err) {
         console.error('Search error:', err);
         // Optionally handle errors in UI, e.g., display error message
@@ -337,7 +336,12 @@ const SearchResult = () => {
                   value={formik.values.words}
                 />
                 <span style={{ fontSize: '12px' }}>
-                  You can use any of these search operators in this input field
+                  You can use any of{' '}
+                  <Link to='/search/info' className='link'>
+                    {' '}
+                    these search operators{' '}
+                  </Link>{' '}
+                  in this input field
                 </span>
               </div>
             </div>
@@ -701,7 +705,7 @@ const SearchResult = () => {
                       currentPage={formik.values.page}
                       onPageChange={(newPage) => {
                         // Update the state that controls the page, or perform a fetch operation here
-                        console.log('Switch to page:', newPage);
+
                         formik.setFieldValue('page', newPage);
                         formik.submitForm();
                       }}

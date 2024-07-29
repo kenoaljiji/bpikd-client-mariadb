@@ -37,6 +37,7 @@ import MaintenancePage from './pages/maintenancePage/MaintenancePage';
 import NotFound from './pages/notFound/NotFound';
 import BackupPage from './pages/backupPage/BackupPage';
 import { complexString } from './utils/complexString';
+import SearchInfo from './pages/searchInfo/SearchInfo';
 
 function App() {
   const { state } = useRouteContext();
@@ -78,6 +79,7 @@ function App() {
             />
             <Route path={transformPath(buttons.button1)} element={<Donate />} />
             <Route path='/search' element={<SearchResult />} />
+            <Route path='/search/info' element={<SearchInfo />} />
             <Route path='/person-of-interest/:id' element={<Author />} />
             <Route path='/person-of-interest/:id/:title' element={<Author />} />
             <Route path='/shop' element={<Shop />} />

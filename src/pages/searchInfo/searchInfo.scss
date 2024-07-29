@@ -1,0 +1,30 @@
+.search-info {
+  padding-top: 115px;
+  padding-bottom: 30px;
+
+  @media only screen and (max-width: 993px) {
+    padding-top: 90px;
+  }
+
+  .testquery {
+    pre {
+      /*    float: left; */
+      display: block;
+      margin-right: 2.35765%;
+      width: 82.94039%;
+      display: block;
+      padding: 15px;
+      margin: 0;
+      background-color: #f7f7f7;
+      border: solid 1px #dedede;
+      border-radius: 4px;
+    }
+
+    a {
+      text-decoration: none;
+      margin-left: 15px;
+      color: #0078c6;
+      font-weight: bold;
+    }
+  }
+}
