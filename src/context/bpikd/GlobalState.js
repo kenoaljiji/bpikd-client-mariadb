@@ -65,7 +65,7 @@ export const GlobalState = ({ children }) => {
       }
     } catch (error) {
       dispatch({ type: LIST_POSTS_FAIL, payload: error.message });
-      setAlert(error.message, 'danger'); // Display any errors as alerts
+      /* setAlert(error.message, 'danger');  */
     } finally {
       setLoading(false);
     }
